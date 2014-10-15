@@ -92,11 +92,18 @@ Vagrant.configure("2") do |config|
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
       #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
 
-      if File.exist?(CLOUD_CONFIG_PATH)
-        config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
-        config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
+      try_install_cloud_config_from = lambda do |p|
+        if File.exist?(p)
+          config.vm.provision :file, :source => p, :destination => "/tmp/vagrantfile-user-data"
+          config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
+          true
+        else
+          false
+        end
       end
-
+      ["#{CLOUD_CONFIG_PATH}.#{config.vm.hostname}", CLOUD_CONFIG_PATH].each do |p|
+        try_install_cloud_config_from.call(p) || next
+      end
     end
   end
 end
