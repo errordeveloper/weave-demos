@@ -45,7 +45,7 @@ coreos:
       enable: true
       content: |
         [Unit]
-        Description=Docker Socket for the AP"
+        Description=Docker Socket for the AP
 
         [Socket]
         ListenStream=2375
