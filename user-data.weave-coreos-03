@@ -39,7 +39,7 @@ coreos:
 
         [Service]
         Type=oneshot
-        ExecStart=/opt/bin/weave launch 10.0.0.1/16 172.17.8.101
+        ExecStart=/opt/bin/weave launch 10.0.0.3/16 172.17.8.101
     - name: docker-tcp.socket
       command: start
       enable: true
