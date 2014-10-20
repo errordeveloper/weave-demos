@@ -85,6 +85,21 @@ coreos:
         Type=oneshot
         RemainAfterExit=yes
         ExecStart=/opt/bin/weave run 10.9.3.20/16 --name=greater -t -i busybox:latest nc -ll -p 2000 0.0.0.0 -e /bin/echo Welcome to 10.9.3.20/16
+    - name: tester.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=docker.service weave.service install-busybox.service
+        Description=Weave Network Test
+        Documentation=http://zettio.github.io/weave/
+        Requires=docker.service weave.service install-busybox.service
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/docker run --name=tester -d -i -t busybox:latest
+        ExecStartPost=/bin/sh -c "/opt/bin/docker-ns tester ip route add 10.9.0.0/16 dev eth0 proto kernel scope link src `docker inspect --format='{{ .NetworkSettings.IPAddress }}' tester`"
     - name: docker.service
       command: start
       content: |
