@@ -25,8 +25,10 @@ coreos:
         RemainAfterExit=yes
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/errordeveloper/weave/132_setup_subcommand/weaver/weave
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/docker-ns
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://gist.githubusercontent.com/errordeveloper/146ec24357d39d42b83f/raw/docker-add-route
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/docker-ns
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/docker-add-route
         ExecStart=/bin/echo Wave Installed
     - name: weave.service
       command: start
@@ -99,7 +101,7 @@ coreos:
         Type=oneshot
         RemainAfterExit=yes
         ExecStart=/usr/bin/docker run --name=tester -d -i -t busybox:latest
-        ExecStartPost=/bin/sh -c "/opt/bin/docker-ns tester ip route add 10.9.0.0/16 dev eth0 proto kernel scope link src `docker inspect --format='{{ .NetworkSettings.IPAddress }}' tester`"
+        ExecStartPost=/opt/bin/docker-add-route tester 10.9.0.0/16
     - name: docker.service
       command: start
       content: |
