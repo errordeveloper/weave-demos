@@ -10,36 +10,35 @@ coreos:
   fleet:
     public-ip: $public_ipv4
   units:
-    #- name: "update-engine.service"
-    #  command: stop
     - name: install-weave.service
       command: start
       enable: true
       content: |
         [Unit]
-        After=network-online.target docker.service
+        After=network-online.target
         Description=Install Weave
         Documentation=http://zettio.github.io/weave/
-        Requires=network-online.target docker.service
+        Requires=network-online.target
 
         [Service]
         Type=oneshot
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/weave
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/errordeveloper/weave/kube_experiments/weaver/weave
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/docker-ns
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/docker-ns
-        ExecStart=/usr/bin/docker pull zettio/weave:latest
+        ExecStart=/bin/echo Wave Installed
     - name: weave.service
       command: start
       enable: true
       content: |
         [Unit]
         After=docker.service install-weave.service
-        Description=Weave Network
+        Description=Weave Network Router
         Documentation=http://zettio.github.io/weave/
         Requires=docker.service install-weave.service
 
         [Service]
+        ExecStartPre=/usr/bin/docker pull zettio/weave:latest
         ExecStartPre=/opt/bin/weave launch 10.9.0.2/16 172.17.8.101
         ExecStart=/usr/bin/docker attach weave
         ExecStop=/opt/bin/weave stop
@@ -57,6 +56,23 @@ coreos:
         Type=oneshot
         ExecStartPre=/usr/bin/docker pull busybox:latest
         ExecStart=/opt/bin/weave run 10.9.2.10/16 --name=pinger -t -i busybox ping 10.9.3.10
+    - name: docker.service
+      command: start
+      content: |
+        [Unit]
+        After=network.target install-weave.service
+        Description=Docker Application Container Engine
+        Documentation=http://docs.docker.io
+        Requires=install-weave.service
+
+        [Service]
+        ExecStartPre=/bin/mount --make-rprivate /
+        ExecStartPre=/opt/bin/weave setup 10.9.0.2/16
+        ExecStartPre=/usr/bin/ip addr add dev weave 10.9.2.1/24
+        ExecStart=/usr/bin/docker --daemon --storage-driver=btrfs -H fd:// --bridge=weave
+
+        [Install]
+        WantedBy=multi-user.target
     - name: docker-tcp.socket
       command: start
       enable: true
