@@ -17,44 +17,45 @@ coreos:
       enable: true
       content: |
         [Unit]
-        After=network-online.target
+        After=network-online.target docker.service
         Description=Install Weave
         Documentation=http://zettio.github.io/weave/
-        Requires=network-online.target
+        Requires=network-online.target docker.service
 
         [Service]
         Type=oneshot
-        ExecStart=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/weave
-        ExecStart=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/docker-ns
-        ExecStart=/usr/bin/chmod +x /opt/bin/weave
-        ExecStart=/usr/bin/chmod +x /opt/bin/docker-ns
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/weave
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/docker-ns
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/docker-ns
         ExecStart=/usr/bin/docker pull zettio/weave:latest
     - name: weave.service
       command: start
       enable: true
       content: |
         [Unit]
-        After=install-weave.service
+        After=docker.service install-weave.service
         Description=Weave Network
         Documentation=http://zettio.github.io/weave/
-        Requires=install-weave.service
+        Requires=docker.service install-weave.service
 
         [Service]
-        Type=oneshot
-        ExecStart=/opt/bin/weave launch 10.9.0.3/16 172.17.8.101
+        ExecStartPre=/opt/bin/weave launch 10.9.0.3/16 172.17.8.101
+        ExecStart=/usr/bin/docker attach weave
+        ExecStop=/opt/bin/weave stop
     - name: weave-pinger.service
       command: start
       enable: true
       content: |
         [Unit]
-        After=weave.service
+        After=docker.service weave.service
         Description=Weave Network Test
         Documentation=http://zettio.github.io/weave/
-        Wants=weave.service
+        Requires=docker.service weave.service
 
         [Service]
         Type=oneshot
-        ExecStart=/usr/bin/docker pull busybox:latest
+        ExecStartPre=/usr/bin/docker pull busybox:latest
         ExecStart=/opt/bin/weave run 10.9.3.10/16 --name=pinger -t -i busybox ping 10.9.1.10
     - name: docker-tcp.socket
       command: start
