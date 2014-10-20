@@ -72,7 +72,8 @@ coreos:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStart=/opt/bin/weave run 10.9.1.10/16 --name=pinger -t -i busybox:latest ping 10.9.2.10
+        ExecStart=/usr/bin/docker run --name=pinger -t -i busybox:latest ping 10.9.2.3
+        ExecStartPost=/opt/bin/docker-add-route pinger 10.9.0.0/16
     - name: weave-greater.service
       command: start
       enable: true
@@ -86,7 +87,8 @@ coreos:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStart=/opt/bin/weave run 10.9.1.20/16 --name=greater -t -i busybox:latest nc -ll -p 2000 0.0.0.0 -e /bin/echo Welcome to 10.9.1.20/16
+        ExecStart=/usr/bin/docker run --name=greater -t -i busybox:latest nc -ll -p 2000 0.0.0.0 -e /bin/echo Welcome to greater1
+        ExecStartPost=/opt/bin/docker-add-route greater 10.9.0.0/16
     - name: tester.service
       command: start
       enable: true
