@@ -25,7 +25,9 @@ coreos:
         [Service]
         Type=oneshot
         ExecStart=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/weave
+        ExecStart=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/docker-ns
         ExecStart=/usr/bin/chmod +x /opt/bin/weave
+        ExecStart=/usr/bin/chmod +x /opt/bin/docker-ns
         ExecStart=/usr/bin/docker pull zettio/weave:latest
     - name: weave.service
       command: start
