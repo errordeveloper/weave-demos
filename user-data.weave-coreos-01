@@ -23,7 +23,7 @@ coreos:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/errordeveloper/weave/kube_experiments/weaver/weave
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/errordeveloper/weave/132_setup_subcommand/weaver/weave
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/docker-ns
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/docker-ns
