@@ -39,7 +39,7 @@ coreos:
 
         [Service]
         Type=oneshot
-        ExecStart=/opt/bin/weave launch 192.168.0.3/16 172.17.8.101
+        ExecStart=/opt/bin/weave launch 10.9.0.3/16 172.17.8.101
     - name: weave-pinger.service
       command: start
       enable: true
@@ -53,7 +53,7 @@ coreos:
         [Service]
         Type=oneshot
         ExecStart=/usr/bin/docker pull busybox:latest
-        ExecStart=/opt/bin/weave run 192.168.3.10/16 --name=pinger -t -i busybox ping 192.168.1.10
+        ExecStart=/opt/bin/weave run 10.9.3.10/16 --name=pinger -t -i busybox ping 10.9.1.10
     - name: docker-tcp.socket
       command: start
       enable: true
