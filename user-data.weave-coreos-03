@@ -84,7 +84,7 @@ coreos:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStart=/opt/bin/weave run 10.9.2.20/16 --name=greater -t -i busybox:latest nc -ll -p 2000 0.0.0.0 -e /bin/echo Welcome to 10.9.2.20/16
+        ExecStart=/opt/bin/weave run 10.9.3.20/16 --name=greater -t -i busybox:latest nc -ll -p 2000 0.0.0.0 -e /bin/echo Welcome to 10.9.3.20/16
     - name: docker.service
       command: start
       content: |
