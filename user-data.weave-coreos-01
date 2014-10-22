@@ -24,7 +24,7 @@ coreos:
         Type=oneshot
         RemainAfterExit=yes
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/errordeveloper/weave/132_setup_subcommand/weaver/weave
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/weaver/docker-ns
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/bin/docker-ns
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://gist.githubusercontent.com/errordeveloper/146ec24357d39d42b83f/raw/docker-add-route
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/docker-ns
