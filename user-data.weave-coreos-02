@@ -10,6 +10,14 @@ coreos:
   fleet:
     public-ip: $public_ipv4
   units:
+    - name: 10-weave.network
+      runtime: false
+      content: |
+        [Match]
+        Type=bridge
+        Name=weave*
+
+        [Network]
     - name: install-weave.service
       command: start
       enable: true
