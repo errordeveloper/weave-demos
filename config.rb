@@ -30,7 +30,7 @@
 $num_instances=3
 
 # Change basename of the VM
-$instance_name_prefix="weave-coreos"
+$instance_name_prefix="weave"
 
 # Official CoreOS channel from which updates should be downloaded
 #$update_channel='alpha'
