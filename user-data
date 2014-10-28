@@ -9,6 +9,7 @@ write_files:
       WEAVE_SETUP_ARGS="10.9.0.1/16"
       BRIDGE_ADDRESS="10.9.1.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
+      CONTAINER_INTERFACE="eth0"
       PINGER_REMOTE="10.9.2.3"
       GREATER_MESSAGE="Hello from #1"
 
@@ -20,6 +21,8 @@ write_files:
       WEAVE_SETUP_ARGS="10.9.0.2/16"
       BRIDGE_ADDRESS="10.9.2.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
+      CONTAINER_INTERFACE="eth0"
+      PINGER_REMOTE="10.9.2.3"
       PINGER_REMOTE="10.9.3.3"
       GREATER_MESSAGE="Hello from #1"
 
@@ -31,19 +34,29 @@ write_files:
       WEAVE_SETUP_ARGS="10.9.0.3/16"
       BRIDGE_ADDRESS="10.9.3.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
+      CONTAINER_INTERFACE="eth0"
+      PINGER_REMOTE="10.9.2.3"
       PINGER_REMOTE="10.9.1.3"
       GREATER_MESSAGE="Hello from #1"
 
 coreos:
+  update:
+    group: alpha
+    reboot-strategy: off
   etcd:
     # generate a new token for each unique cluster from https://discovery.etcd.io/new
     # WARNING: replace each time you 'vagrant destroy'
     #discovery: https://discovery.etcd.io/<token>
     addr: $public_ipv4:4001
+    bind-addr: 0.0.0.0
     peer-addr: $public_ipv4:7001
+    peer-heartbeat-interval: 250
+    peer-election-timeout: 1000
   fleet:
     public-ip: $public_ipv4
   units:
+    - name: etcd.service
+      command: start
     - name: 10-weave.network
       runtime: false
       content: |
@@ -67,11 +80,9 @@ coreos:
         Type=oneshot
         RemainAfterExit=yes
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/errordeveloper/weave/132_setup_subcommand/weaver/weave
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/zettio/weave/master/bin/docker-ns
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://gist.githubusercontent.com/errordeveloper/146ec24357d39d42b83f/raw/docker-add-route
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://gist.githubusercontent.com/errordeveloper/146ec24357d39d42b83f/raw/weave-helper
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
-        ExecStartPre=/usr/bin/chmod +x /opt/bin/docker-ns
-        ExecStartPre=/usr/bin/chmod +x /opt/bin/docker-add-route
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/weave-helper
         ExecStart=/bin/echo Wave Installed
     - name: weave.service
       command: start
@@ -92,6 +103,18 @@ coreos:
         ExecStart=/usr/bin/docker logs -f weave
         SuccessExitStatus=2
         ExecStop=/opt/bin/weave stop
+
+    - name: weave-helper.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=install-weave.service
+        After=docker.service
+
+        [Service]
+        EnvironmentFile=/etc/%H.env
+        ExecStart=/opt/bin/weave-helper $CONTAINER_INTERFACE $BREAKOUT_ROUTE
 
     - name: install-busybox.service
       command: start
@@ -130,7 +153,6 @@ coreos:
           run -t -i \
           --name=pinger busybox:latest \
           ping $PINGER_REMOTE
-        ExecStartPost=/opt/bin/docker-add-route pinger $BREAKOUT_ROUTE
 
     - name: greater.service
       command: start
@@ -154,7 +176,6 @@ coreos:
           run -t -i \
           --name=greater busybox:latest \
           nc -ll -p 2000 0.0.0.0 -e /bin/echo $GREATER_MESSAGE
-        ExecStartPost=/opt/bin/docker-add-route greater $BREAKOUT_ROUTE
 
     - name: tester.service
       command: start
@@ -173,7 +194,6 @@ coreos:
         ExecStart=/usr/bin/docker \
           run -t -i \
           --name=tester -d busybox:latest
-        ExecStartPost=/opt/bin/docker-add-route tester $BREAKOUT_ROUTE
 
     - name: docker.service
       command: start
