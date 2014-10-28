@@ -84,6 +84,7 @@ coreos:
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave-helper
         ExecStart=/bin/echo Wave Installed
+
     - name: weave.service
       command: start
       enable: true
