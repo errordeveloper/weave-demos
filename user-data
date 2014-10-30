@@ -74,7 +74,7 @@ coreos:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/errordeveloper/weave/poseidon/weave
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://gist.githubusercontent.com/errordeveloper/146ec24357d39d42b83f/raw/weave
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://gist.githubusercontent.com/errordeveloper/146ec24357d39d42b83f/raw/weave-helper
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave-helper
@@ -232,7 +232,7 @@ coreos:
         ExecStartPre=/bin/mount --make-rprivate /
         ExecStartPre=/opt/bin/weave setup
         ExecStartPre=/usr/bin/ip addr add dev weave $BRIDGE_ADDRESS
-        ExecStart=/usr/bin/docker --daemon --storage-driver=btrfs -H fd:// --bridge=weave --iptables=false --ip-masq=false
+        ExecStart=/usr/bin/docker --daemon --storage-driver=btrfs -H fd:// --bridge=weave
 
         [Install]
         WantedBy=multi-user.target
