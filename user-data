@@ -6,7 +6,8 @@ write_files:
     owner: root
     content: |
       WEAVE_LAUCH_ARGS=""
-      BRIDGE_ADDRESS="10.9.1.1/24"
+      BRIDGE_ADDRESS="10.9.1.1"
+      BRIDGE_ADDRESS_CIDR="10.9.1.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
       CONTAINER_INTERFACE="eth0"
       PINGER_REMOTE="10.9.2.3"
@@ -17,7 +18,8 @@ write_files:
     owner: root
     content: |
       WEAVE_LAUCH_ARGS="172.17.8.101"
-      BRIDGE_ADDRESS="10.9.2.1/24"
+      BRIDGE_ADDRESS="10.9.2.1"
+      BRIDGE_ADDRESS_CIDR="10.9.2.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
       CONTAINER_INTERFACE="eth0"
       PINGER_REMOTE="10.9.3.3"
@@ -28,7 +30,8 @@ write_files:
     owner: root
     content: |
       WEAVE_LAUCH_ARGS="172.17.8.101"
-      BRIDGE_ADDRESS="10.9.3.1/24"
+      BRIDGE_ADDRESS="10.9.3.1"
+      BRIDGE_ADDRESS_CIDR="10.9.3.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
       CONTAINER_INTERFACE="eth0"
       PINGER_REMOTE="10.9.1.3"
@@ -52,6 +55,19 @@ coreos:
   units:
     - name: etcd.service
       command: start
+
+    - name: weave-network.target
+      enable: true
+      content: |
+        [Unit]
+        Description=Weave Network Setup Complete
+        Documentation=man:systemd.special(7)
+        RefuseManualStart=no
+        After=network-online.target
+
+        [Install]
+        WantedBy=multi-user.target
+
     - name: 10-weave.network
       runtime: false
       content: |
@@ -62,11 +78,13 @@ coreos:
         [Network]
 
     - name: install-weave.service
-      command: start
       enable: true
       content: |
         [Unit]
         After=network-online.target
+        Before=weave.service
+        Before=weave-helper.service
+        Before=docker.service
         Description=Install Weave
         Documentation=http://zettio.github.io/weave/
         Requires=network-online.target
@@ -80,8 +98,11 @@ coreos:
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave-helper
         ExecStart=/bin/echo Wave Installed
 
+        [Install]
+        WantedBy=weave-network.target
+        WantedBy=weave.service
+
     - name: weave-helper.service
-      command: start
       enable: true
       content: |
         [Unit]
@@ -96,8 +117,10 @@ coreos:
         EnvironmentFile=/etc/%H.env
         ExecStart=/opt/bin/weave-helper $CONTAINER_INTERFACE $BREAKOUT_ROUTE
 
+        [Install]
+        WantedBy=weave-network.target
+
     - name: weave.service
-      command: start
       enable: true
       content: |
         [Unit]
@@ -116,17 +139,9 @@ coreos:
         SuccessExitStatus=2
         ExecStop=/opt/bin/weave stop
 
-    - name: weave-helper.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        After=install-weave.service
-        After=docker.service
+        [Install]
+        WantedBy=weave-network.target
 
-        [Service]
-        EnvironmentFile=/etc/%H.env
-        ExecStart=/opt/bin/weave-helper $CONTAINER_INTERFACE $BREAKOUT_ROUTE
 
     - name: install-busybox.service
       command: start
@@ -148,16 +163,12 @@ coreos:
       enable: true
       content: |
         [Unit]
-        After=weave.service
-        After=weave-helper.service
+        After=weave-network.target
         After=install-busybox.service
-        After=docker.service
         Description=Weave Network Test Monitor
         Documentation=http://zettio.github.io/weave/
-        Requires=weave.service
-        Requires=weave-helper.service
+        Requires=weave-network.target
         Requires=install-busybox.service
-        Requires=docker.service
 
         [Service]
         EnvironmentFile=/etc/%H.env
@@ -173,16 +184,12 @@ coreos:
       enable: true
       content: |
         [Unit]
-        After=weave.service 
-        After=weave-helper.service
+        After=weave-network.target
         After=install-busybox.service
-        After=docker.service
         Description=Weave Network Test Service
         Documentation=http://zettio.github.io/weave/
-        Requires=weave.service
-        Requires=weave-helper.service
+        Requires=weave-network.target
         Requires=install-busybox.service
-        Requires=docker.service
 
         [Service]
         EnvironmentFile=/etc/%H.env
@@ -198,16 +205,12 @@ coreos:
       enable: true
       content: |
         [Unit]
-        After=weave.service
-        After=weave-helper.service
+        After=weave-network.target
         After=install-busybox.service
-        After=docker.service
         Description=Weave Network Test
         Documentation=http://zettio.github.io/weave/
-        Requires=weave.service
-        Requires=weave-helper.service
+        Requires=weave-network.target
         Requires=install-busybox.service
-        Requires=docker.service
 
         [Service]
         EnvironmentFile=/etc/%H.env
@@ -218,24 +221,28 @@ coreos:
           --name=tester -d busybox:latest
 
     - name: docker.service
-      command: start
+      enable: true
       content: |
         [Unit]
         After=network.target
         After=install-weave.service
+        Before=weave.service
         Description=Docker Application Container Engine
         Documentation=http://docs.docker.io
+        Requires=network.target
         Requires=install-weave.service
 
         [Service]
         EnvironmentFile=/etc/%H.env
         ExecStartPre=/bin/mount --make-rprivate /
         ExecStartPre=/opt/bin/weave setup
-        ExecStartPre=/usr/bin/ip addr add dev weave $BRIDGE_ADDRESS
+        ExecStartPre=/usr/bin/ip addr add dev weave $BRIDGE_ADDRESS_CIDR
+        ExecStartPre=/usr/bin/ip route add $BREAKOUT_ROUTE dev weave proto kernel scope link src $BRIDGE_ADDRESS
         ExecStart=/usr/bin/docker --daemon --storage-driver=btrfs -H fd:// --bridge=weave
 
         [Install]
         WantedBy=multi-user.target
+        WantedBy=weave-network.target
 
     - name: docker-tcp.socket
       command: start
