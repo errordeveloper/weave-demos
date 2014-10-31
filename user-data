@@ -51,25 +51,6 @@ coreos:
   units:
     - name: etcd.service
       command: start
-      #enable: true
-      #content: |
-      #  [Unit]
-      #  Description=etcd
-
-      #  [Service]
-      #  User=etcd
-      #  PermissionsStartOnly=true
-      #  ExecStart=/usr/bin/etcd \
-      #    -data-dir=/var/lib/etcd \
-      #    -name=%m \
-      #    -addr=$public_ipv4:4001 \
-      #    -bind-addr=0.0.0.0 \
-      #    -peer-addr=$public_ipv4:7001 \
-      #    -peer-heartbeat-interval=250 \
-      #    -peer-election-timeout=1000 \
-      #    -discovery=https://discovery.etcd.io/2cefc54b60d5055b0e5d1ff43205ffa6
-      #  Restart=always
-      #  RestartSec=10s
 
     - name: weave-network.target
       enable: true
