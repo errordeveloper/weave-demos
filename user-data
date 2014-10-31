@@ -42,19 +42,34 @@ coreos:
     group: alpha
     reboot-strategy: off
   etcd:
-    # generate a new token for each unique cluster from https://discovery.etcd.io/new
-    # WARNING: replace each time you 'vagrant destroy'
-    #discovery: https://discovery.etcd.io/<token>
+    discovery: https://discovery.etcd.io/3631c3188f72e9925d9ca8b72c1dcab8
     addr: $public_ipv4:4001
     bind-addr: 0.0.0.0
     peer-addr: $public_ipv4:7001
     peer-heartbeat-interval: 250
     peer-election-timeout: 1000
-  fleet:
-    public-ip: $public_ipv4
   units:
     - name: etcd.service
       command: start
+      #enable: true
+      #content: |
+      #  [Unit]
+      #  Description=etcd
+
+      #  [Service]
+      #  User=etcd
+      #  PermissionsStartOnly=true
+      #  ExecStart=/usr/bin/etcd \
+      #    -data-dir=/var/lib/etcd \
+      #    -name=%m \
+      #    -addr=$public_ipv4:4001 \
+      #    -bind-addr=0.0.0.0 \
+      #    -peer-addr=$public_ipv4:7001 \
+      #    -peer-heartbeat-interval=250 \
+      #    -peer-election-timeout=1000 \
+      #    -discovery=https://discovery.etcd.io/2cefc54b60d5055b0e5d1ff43205ffa6
+      #  Restart=always
+      #  RestartSec=10s
 
     - name: weave-network.target
       enable: true
@@ -238,7 +253,7 @@ coreos:
         ExecStartPre=/opt/bin/weave setup
         ExecStartPre=/usr/bin/ip addr add dev weave $BRIDGE_ADDRESS_CIDR
         ExecStartPre=/usr/bin/ip route add $BREAKOUT_ROUTE dev weave proto kernel scope link src $BRIDGE_ADDRESS
-        ExecStart=/usr/bin/docker --daemon --storage-driver=btrfs -H fd:// --bridge=weave
+        ExecStart=/usr/bin/docker --daemon --storage-driver=btrfs -H fd:// --bridge=weave --iptables=false --ip-masq=false -r=false
 
         [Install]
         WantedBy=multi-user.target
@@ -295,7 +310,7 @@ coreos:
         --port=8080 \
         --etcd_servers=http://127.0.0.1:4001 \
         --machines=172.17.8.101,172.17.8.102,172.17.8.103 \
-        --portal_net=10.9.1.0/24 \
+        --portal_net=10.0.0.0/16 \
         --logtostderr=true -v=3
         Restart=always
         RestartSec=10
