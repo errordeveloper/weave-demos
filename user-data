@@ -42,7 +42,7 @@ coreos:
     group: alpha
     reboot-strategy: off
   etcd:
-    discovery: https://discovery.etcd.io/3631c3188f72e9925d9ca8b72c1dcab8
+    discovery: https://discovery.etcd.io/e2dd7cfc4e4e42f8fe00421c212c0dbb
     addr: $public_ipv4:4001
     bind-addr: 0.0.0.0
     peer-addr: $public_ipv4:7001
@@ -270,6 +270,7 @@ coreos:
 
         [Service]
         ExecStart=/bin/bash -c "curl -s -L 'https://www.dropbox.com/s/451yxbs400ksmut/kube-v0.4-397-g78df011.txz?dl=1' | tar xJv -C /opt/"
+        ExecStart=/bin/bash -c "curl -s -L 'https://github.com/GoogleCloudPlatform/kubernetes/archive/master.tar.gz' | tar xzv -C /home/core/"
         RemainAfterExit=yes
         Type=oneshot
     - name: apiserver.service
@@ -278,6 +279,7 @@ coreos:
         [Unit]
         After=etcd.service
         After=download-kubernetes.service
+        ConditionHost=weave-01
         ConditionFileIsExecutable=/opt/bin/apiserver
         Description=Kubernetes API Server
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
@@ -285,7 +287,6 @@ coreos:
         Wants=download-kubernetes.service
 
         [Service]
-        ExecStartPre=/bin/test %H = weave-01
         ExecStart=/opt/bin/apiserver \
         --address=0.0.0.0 \
         --port=8080 \
@@ -304,13 +305,13 @@ coreos:
         [Unit]
         After=apiserver.service
         After=download-kubernetes.service
+        ConditionHost=weave-01
         ConditionFileIsExecutable=/opt/bin/scheduler
         Description=Kubernetes Scheduler
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=apiserver.service
 
         [Service]
-        ExecStartPre=/bin/test %H = weave-01
         ExecStart=/opt/bin/scheduler \
         --logtostderr=true \
         --master=127.0.0.1:8080
@@ -325,6 +326,7 @@ coreos:
         [Unit]
         After=etcd.service
         After=download-kubernetes.service
+        ConditionHost=weave-01
         ConditionFileIsExecutable=/opt/bin/controller-manager
         Description=Kubernetes Controller Manager
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
@@ -332,7 +334,6 @@ coreos:
         Wants=download-kubernetes.service
 
         [Service]
-        ExecStartPre=/bin/test %H = weave-01
         ExecStart=/opt/bin/controller-manager \
         --master=127.0.0.1:8080 \
         --logtostderr=true
