@@ -10,7 +10,6 @@ CONFIG = File.join(File.dirname(__FILE__), "config.rb")
 
 # Defaults for config options defined in CONFIG
 $num_instances = 1
-$instance_name_prefix = "core"
 $update_channel = "alpha"
 $enable_serial_logging = false
 $vb_gui = false
@@ -49,7 +48,7 @@ Vagrant.configure("2") do |config|
   end
 
   (1..$num_instances).each do |i|
-    config.vm.define vm_name = "%s-%02d" % [$instance_name_prefix, i] do |config|
+    config.vm.define vm_name = "core-%02d" % i do |config|
       config.vm.hostname = vm_name
 
       if $enable_serial_logging
@@ -92,18 +91,11 @@ Vagrant.configure("2") do |config|
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
       #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
 
-      try_install_cloud_config_from = lambda do |p|
-        if File.exist?(p)
-          config.vm.provision :file, :source => p, :destination => "/tmp/vagrantfile-user-data"
-          config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
-          true
-        else
-          false
-        end
+      if File.exist?(CLOUD_CONFIG_PATH)
+        config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
+        config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
       end
-      ["#{CLOUD_CONFIG_PATH}.#{config.vm.hostname}", CLOUD_CONFIG_PATH].each do |p|
-        try_install_cloud_config_from.call(p) || next
-      end
+
     end
   end
 end
