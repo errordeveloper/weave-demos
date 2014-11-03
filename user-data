@@ -1,7 +1,7 @@
 #cloud-config
 
 write_files:
-  - path: /etc/weave-01.env
+  - path: /etc/weave.core-01.env
     permissions: 0644
     owner: root
     content: |
@@ -13,7 +13,7 @@ write_files:
       PINGER_REMOTE="10.9.2.3"
       GREATER_MESSAGE="Hello from #1"
 
-  - path: /etc/weave-02.env
+  - path: /etc/weave.core-02.env
     permissions: 0644
     owner: root
     content: |
@@ -25,7 +25,7 @@ write_files:
       PINGER_REMOTE="10.9.3.3"
       GREATER_MESSAGE="Hello from #1"
 
-  - path: /etc/weave-03.env
+  - path: /etc/weave.core-03.env
     permissions: 0644
     owner: root
     content: |
@@ -42,7 +42,7 @@ coreos:
     group: alpha
     reboot-strategy: off
   etcd:
-    discovery: https://discovery.etcd.io/e2dd7cfc4e4e42f8fe00421c212c0dbb
+    discovery: https://discovery.etcd.io/06654ebb186c9dcc68daf06f840ab6c8
     addr: $public_ipv4:4001
     bind-addr: 0.0.0.0
     peer-addr: $public_ipv4:7001
@@ -110,7 +110,7 @@ coreos:
         Requires=install-weave.service
 
         [Service]
-        EnvironmentFile=/etc/%H.env
+        EnvironmentFile=/etc/weave.%H.env
         ExecStart=/opt/bin/weave-helper $CONTAINER_INTERFACE $BREAKOUT_ROUTE
 
         [Install]
@@ -128,7 +128,7 @@ coreos:
         Requires=install-weave.service
 
         [Service]
-        EnvironmentFile=/etc/%H.env
+        EnvironmentFile=/etc/weave.%H.env
         ExecStartPre=/usr/bin/docker pull zettio/weave:latest
         ExecStartPre=/opt/bin/weave launch $WEAVE_LAUCH_ARGS
         ExecStart=/usr/bin/docker logs -f weave
@@ -167,7 +167,7 @@ coreos:
         Requires=install-busybox.service
 
         [Service]
-        EnvironmentFile=/etc/%H.env
+        EnvironmentFile=/etc/weave.%H.env
         Type=oneshot
         RemainAfterExit=yes
         ExecStart=/usr/bin/docker \
@@ -188,7 +188,7 @@ coreos:
         Requires=install-busybox.service
 
         [Service]
-        EnvironmentFile=/etc/%H.env
+        EnvironmentFile=/etc/weave.%H.env
         Type=oneshot
         RemainAfterExit=yes
         ExecStart=/usr/bin/docker \
@@ -209,7 +209,7 @@ coreos:
         Requires=install-busybox.service
 
         [Service]
-        EnvironmentFile=/etc/%H.env
+        EnvironmentFile=/etc/weave.%H.env
         Type=oneshot
         RemainAfterExit=yes
         ExecStart=/usr/bin/docker \
@@ -229,7 +229,7 @@ coreos:
         Requires=install-weave.service
 
         [Service]
-        EnvironmentFile=/etc/%H.env
+        EnvironmentFile=/etc/weave.%H.env
         ExecStartPre=/bin/mount --make-rprivate /
         ExecStartPre=/opt/bin/weave setup
         ExecStartPre=/usr/bin/ip addr add dev weave $BRIDGE_ADDRESS_CIDR
@@ -279,7 +279,7 @@ coreos:
         [Unit]
         After=etcd.service
         After=download-kubernetes.service
-        ConditionHost=weave-01
+        ConditionHost=core-01
         ConditionFileIsExecutable=/opt/bin/apiserver
         Description=Kubernetes API Server
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
@@ -305,7 +305,7 @@ coreos:
         [Unit]
         After=apiserver.service
         After=download-kubernetes.service
-        ConditionHost=weave-01
+        ConditionHost=core-01
         ConditionFileIsExecutable=/opt/bin/scheduler
         Description=Kubernetes Scheduler
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
@@ -326,7 +326,7 @@ coreos:
         [Unit]
         After=etcd.service
         After=download-kubernetes.service
-        ConditionHost=weave-01
+        ConditionHost=core-01
         ConditionFileIsExecutable=/opt/bin/controller-manager
         Description=Kubernetes Controller Manager
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
