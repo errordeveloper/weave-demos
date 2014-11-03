@@ -40,7 +40,7 @@ write_files:
 coreos:
   update:
     group: alpha
-    reboot-strategy: off
+    reboot-strategy: 'off'
   etcd:
     addr: $public_ipv4:4001
     bind-addr: 0.0.0.0
