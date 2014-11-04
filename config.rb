@@ -12,7 +12,7 @@ if File.exists?('kubernetes-cluster.yaml') && ARGV[0].eql?('up')
   lines = YAML.dump(data).split("\n")
   lines[0] = '#cloud-config'
 
-  open('user-data', 'r+') do |f|
+  open('user-data', 'w') do |f|
     f.puts(lines.join("\n"))
   end
 end
