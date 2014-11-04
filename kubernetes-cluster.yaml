@@ -56,6 +56,42 @@ coreos:
 
         [Install]
         WantedBy=multi-user.target
+        WantedBy=kubernetes-master.target
+        WantedBy=kubernetes-minion.target
+
+    - name: kubernetes-master.target
+      enable: true
+      command: start
+      content: |
+        [Unit]
+        Description=Kubernetes Cluster Master
+        Documentation=http://kubernetes.io/
+        RefuseManualStart=no
+        After=weave-network.target
+        Requires=weave-network.target
+        ConditionHost=core-01
+        Wants=apiserver.service
+        Wants=scheduler.service
+        Wants=controller-manager.service
+
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: kubernetes-minion.target
+      enable: true
+      command: start
+      content: |
+        [Unit]
+        Description=Kubernetes Cluster Master
+        Documentation=http://kubernetes.io/
+        RefuseManualStart=no
+        After=weave-network.target
+        Requires=weave-network.target
+        Wants=proxy.service
+        Wants=kubelet.service
+
+        [Install]
+        WantedBy=multi-user.target
 
     - name: 10-weave.network
       runtime: false
@@ -169,9 +205,10 @@ coreos:
 
         [Install]
         WantedBy=sockets.target
+
     ## based on: https://github.com/kelseyhightower/kubernetes-coreos/blob/e16f8ac/configs/master.yml
     - name: download-kubernetes.service
-      command: start
+      enable: true
       content: |
         [Unit]
         After=network-online.target
@@ -189,18 +226,23 @@ coreos:
         ExecStart=/bin/bash -c "curl -s -L 'https://github.com/GoogleCloudPlatform/kubernetes/archive/master.tar.gz' | tar xzv -C /home/core/"
         RemainAfterExit=yes
         Type=oneshot
+
+        [Install]
+        WantedBy=kubernetes-master.target
+        WantedBy=kubernetes-minion.target
+
     - name: apiserver.service
-      command: start
+      enable: true
       content: |
         [Unit]
         After=etcd.service
         After=download-kubernetes.service
-        ConditionHost=core-01
         ConditionFileIsExecutable=/opt/bin/apiserver
         Description=Kubernetes API Server
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=etcd.service
         Wants=download-kubernetes.service
+        ConditionHost=core-01
 
         [Service]
         ExecStart=/opt/bin/apiserver \
@@ -214,18 +256,19 @@ coreos:
         RestartSec=10
 
         [Install]
-        WantedBy=multi-user.target
+        WantedBy=kubernetes-master.target
+
     - name: scheduler.service
-      command: start
+      enable: true
       content: |
         [Unit]
         After=apiserver.service
         After=download-kubernetes.service
-        ConditionHost=core-01
         ConditionFileIsExecutable=/opt/bin/scheduler
         Description=Kubernetes Scheduler
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=apiserver.service
+        ConditionHost=core-01
 
         [Service]
         ExecStart=/opt/bin/scheduler \
@@ -235,19 +278,20 @@ coreos:
         RestartSec=10
 
         [Install]
-        WantedBy=multi-user.target
+        WantedBy=kubernetes-master.target
+
     - name: controller-manager.service
-      command: start
+      enable: true
       content: |
         [Unit]
         After=etcd.service
         After=download-kubernetes.service
-        ConditionHost=core-01
         ConditionFileIsExecutable=/opt/bin/controller-manager
         Description=Kubernetes Controller Manager
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=etcd.service
         Wants=download-kubernetes.service
+        ConditionHost=core-01
 
         [Service]
         ExecStart=/opt/bin/controller-manager \
@@ -257,9 +301,9 @@ coreos:
         RestartSec=10
 
         [Install]
-        WantedBy=multi-user.target
+        WantedBy=kubernetes-master.target
+
     - name: kubelet.service
-      command: start
       content: |
         [Unit]
         After=etcd.service
@@ -281,9 +325,9 @@ coreos:
         RestartSec=10
 
         [Install]
-        WantedBy=multi-user.target
+        WantedBy=kubernetes-minion.target
+
     - name: proxy.service
-      command: start
       content: |
         [Unit]
         After=etcd.service
@@ -300,4 +344,4 @@ coreos:
         RestartSec=10
 
         [Install]
-        WantedBy=multi-user.target
+        WantedBy=kubernetes-minion.target
