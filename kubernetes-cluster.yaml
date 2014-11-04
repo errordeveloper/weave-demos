@@ -292,6 +292,7 @@ coreos:
         --etcd_servers=http://127.0.0.1:4001 \
         --machines=172.17.8.101,172.17.8.102,172.17.8.103 \
         --portal_net=10.0.0.0/16 \
+        --cloud_provider=vagrant \
         --logtostderr=true -v=3
         Restart=always
         RestartSec=10
