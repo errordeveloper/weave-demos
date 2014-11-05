@@ -220,7 +220,7 @@ coreos:
 
         [Service]
         ExecStartPre=/bin/mkdir -p /opt/
-        ExecStart=/bin/bash -c "curl -s -L 'https://www.dropbox.com/s/451yxbs400ksmut/kube-v0.4-397-g78df011.txz?dl=1' | tar xJv -C /opt/"
+        ExecStart=/bin/bash -c "curl -s -L 'https://github.com/errordeveloper/weave-demos/releases/download/kube-blog-post-1/kube-v0.4-397-g78df011.txz' | tar xJv -C /opt/"
         ExecStart=/bin/bash -c "curl -s -L 'https://github.com/GoogleCloudPlatform/kubernetes/archive/master.tar.gz' | tar xzv -C /home/core/"
         RemainAfterExit=yes
         Type=oneshot
