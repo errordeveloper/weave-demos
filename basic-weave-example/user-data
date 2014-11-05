@@ -1,0 +1,130 @@
+#cloud-config
+write_files:
+  - path: /etc/weave.core-01.env
+    permissions: 0644
+    owner: root
+    content: |
+      WEAVE_LAUNCH_ARGS=""
+      PINGER_LOCAL="10.0.1.1/24"
+      PINGER_REMOTE="10.0.1.2"
+      GREETER_ADDRESS="10.0.2.1/24"
+      GREETER_MESSAGE="Hello from #1"
+
+  - path: /etc/weave.core-02.env
+    permissions: 0644
+    owner: root
+    content: |
+      WEAVE_LAUNCH_ARGS="172.17.8.101"
+      PINGER_LOCAL="10.0.1.2/24"
+      PINGER_REMOTE="10.0.1.1"
+      GREETER_ADDRESS="10.0.2.2/24"
+      GREETER_MESSAGE="Hello from #2"
+
+
+coreos:
+  units:
+    - name: 10-weave.network
+      runtime: false
+      content: |
+        [Match]
+        Type=bridge
+        Name=weave*
+
+        [Network]
+
+    - name: install-weave.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=network-online.target
+        After=docker.service
+        Description=Install Weave
+        Documentation=http://zettio.github.io/weave/
+        Requires=network-online.target
+        Requires=docker.service
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin \
+            https://raw.github.com/zettio/weave/master/weave 
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
+        ExecStartPre=/usr/bin/docker pull zettio/weave:latest
+        ExecStart=/bin/echo Wave Installed
+
+    - name: weave.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=install-weave.service
+        Description=Weave Network
+        Documentation=http://zettio.github.io/weave/
+        Requires=install-weave.service
+
+        [Service]
+        EnvironmentFile=/etc/weave.%H.env
+        ExecStartPre=/opt/bin/weave launch $WEAVE_LAUNCH_ARGS
+        ExecStart=/usr/bin/docker logs -f weave
+        SuccessExitStatus=2
+        ExecStop=/opt/bin/weave stop
+
+    - name: pinger.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=weave.service 
+        After=install-busybox.service
+        Description=Weave Network Test Monitor
+        Documentation=http://zettio.github.io/weave/
+        Requires=weave.service
+        Requires=install-busybox.service
+
+        [Service]
+        EnvironmentFile=/etc/weave.%H.env
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/opt/bin/weave \
+          run $PINGER_LOCAL \
+          --name=pinger busybox:latest \
+          ping $PINGER_REMOTE
+
+    - name: greeter.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=weave.service 
+        After=install-busybox.service
+        Description=Weave Network Test Service
+        Documentation=http://zettio.github.io/weave/
+        Requires=weave.service
+        Requires=install-busybox.service
+
+        [Service]
+        EnvironmentFile=/etc/weave.%H.env
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/opt/bin/weave \
+          run $GREETER_ADDRESS \
+          --name=greeter busybox:latest \
+          nc -ll -p 2000 0.0.0.0 -e /bin/echo $GREETER_MESSAGE
+
+    - name: install-busybox.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=network-online.target
+        After=docker.service
+        Description=Install BusyBox
+        Documentation=http://zettio.github.io/weave/
+        Requires=network-online.target
+        Requires=docker.service
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/docker pull busybox:latest
