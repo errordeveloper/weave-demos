@@ -117,10 +117,8 @@ coreos:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://gist.githubusercontent.com/errordeveloper/146ec24357d39d42b83f/raw/weave
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://gist.githubusercontent.com/errordeveloper/146ec24357d39d42b83f/raw/weave-helper
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/errordeveloper/weave/poseidon/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
-        ExecStartPre=/usr/bin/chmod +x /opt/bin/weave-helper
         ExecStart=/bin/echo Wave Installed
 
         [Install]
@@ -140,7 +138,7 @@ coreos:
 
         [Service]
         EnvironmentFile=/etc/weave.%H.env
-        ExecStart=/opt/bin/weave-helper $CONTAINER_INTERFACE $BREAKOUT_ROUTE
+        ExecStart=/opt/bin/weave helper $CONTAINER_INTERFACE $BREAKOUT_ROUTE
 
         [Install]
         WantedBy=weave-network.target
