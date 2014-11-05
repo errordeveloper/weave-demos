@@ -117,7 +117,7 @@ coreos:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/errordeveloper/weave/poseidon/weave
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.githubusercontent.com/errordeveloper/weave-demos/master/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStart=/bin/echo Wave Installed
 

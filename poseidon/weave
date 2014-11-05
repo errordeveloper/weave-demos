@@ -1,0 +1,225 @@
+#!/bin/sh -x
+set -e
+
+usage() {
+    echo "Usage:"
+    echo "weave setup"
+    echo "weave launch  [-password <password>] <peer> ..."
+    echo "weave helper <container_interface> <cidr>"
+    echo "weave status"
+    echo "weave version"
+    echo
+    echo "where <peer> is of the form <ip_address_or_fqdn>[:<port>], and"
+    echo "      <cidr> is of the form <ip_address>/<routing_prefix_length>"
+    echo "      <container_interface> is an interface aname inside of the"
+    echo "                            container's namespace, usually eth0"
+    exit 1
+}
+
+# utility function to check whether a command can be executed by the shell
+# see http://stackoverflow.com/questions/592620/how-to-check-if-a-program-exists-from-a-bash-script
+command_exists () {
+    command -v $1 >/dev/null 2>&1
+}
+
+[ `id -u` = 0 ] || {
+    echo "weave must be run as 'root'" >&2
+    exit 1
+}
+
+[ $# -gt 0 ] || usage
+
+IMAGE=zettio/weave
+CONTAINER_NAME=weave
+BRIDGE=weave
+CONTAINER_IFNAME=ethwe
+MTU=65535
+PORT=6783
+HTTP_PORT=6784
+
+COMMAND=$1
+
+shift 1
+
+check_command_and_run() {
+    if command_exists $1
+    then
+        shift 1
+        "$@"
+    else
+        echo "Cannot find $1; please install it. Continuing without it." >&2
+    fi
+}
+
+run_iptables() {
+    # -w is recent addition to iptables
+    if [ -z "$CHECKED_IPTABLES_W" ] ; then
+        if iptables -S -w >/dev/null 2>&1 ; then
+            IPTABLES_W=-w
+        fi
+        CHECKED_IPTABLES_W=1
+    fi
+
+    iptables $IPTABLES_W "$@"
+}
+
+# Add a rule to iptables, if it doesn't exist already
+add_iptables_rule() {
+    IPTABLES_TABLE="$1"
+    shift 1
+    if ! run_iptables -t $IPTABLES_TABLE -C "$@" >/dev/null 2>&1
+    then
+        run_iptables -t $IPTABLES_TABLE -A "$@" >/dev/null
+    fi
+}
+
+create_bridge() {
+    [ ! -d /sys/class/net/$BRIDGE ] && {
+        ip link add name $BRIDGE type bridge
+        ip link set dev $BRIDGE address 7a:$(od -txC -An -N5 /dev/random | tr \  : | tail -c+2)
+        # Attempting to set the bridge MTU to a high value directly
+        # fails. Bridges take the lowest MTU of their interfaces. So
+        # instead we create a temporary interface with the desired
+        # MTU, attach that to the bridge, and then remove it again.
+        ip link add name v${CONTAINER_IFNAME}du mtu $MTU type dummy
+        ip link set dev v${CONTAINER_IFNAME}du master $BRIDGE
+        ip link del dev v${CONTAINER_IFNAME}du
+        # disable offloading
+        check_command_and_run ethtool ethtool -K $BRIDGE tx off >/dev/null
+        # Work around the situation where there are no rules allowing traffic
+        # across our bridge. E.g. ufw
+        add_iptables_rule filter FORWARD -i $BRIDGE -o $BRIDGE -j ACCEPT
+        # create a chain for masquerading
+        run_iptables -t nat -N WEAVE >/dev/null 2>&1 || true
+        add_iptables_rule nat POSTROUTING -j WEAVE
+    }
+    ip link set dev $BRIDGE up
+}
+
+docker_ip() {
+    if ! DOCKERIP=$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' $CONTAINER_NAME 2>/dev/null) ; then
+        echo "Weave is not running." >&2
+        exit 1
+    fi
+    if [ -z "$DOCKERIP" ] ; then
+        echo "Weave is not running." >&2
+        exit 1
+    fi
+}
+
+connect_container_to_bridge() {
+    if ! ip link add name $LOCAL_IFNAME mtu $MTU type veth peer name $CONTAINER_IFNAME mtu $MTU ; then
+        return 1
+    fi
+
+    ip link set $LOCAL_IFNAME master $BRIDGE &&
+        ip link set $LOCAL_IFNAME up
+}
+
+
+launch() {
+    connect_container_to_bridge &&
+        ip link set $CONTAINER_IFNAME up &&
+        for i in `ls -d /sys/class/net/*/device/net/* | xargs -n1 basename`
+        do check_command_and_run ethtool ethtool -K $i tx off >/dev/null
+        done
+}
+
+case "$COMMAND" in
+    launch)
+        case $(docker inspect --format '{{ .State.Running }} {{ .Config.Image }}' $CONTAINER_NAME 2>/dev/null) in
+            "true $IMAGE")
+                echo "Weave is already running." >&2
+                exit 1
+                ;;
+            "false $IMAGE")
+                docker rm $CONTAINER_NAME >/dev/null
+                ;;
+            true*)
+                echo "Found another running container named '$CONTAINER_NAME'. Aborting." >&2
+                exit 1
+                ;;
+            false*)
+                echo "Found another container named '$CONTAINER_NAME'. Aborting." >&2
+                exit 1
+                ;;
+        esac
+        create_bridge
+        # We set the router name to the bridge mac since that is
+        # stable across re-creations of the containers.
+        #
+        # TODO use the mac of one of the physical host interfaces
+        # (eth0, wlan0, etc) so the name becomes stable across host
+        # restarts.
+        MACADDR=`cat /sys/class/net/$BRIDGE/address`
+        # Set WEAVE_DOCKER_ARGS in the environment in order to supply
+        # additional parameters, such as resource limits, to docker
+        # when launching the weave container.
+        CONTAINER=$(docker run --net=host --privileged -d --name=$CONTAINER_NAME -p $PORT:$PORT/tcp -p $PORT:$PORT/udp $WEAVE_DOCKER_ARGS $IMAGE -name $MACADDR "$@" | tail -n 1)
+        CONTAINER_PID=$(docker inspect --format='{{ .State.Pid }}' $CONTAINER)
+
+        if [ "$CONTAINER_PID" = 0 ] ; then
+            echo "Container $CONTAINER not running." >&2
+            exit 1
+        fi
+
+        if [ "$CONTAINER_PID" = "<no value>" ] ; then
+            echo "Container $CONTAINER unknown to Docker." >&2
+            exit 1
+        fi
+
+        LOCAL_IFNAME="v${CONTAINER_IFNAME}pl${CONTAINER_PID}"
+        #GUEST_IFNAME="v${CONTAINER_IFNAME}pg${CONTAINER_PID}"
+        launch
+        echo $CONTAINER
+        ;;
+    setup)
+        create_bridge
+        ;;
+    helper)
+        [ $# -eq 2 ] || usage
+
+        container_interface="$1"
+        add_route="$2"
+
+        docker events | while read event
+        do
+                echo $event | grep -q -v '\ start$' && continue
+
+                container_id=`echo $event | sed 's/.*Z\ \(.*\):\ .*/\1/'`
+
+                nsenter="nsenter -n -t {{ .State.Pid }} --"
+                ip_route_add="ip route add ${add_route} dev ${container_interface} proto kernel scope link src {{ .NetworkSettings.IPAddress }}"
+                ethtool_tx_off="ethtool -K ${container_interface} tx off >/dev/null"
+
+                eval `docker inspect --format="${nsenter} ${ip_route_add}; ${nsenter} ${ethtool_tx_off};" ${container_id}`
+        done
+        ;;
+    status)
+        [ $# -eq 0 ] || usage
+        docker_ip
+        if command_exists wget ; then
+            wget -O - -q $DOCKERIP:$HTTP_PORT/status
+        elif command_exists curl ; then
+            curl $DOCKERIP:$HTTP_PORT/status
+        else
+            echo "Cannot find wget or curl. Install one of them for 'weave status' to function." >&2
+            exit 1
+        fi
+        ;;
+    version)
+        [ $# -eq 0 ] || usage
+        # Try the running container first; if no luck try the image
+        if ! DOCKERIMAGE=$(docker inspect --format='{{ .Image }}' $CONTAINER_NAME 2>/dev/null) ; then
+            if ! DOCKERIMAGE=$(docker inspect --format='{{ .Id }}' $IMAGE 2>/dev/null) ; then
+                echo "Unable to find $IMAGE image." >&2
+                exit 1
+            fi
+        fi
+        docker images --no-trunc | grep $DOCKERIMAGE | grep -v latest | tr -s ' ' | cut -d ' ' -f 2
+        ;;
+    *)
+        echo "Unknown weave command '$COMMAND'" >&2
+        usage
+        ;;
+esac
