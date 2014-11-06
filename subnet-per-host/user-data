@@ -1,7 +1,7 @@
 #cloud-config
 
 write_files:
-  - path: /etc/weave-01.env
+  - path: /etc/core-01.env
     permissions: 0644
     owner: root
     content: |
@@ -12,7 +12,7 @@ write_files:
       PINGER_REMOTE="10.9.2.3"
       GREATER_MESSAGE="Hello from #1"
 
-  - path: /etc/weave-02.env
+  - path: /etc/core-02.env
     permissions: 0644
     owner: root
     content: |
@@ -23,7 +23,7 @@ write_files:
       PINGER_REMOTE="10.9.3.3"
       GREATER_MESSAGE="Hello from #1"
 
-  - path: /etc/weave-03.env
+  - path: /etc/core-03.env
     permissions: 0644
     owner: root
     content: |
