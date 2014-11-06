@@ -190,11 +190,12 @@ case "$COMMAND" in
 
                 container_id=`echo $event | sed 's/.*Z\ \(.*\):\ .*/\1/'`
 
-                nsenter="nsenter -n -t {{ .State.Pid }} --"
-                ip_route_add="test {{ .NetworkSettings.IPAddress }} && ip route add ${add_route} dev ${container_interface} proto kernel scope link src {{ .NetworkSettings.IPAddress }}"
+                only_if="test -n '{{ .NetworkSettings.IPAddress }}'"
+                in_namespace="nsenter -n -t {{ .State.Pid }} --"
+                ip_route_add="ip route add ${add_route} dev ${container_interface} proto kernel scope link src {{ .NetworkSettings.IPAddress }}"
                 ethtool_tx_off="ethtool -K ${container_interface} tx off >/dev/null"
 
-                eval `docker inspect --format="(${nsenter} ${ip_route_add}); (${nsenter} ${ethtool_tx_off});" ${container_id}`
+                eval `docker inspect --format="${only_if} && { (${in_namespace} ${ip_route_add}); (${in_namespace} ${ethtool_tx_off}); }" ${container_id}`
         done
         ;;
     status)
