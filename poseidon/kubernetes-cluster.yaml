@@ -6,7 +6,6 @@ write_files:
     owner: root
     content: |
       WEAVE_LAUCH_ARGS=""
-      BRIDGE_ADDRESS="10.9.1.1"
       BRIDGE_ADDRESS_CIDR="10.9.1.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
       CONTAINER_INTERFACE="eth0"
@@ -16,7 +15,6 @@ write_files:
     owner: root
     content: |
       WEAVE_LAUCH_ARGS="172.17.8.101"
-      BRIDGE_ADDRESS="10.9.2.1"
       BRIDGE_ADDRESS_CIDR="10.9.2.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
       CONTAINER_INTERFACE="eth0"
@@ -26,7 +24,6 @@ write_files:
     owner: root
     content: |
       WEAVE_LAUCH_ARGS="172.17.8.101"
-      BRIDGE_ADDRESS="10.9.3.1"
       BRIDGE_ADDRESS_CIDR="10.9.3.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
       CONTAINER_INTERFACE="eth0"
@@ -182,7 +179,8 @@ coreos:
         ExecStartPre=/bin/mount --make-rprivate /
         ExecStartPre=/opt/bin/weave setup
         ExecStartPre=/usr/bin/ip addr add dev weave $BRIDGE_ADDRESS_CIDR
-        ExecStartPre=/usr/bin/ip route add $BREAKOUT_ROUTE dev weave proto kernel scope link src $BRIDGE_ADDRESS
+        ExecStartPre=/usr/bin/ip route add $BREAKOUT_ROUTE dev weave scope link
+        ExecStartPre=/usr/bin/ip route add 224.0.0.0/4 dev weave
         ExecStart=/usr/bin/docker --daemon --storage-driver=btrfs -H fd:// --bridge=weave --iptables=false --ip-masq=false -r=false
 
         [Install]
