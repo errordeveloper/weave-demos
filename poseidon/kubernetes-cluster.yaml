@@ -203,8 +203,8 @@ coreos:
 
         [Service]
         ExecStartPre=/bin/mkdir -p /opt/
-        ExecStart=/bin/bash -c "curl -s -L 'https://github.com/errordeveloper/weave-demos/releases/download/kube-blog-post-1/kube-v0.4-633-g6c70227.txz' | tar xJv -C /opt/"
-        ExecStartPost=/bin/bash -c "curl -s -L 'https://github.com/GoogleCloudPlatform/kubernetes/archive/master.tar.gz' | tar xzv -C /home/core/"
+        ExecStart=/bin/bash -c "curl -s -L 'https://github.com/errordeveloper/weave-demos/releases/download/kube-blog-post-1/kube-v0.4-633-g6c70227-6c70227a2eccc23966d32ea6d558ee05df46e400.txz' | tar xJv -C /opt/"
+        ExecStartPost=/bin/ln -s -f /opt/guestbook-example /home/core/
         RemainAfterExit=yes
         Type=oneshot
 
