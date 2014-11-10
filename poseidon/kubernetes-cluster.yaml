@@ -79,7 +79,7 @@ coreos:
       command: start
       content: |
         [Unit]
-        Description=Kubernetes Cluster Master
+        Description=Kubernetes Cluster Minion
         Documentation=http://kubernetes.io/
         RefuseManualStart=no
         After=weave-network.target
@@ -218,7 +218,7 @@ coreos:
 
         [Service]
         ExecStartPre=/bin/mkdir -p /opt/
-        ExecStart=/bin/bash -c "curl -s -L 'https://github.com/errordeveloper/weave-demos/releases/download/kube-blog-post-1/kube-v0.4-397-g78df011.txz' | tar xJv -C /opt/"
+        ExecStart=/bin/bash -c "curl -s -L 'https://github.com/errordeveloper/weave-demos/releases/download/kube-blog-post-1/kube-v0.4-633-g6c70227.txz' | tar xJv -C /opt/"
         ExecStart=/bin/bash -c "curl -s -L 'https://github.com/GoogleCloudPlatform/kubernetes/archive/master.tar.gz' | tar xzv -C /home/core/"
         RemainAfterExit=yes
         Type=oneshot
@@ -233,6 +233,8 @@ coreos:
         [Unit]
         After=etcd.service
         After=download-kubernetes.service
+        Before=controller-manager.service
+        Before=scheduler.service
         ConditionFileIsExecutable=/opt/bin/apiserver
         Description=Kubernetes API Server
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
@@ -245,8 +247,8 @@ coreos:
         --address=0.0.0.0 \
         --port=8080 \
         --etcd_servers=http://127.0.0.1:4001 \
-        --machines=172.17.8.101,172.17.8.102,172.17.8.103 \
         --portal_net=10.0.0.0/16 \
+        --cloud_provider=vagrant \
         --logtostderr=true -v=3
         Restart=always
         RestartSec=10
@@ -282,15 +284,20 @@ coreos:
         [Unit]
         After=etcd.service
         After=download-kubernetes.service
+        After=apiserver.service
         ConditionFileIsExecutable=/opt/bin/controller-manager
         Description=Kubernetes Controller Manager
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Wants=apiserver.service
         Wants=etcd.service
         Wants=download-kubernetes.service
         ConditionHost=core-01
 
         [Service]
+        ExecStartPre=/bin/bash -x -c 'result=`wget --retry-connrefused --tries=5 127.0.0.1:8080/healthz -O -` && test -n "$${result}" && test "$${result}" = ok'
         ExecStart=/opt/bin/controller-manager \
+        --machines=172.17.8.101,172.17.8.102,172.17.8.103 \
+        --cloud_provider=vagrant \
         --master=127.0.0.1:8080 \
         --logtostderr=true
         Restart=always
