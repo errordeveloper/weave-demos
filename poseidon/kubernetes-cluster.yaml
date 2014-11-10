@@ -187,21 +187,6 @@ coreos:
         WantedBy=multi-user.target
         WantedBy=weave-network.target
 
-    - name: docker-tcp.socket
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=Docker Socket for the AP
-
-        [Socket]
-        ListenStream=2375
-        Service=docker.service
-        BindIPv6Only=both
-
-        [Install]
-        WantedBy=sockets.target
-
     ## based on: https://github.com/kelseyhightower/kubernetes-coreos/blob/e16f8ac/configs/master.yml
     - name: download-kubernetes.service
       enable: true
