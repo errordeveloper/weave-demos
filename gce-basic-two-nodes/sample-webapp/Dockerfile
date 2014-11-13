@@ -1,9 +1,4 @@
-FROM ubuntu:trusty
-
-RUN apt-get update && apt-get install -y python python-pip
-
-ADD ./requirements.txt /requirements.txt
-RUN pip install -r requirements.txt
+FROM progrium/webapp
 
 ADD ./app.py /app.py
 
