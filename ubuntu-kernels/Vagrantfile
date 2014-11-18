@@ -1,0 +1,54 @@
+# Once rebooted the machine, you get the latest kernel that we installed
+# You can test that manually, then remove kernel you have just tested and
+# the next reboot brings you on the older one.
+
+kernels = %w(
+  linux-image-3.2.0-70-generic
+  linux-image-3.5.0-54-generic
+  linux-image-3.8.0-44-generic
+  linux-image-3.11.0-26-generic
+  linux-image-3.13.0-39-generic
+)
+
+Vagrant.configure("2") do |config|
+  config.vm.box = 'phusion/ubuntu-12.04-amd64'
+  config.vm.box_url = 'https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-12.04-amd64-vbox.box'
+
+  config.vm.provider :virtualbox do |vb|
+    vb.memory = 2048
+    vb.cpus = 2
+  end
+
+  [
+    'curl -s https://get.docker.io/ | sudo bash > /dev/null 2>&1',
+    'curl -s -L https://raw.github.com/zettio/weave/master/weave | sudo install --mode=0755 /dev/fd/0 /usr/bin/weave',
+    'sudo docker pull zettio/weave:latest',
+    "sudo apt-get -qq -y --force-yes --no-install-recommends install ethtool conntrack #{kernels.join(' ')}",
+  ].each do |cmd|
+    config.vm.provision :shell, :inline => cmd
+  end
+
+  weave_cmds = [
+    [
+      'sudo weave launch',
+      'sudo weave expose 10.9.0.1/24',
+    ],
+    [
+      'sudo weave launch 172.17.8.100',
+      'sudo weave expose 10.9.0.2/24',
+      'ping -c 5 10.9.0.1',
+    ],
+  ]
+
+  2.times do |i|
+    config.vm.define vm_name = 'weave-%02d' % i do |config|
+      config.vm.hostname = vm_name
+      ip = "172.17.8.#{i+100}"
+      config.vm.network :private_network, ip: ip
+
+      weave_cmds[i].each do |cmd|
+        config.vm.provision :shell, :inline => cmd
+      end
+    end
+  end
+end
