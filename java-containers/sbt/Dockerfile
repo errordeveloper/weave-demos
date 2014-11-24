@@ -10,9 +10,6 @@ RUN curl \
 
 VOLUME [ "/io" ]
 
-CMD [ \
-  "-Xms512M", "-Xmx1536M", "-Xss1M", \
-  "-XX:+CMSClassUnloadingEnabled', \
-  "-XX:MaxPermSize=256M", \
-  "-jar", "/usr/lib/sbt-launch.jar" \
-]
+RUN java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256M -jar /usr/lib/sbt-launch.jar
+
+CMD [ "-Xms512M", "-Xmx1536M", "-Xss1M", "-XX:+CMSClassUnloadingEnabled", "-XX:MaxPermSize=256M", "-jar", "/usr/lib/sbt-launch.jar" ]
