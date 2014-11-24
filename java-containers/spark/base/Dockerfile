@@ -21,5 +21,5 @@ ENTRYPOINT [ \
   "java", \
   "-Dspark.akka.logLifecycleEvents=true", \
   "-Xms512m", "-Xmx512m", \
-  "-cp", "::/usr/spark/conf:/usr/spark/lib/spark-assembly-*.jar:/usr/spark/lib/datanucleus-api-jdo-*.jar:/usr/spark/lib/datanucleus-core-*.jar:/usr/spark/lib/datanucleus-rdbms-*.jar" \
+  "-cp", "::/usr/spark/conf:/usr/spark/lib/*" \
 ]
