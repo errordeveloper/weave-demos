@@ -9,6 +9,8 @@ RUN curl \
     | gunzip \
     | tar x -C /usr/
 
+VOLUME [ "/data" ]
+
 CMD [ \
   "-Xms256m", "-Xmx1g", "-Xss256k", \
   "-Djava.awt.headless=true", \
@@ -21,6 +23,7 @@ CMD [ \
   "-Delasticsearch", \
   "-Des.foreground=yes", \
   "-Des.path.home=/usr/elasticsearch-1.4.0", \
+  "-Des.path.data=/data", \
   "-Des.network.bind_host=_ethwe:ipv4_", \
   "-Des.network.publish_host=_ethwe:ipv4_", \
   "-Des.cluster.name=elasticsearch", \
