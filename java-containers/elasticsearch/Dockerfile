@@ -1,6 +1,13 @@
 FROM errordeveloper/oracle-jdk
 
-RUN curl -ks https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.0.tar.gz | zcat | tar -x -C /usr
+RUN curl \
+  --silent \
+  --location \
+  --retry 3 \
+  --cacert /etc/ssl/certs/Go_Daddy_Class_2_CA.crt \
+  https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.0.tar.gz \
+    | gunzip \
+    | tar x -C /usr/
 
 CMD [ \
   "-Xms256m", "-Xmx1g", "-Xss256k", \
