@@ -1,13 +1,16 @@
 FROM errordeveloper/oracle-jdk
 
+ENV ELASTICSEARCH_BINARY_RELEASE 1.4.0
+
 RUN curl \
   --silent \
   --location \
   --retry 3 \
   --cacert /etc/ssl/certs/Go_Daddy_Class_2_CA.crt \
-  https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.0.tar.gz \
+  https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$ELASTICSEARCH_BINARY_RELEASE.tar.gz \
     | gunzip \
-    | tar x -C /usr/
+    | tar x -C /usr/ \
+  && ln -s /usr/elasticsearch-$ELASTICSEARCH_BINARY_RELEASE /usr/elasticsearch
 
 VOLUME [ "/data" ]
 
@@ -22,11 +25,11 @@ CMD [ \
   "-XX:+DisableExplicitGC", \
   "-Delasticsearch", \
   "-Des.foreground=yes", \
-  "-Des.path.home=/usr/elasticsearch-1.4.0", \
+  "-Des.path.home=/usr/elasticsearch", \
   "-Des.path.data=/data", \
   "-Des.network.bind_host=_ethwe:ipv4_", \
   "-Des.network.publish_host=_ethwe:ipv4_", \
   "-Des.cluster.name=elasticsearch", \
-  "-cp", ":/usr/elasticsearch-1.4.0/lib/elasticsearch-1.4.0.jar:/usr/elasticsearch-1.4.0/lib/*:/usr/elasticsearch-1.4.0/lib/sigar/*", \
+  "-cp", ":/usr/elasticsearch/lib/elasticsearch-*.jar:/usr/elasticsearch/lib/*:/usr/elasticsearch/lib/sigar/*", \
   "org.elasticsearch.bootstrap.Elasticsearch" \
 ]
