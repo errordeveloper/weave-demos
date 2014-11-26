@@ -1,6 +1,9 @@
 FROM errordeveloper/weave-spark-base-minimal
 
-CMD [ \
-  "org.apache.spark.deploy.master.Master", \
-  "--ip", "0.0.0.0" \
+ENTRYPOINT [ \
+  "java", \
+  "-Dspark.akka.logLifecycleEvents=true", \
+  "-Xms512m", "-Xmx512m", \
+  "-cp", "::/usr/spark/conf:/usr/spark/lib/*", \
+  "org.apache.spark.deploy.master.Master" \
 ]

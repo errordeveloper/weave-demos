@@ -16,10 +16,3 @@ RUN curl \
 
 ENV SPARK_HOME /usr/spark-$SPARK_BINARY_RELEASE
 ENV PATH $PATH:$SPARK_HOME/bin
-
-ENTRYPOINT [ \
-  "java", \
-  "-Dspark.akka.logLifecycleEvents=true", \
-  "-Xms512m", "-Xmx512m", \
-  "-cp", "::/usr/spark/conf:/usr/spark/lib/*" \
-]
