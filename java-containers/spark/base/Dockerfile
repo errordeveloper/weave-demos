@@ -14,5 +14,7 @@ RUN curl \
     | tar x -C /usr/ \
   && ln -s /usr/spark-$SPARK_BINARY_RELEASE /usr/spark
 
+RUN sed 's/^\(hosts:[\ ]*\)\(files\)\ \(dns\)$/\1\3 \2/' -i /etc/nsswitch.conf
+
 ENV SPARK_HOME /usr/spark-$SPARK_BINARY_RELEASE
 ENV PATH $PATH:$SPARK_HOME/bin
