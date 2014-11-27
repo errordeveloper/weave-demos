@@ -1,5 +1,7 @@
 FROM errordeveloper/oracle-jre
 
+RUN opkg-install bash
+
 ENV SPARK_BINARY_RELEASE 1.1.0-bin-cdh4
 
 RUN curl \
