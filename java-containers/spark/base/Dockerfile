@@ -1,6 +1,4 @@
-FROM errordeveloper/oracle-jdk
-
-RUN opkg-install bash
+FROM errordeveloper/oracle-jre
 
 ENV SPARK_BINARY_RELEASE 1.1.0-bin-cdh4
 
