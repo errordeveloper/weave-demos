@@ -11,7 +11,7 @@ write_files:
       SPARK_CONTAINER="errordeveloper/weave-spark-master-minimal:latest"
       SPARK_CONTAINER_ARGS=""
       ELASTICSEARCH_NODE_ADDR="10.10.1.1/24"
-      ELASTICSEARCH_NODE_NAME="elasticsearch-1"
+      ELASTICSEARCH_NODE_NAME="elasticsearch-1.weave.local"
       ELASTICSEARCH_CONTAINER="errordeveloper/weave-elasticsearch-minimal:latest"
 
   - path: /etc/weave.core-02.env
@@ -25,7 +25,7 @@ write_files:
       SPARK_CONTAINER="errordeveloper/weave-spark-worker-minimal:latest"
       SPARK_CONTAINER_ARGS="spark://spark-master.weave.local:7077"
       ELASTICSEARCH_NODE_ADDR="10.10.1.2/24"
-      ELASTICSEARCH_NODE_NAME="elasticsearch-2"
+      ELASTICSEARCH_NODE_NAME="elasticsearch-2.weave.local"
       ELASTICSEARCH_CONTAINER="errordeveloper/weave-elasticsearch-minimal:latest"
 
   - path: /etc/weave.core-03.env
@@ -39,7 +39,7 @@ write_files:
       SPARK_CONTAINER="errordeveloper/weave-spark-worker-minimal:latest"
       SPARK_CONTAINER_ARGS="spark://spark-master.weave.local:7077"
       ELASTICSEARCH_NODE_ADDR="10.10.1.3/24"
-      ELASTICSEARCH_NODE_NAME="elasticsearch-3"
+      ELASTICSEARCH_NODE_NAME="elasticsearch-3.weave.local"
       ELASTICSEARCH_CONTAINER="errordeveloper/weave-elasticsearch-minimal:latest"
 
 coreos:
@@ -145,8 +145,10 @@ coreos:
         [Service]
         EnvironmentFile=/etc/weave.%H.env
         ExecStartPre=/opt/bin/weave \
-          run $ELASTICSEARCH_NODE_ADDR \
-          --name=elasticsearch $ELASTICSEARCH_CONTAINER
+          run --with-dns $ELASTICSEARCH_NODE_ADDR \
+          --name=elasticsearch \
+          -h $ELASTICSEARCH_NODE_NAME \
+          $ELASTICSEARCH_CONTAINER
         ExecStart=/usr/bin/docker attach elasticsearch
         SuccessExitStatus=255
         ExecStop=/usr/bin/docker kill elasticsearch ; /usr/bin/docker rm elasticsearch
