@@ -12,6 +12,8 @@ RUN curl \
     | tar x -C /usr/ \
   && ln -s /usr/elasticsearch-$ELASTICSEARCH_BINARY_RELEASE /usr/elasticsearch
 
+RUN sed 's/^\(hosts:[\ ]*\)\(files\)\ \(dns\)$/\1\3 \2/' -i /etc/nsswitch.conf
+
 VOLUME [ "/data" ]
 
 CMD [ \
