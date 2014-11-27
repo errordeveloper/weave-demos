@@ -1,4 +1,4 @@
-FROM errordeveloper/oracle-jdk
+FROM errordeveloper/oracle-jre
 
 ENV ELASTICSEARCH_BINARY_RELEASE 1.4.0
 
