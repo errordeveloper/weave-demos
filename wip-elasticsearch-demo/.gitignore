@@ -1,0 +1,5 @@
+cloud/kill
+cloud/terraform-bin/
+cloud/terraform-playgound/
+cloud/terraform.tfstate
+cloud/terraform.tfstate.backup

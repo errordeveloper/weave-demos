@@ -1,0 +1,155 @@
+#cloud-config
+write_files:
+  - path: /etc/weave-gce-0.env
+    permissions: 0644
+    owner: root
+    content: |
+      WEAVE_LAUNCH_ARGS=""
+      WEAVE_LAUNCH_DNS_ARGS="10.9.1.1/16"
+      SPARK_NODE_ADDR="10.10.1.11/24"
+      SPARK_NODE_NAME="spark-master.weave.local"
+      SPARK_CONTAINER="errordeveloper/weave-spark-master-minimal:latest"
+      SPARK_CONTAINER_ARGS=""
+      ELASTICSEARCH_NODE_ADDR="10.10.1.1/24"
+      ELASTICSEARCH_NODE_NAME="elasticsearch-1.weave.local"
+      ELASTICSEARCH_CONTAINER="errordeveloper/weave-elasticsearch-minimal:latest"
+
+  - path: /etc/weave-gce-1.env
+    permissions: 0644
+    owner: root
+    content: |
+      WEAVE_LAUNCH_ARGS="weave-gce-0"
+      WEAVE_LAUNCH_DNS_ARGS="10.9.1.2/16"
+      SPARK_NODE_ADDR="10.10.1.12/24"
+      SPARK_NODE_NAME="spark-worker-1.weave.local"
+      SPARK_CONTAINER="errordeveloper/weave-spark-worker-minimal:latest"
+      SPARK_CONTAINER_ARGS="spark://spark-master.weave.local:7077"
+      ELASTICSEARCH_NODE_ADDR="10.10.1.2/24"
+      ELASTICSEARCH_NODE_NAME="elasticsearch-2.weave.local"
+      ELASTICSEARCH_CONTAINER="errordeveloper/weave-elasticsearch-minimal:latest"
+
+  - path: /etc/weave-gce-2.env
+    permissions: 0644
+    owner: root
+    content: |
+      WEAVE_LAUNCH_ARGS="weave-gce-0"
+      WEAVE_LAUNCH_DNS_ARGS="10.9.1.3/16"
+      SPARK_NODE_ADDR="10.10.1.13/24"
+      SPARK_NODE_NAME="spark-worker-2.weave.local"
+      SPARK_CONTAINER="errordeveloper/weave-spark-worker-minimal:latest"
+      SPARK_CONTAINER_ARGS="spark://spark-master.weave.local:7077"
+      ELASTICSEARCH_NODE_ADDR="10.10.1.3/24"
+      ELASTICSEARCH_NODE_NAME="elasticsearch-3.weave.local"
+      ELASTICSEARCH_CONTAINER="errordeveloper/weave-elasticsearch-minimal:latest"
+
+coreos:
+  update:
+    reboot-strategy: 'off'
+  units:
+    - name: 10-weave.network
+      runtime: false
+      content: |
+        [Match]
+        Type=bridge
+        Name=weave*
+
+        [Network]
+
+    - name: install-weave.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=network-online.target
+        After=docker.service
+        Description=Install Weave
+        Documentation=http://zettio.github.io/weave/
+        Requires=network-online.target
+        Requires=docker.service
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin \
+            https://raw.github.com/zettio/weave/master/weave 
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
+        ExecStartPre=/usr/bin/docker pull zettio/weave:latest
+        ExecStartPre=/bin/bash -c "ln -s /etc/`hostname -s`.env /etc/weave.%H.env"
+        ExecStart=/bin/echo Wave Installed
+
+    - name: weave.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=install-weave.service
+        Description=Weave Network
+        Documentation=http://zettio.github.io/weave/
+        Requires=install-weave.service
+
+        [Service]
+        EnvironmentFile=/etc/weave.%H.env
+        ExecStartPre=/opt/bin/weave launch $WEAVE_LAUNCH_ARGS
+        ExecStartPre=/opt/bin/weave launch-dns $WEAVE_LAUNCH_DNS_ARGS
+        ExecStart=/usr/bin/docker logs -f weave
+        SuccessExitStatus=2
+        ExecStop=/opt/bin/weave stop
+
+    - name: pre-fetch-container-images.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        EnvironmentFile=/etc/weave.%H.env
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/docker pull $SPARK_CONTAINER
+        ExecStart=/usr/bin/docker pull $ELASTICSEARCH_CONTAINER
+
+    - name: spark.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=weave.service pre-fetch-container-images.service
+        Description=Apache Spark Cluster
+        Documentation=https://spark.apache.org/docs/latest/
+        Requires=weave.service pre-fetch-container-images.service
+
+        [Service]
+        EnvironmentFile=/etc/weave.%H.env
+        ExecStartPre=/opt/bin/weave \
+          run --with-dns $SPARK_NODE_ADDR \
+          --name=spark \
+          -h $SPARK_NODE_NAME \
+          $SPARK_CONTAINER \
+          $SPARK_CONTAINER_ARGS
+        ExecStart=/usr/bin/docker attach spark
+        SuccessExitStatus=255
+        Restart=always
+        ExecStop=/usr/bin/docker kill spark ; /usr/bin/docker rm spark
+
+    - name: elasticsearch.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=weave.service pre-fetch-container-images.service
+        Description=ElasticSearch on Weave
+        Documentation=https://registry.hub.docker.com/u/errordeveloper/weave-elasticsearch-minimal/
+        Requires=weave.service pre-fetch-container-images.service
+
+        [Service]
+        EnvironmentFile=/etc/weave.%H.env
+        ExecStartPre=/opt/bin/weave \
+          run --with-dns $ELASTICSEARCH_NODE_ADDR \
+          --name=elasticsearch \
+          -h $ELASTICSEARCH_NODE_NAME \
+          $ELASTICSEARCH_CONTAINER
+        ExecStart=/usr/bin/docker attach elasticsearch
+        SuccessExitStatus=255
+        ExecStop=/usr/bin/docker kill elasticsearch ; /usr/bin/docker rm elasticsearch
