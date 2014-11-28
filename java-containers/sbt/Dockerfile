@@ -8,12 +8,14 @@ RUN curl \
   --retry 3 \
   --insecure \
   https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/$SBT_BINARY_RELEASE/sbt-launch.jar \
-  --output /usr/lib/sbt-launch.jar
+  --output /usr/lib/sbt-launch.jar \
+    && java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -jar /usr/lib/sbt-launch.jar
 
 VOLUME [ "/io" ]
 
-RUN java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -jar /usr/lib/sbt-launch.jar
-
 WORKDIR /io
 
-CMD [ "-Xms512M", "-Xmx1536M", "-Xss1M", "-XX:+CMSClassUnloadingEnabled", "-jar", "/usr/lib/sbt-launch.jar" ]
+ENTRYPOINT [ \
+  "java", "-Xms512M", "-Xmx1536M", "-Xss1M", "-XX:+CMSClassUnloadingEnabled", \
+  "-jar", "/usr/lib/sbt-launch.jar" \
+]
