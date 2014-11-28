@@ -130,6 +130,7 @@ coreos:
           $SPARK_CONTAINER_ARGS
         ExecStart=/usr/bin/docker attach spark
         SuccessExitStatus=255
+        Restart=always
         ExecStop=/usr/bin/docker kill spark ; /usr/bin/docker rm spark
 
     - name: elasticsearch.service
