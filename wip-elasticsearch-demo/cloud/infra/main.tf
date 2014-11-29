@@ -16,7 +16,7 @@ resource "aws_instance" "weave" {
     count = 3
     instance_type = "m3.xlarge"
 
-    ami = "ami-46e14e31"
+    ami = "ami-c6e858b1"
 
     key_name = "terraform"
 
