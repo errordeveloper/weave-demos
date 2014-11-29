@@ -1,6 +1,6 @@
 FROM errordeveloper/oracle-jre
 
-RUN opkg-install bash libstdcpp
+RUN opkg-install bash libstdcpp zlib
 
 ENV SPARK_BINARY_RELEASE 1.1.0-bin-cdh4
 
@@ -14,7 +14,16 @@ RUN curl \
     | tar x -C /usr/ \
   && ln -s /usr/spark-$SPARK_BINARY_RELEASE /usr/spark
 
+RUN curl \
+  --silent \
+  --location \
+  --retry 3 \
+  --insecure \
+  https://github.com/errordeveloper/weave-demos/releases/download/sparkles-demo-1/python-2.7.6-gce-x86_64.txz \
+    | xzcat \
+    | tar x -C /usr/
+
 RUN sed 's/^\(hosts:[\ ]*\)\(files\)\ \(dns\)$/\1\3 \2/' -i /etc/nsswitch.conf
 
 ENV SPARK_HOME /usr/spark-$SPARK_BINARY_RELEASE
-ENV PATH $PATH:$SPARK_HOME/bin
+ENV PATH $PATH:$SPARK_HOME/bin:/usr/python/bin/
