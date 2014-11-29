@@ -27,3 +27,7 @@ RUN sed 's/^\(hosts:[\ ]*\)\(files\)\ \(dns\)$/\1\3 \2/' -i /etc/nsswitch.conf
 
 ENV SPARK_HOME /usr/spark-$SPARK_BINARY_RELEASE
 ENV PATH $PATH:$SPARK_HOME/bin:/usr/python/bin/
+
+RUN sed 's/^\(log4j.rootCategory=\)INFO\(, console\)$/\1DEBUG\2/' \
+  $SPARK_HOME/conf/log4j.properties.template \
+  > $SPARK_HOME/conf/log4j.properties
