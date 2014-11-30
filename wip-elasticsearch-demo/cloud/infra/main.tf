@@ -44,6 +44,9 @@ resource "aws_instance" "weave" {
             key_file = "ec2_terraform.eu-west-1.pem"
         }
     }
+    # provisioner "local-exec" {
+    #     command = "echo ${aws_instance.weave.public_dns} >> aws_instances"
+    # }
 }
 
 resource "google_compute_instance" "weave" {
