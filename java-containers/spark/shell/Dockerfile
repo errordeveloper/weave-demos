@@ -2,7 +2,7 @@ FROM errordeveloper/oracle-jdk
 
 RUN opkg-install bash libstdcpp zlib
 
-ENV SPARK_BINARY_RELEASE 1.1.1-bin-cdh4
+ENV SPARK_BINARY_RELEASE 1.1.0-bin-cdh4
 
 RUN curl \
   --silent \
