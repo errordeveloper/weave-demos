@@ -124,7 +124,7 @@ write_files:
       SPARK_CONTAINER_ARGS=""
       ELASTICSEARCH_NODE_ADDR="10.10.1.20/24"
       ELASTICSEARCH_NODE_NAME="elasticsearch-gce-0.weave.local"
-      ELASTICSEARCH_CONTAINER="errordeveloper/weave-elasticsearch-minimal:latest"
+      ELASTICSEARCH_CONTAINER="errordeveloper/weave-twitter-river-minimal:latest"
 
   - path: /etc/weave-gce-1.env
     permissions: 0644
@@ -138,7 +138,7 @@ write_files:
       SPARK_CONTAINER_ARGS="spark://spark-master-gce.weave.local:7077"
       ELASTICSEARCH_NODE_ADDR="10.10.1.21/24"
       ELASTICSEARCH_NODE_NAME="elasticsearch-gce-1.weave.local"
-      ELASTICSEARCH_CONTAINER="errordeveloper/weave-elasticsearch-minimal:latest"
+      ELASTICSEARCH_CONTAINER="errordeveloper/weave-twitter-river-minimal:latest"
 
   - path: /etc/weave-gce-2.env
     permissions: 0644
@@ -152,5 +152,5 @@ write_files:
       SPARK_CONTAINER_ARGS="spark://spark-master-gce.weave.local:7077"
       ELASTICSEARCH_NODE_ADDR="10.10.1.22/24"
       ELASTICSEARCH_NODE_NAME="elasticsearch-gce-2.weave.local"
-      ELASTICSEARCH_CONTAINER="errordeveloper/weave-elasticsearch-minimal:latest"
+      ELASTICSEARCH_CONTAINER="errordeveloper/weave-twitter-river-minimal:latest"
 
