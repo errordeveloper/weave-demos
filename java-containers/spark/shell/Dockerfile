@@ -23,6 +23,13 @@ RUN curl \
     | xzcat \
     | tar x -C /usr/
 
+RUN curl \
+  --silent \
+  --location \
+  --retry 3 \
+  http://central.maven.org/maven2/org/elasticsearch/elasticsearch-spark_2.10/2.1.0.Beta3/elasticsearch-spark_2.10-2.1.0.Beta3.jar \
+  --output /usr/spark/lib/elasticsearch-spark_2.10-2.1.0.Beta3.jar
+
 RUN sed 's/^\(hosts:[\ ]*\)\(files\)\ \(dns\)$/\1\3 \2/' -i /etc/nsswitch.conf
 
 ENV SPARK_HOME /usr/spark-$SPARK_BINARY_RELEASE
