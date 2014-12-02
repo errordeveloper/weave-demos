@@ -1,13 +1,13 @@
 core@ip-172-31-44-124 ~/pres-spark-demo $ sudo weave run --with-dns 10.10.1.88/24 --tty --interactive --hostname=spark-shell.weave.local --name=spark-shell errordeveloper/weave-spark-shell-minimal:latest --master spark://spark-master-gce.weave.local:7077 --jars /usr/spark/lib/elasticsearch-spark_2.10-2.1.0.Beta3.jar && docker attach spark-shell
-06d08f0d6a9751be093f7f6a7aa6c63ee3abae98e638e6068fcd7f8d79ede6e8
+a4d109c1fae27ddfe4b16913ed8ac712917b2fb037518194ebb2cc10eceda2aa
 Spark assembly has been built with Hive, including Datanucleus jars on classpath
 Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=128m; support was removed in 8.0
 Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
-14/12/02 14:24:54 INFO SecurityManager: Changing view acls to: root,
-14/12/02 14:24:54 INFO SecurityManager: Changing modify acls to: root,
-14/12/02 14:24:54 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: Set(root, ); users with modify permissions: Set(root, )
-14/12/02 14:24:54 INFO HttpServer: Starting HTTP Server
-14/12/02 14:24:54 INFO Utils: Successfully started service 'HTTP class server' on port 34615.
+14/12/02 15:44:17 INFO SecurityManager: Changing view acls to: root,
+14/12/02 15:44:17 INFO SecurityManager: Changing modify acls to: root,
+14/12/02 15:44:17 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: Set(root, ); users with modify permissions: Set(root, )
+14/12/02 15:44:17 INFO HttpServer: Starting HTTP Server
+14/12/02 15:44:17 INFO Utils: Successfully started service 'HTTP class server' on port 38027.
 Welcome to
       ____              __
      / __/__  ___ _____/ /__
@@ -18,732 +18,267 @@ Welcome to
 Using Scala version 2.10.4 (Java HotSpot(TM) 64-Bit Server VM, Java 1.8.0_25)
 Type in expressions to have them evaluated.
 Type :help for more information.
-14/12/02 14:24:58 INFO SecurityManager: Changing view acls to: root,
-14/12/02 14:24:58 INFO SecurityManager: Changing modify acls to: root,
-14/12/02 14:24:58 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: Set(root, ); users with modify permissions: Set(root, )
-14/12/02 14:24:59 INFO Slf4jLogger: Slf4jLogger started
-14/12/02 14:24:59 INFO Remoting: Starting remoting
-14/12/02 14:24:59 INFO Remoting: Remoting started; listening on addresses :[akka.tcp://sparkDriver@spark-shell.weave.local:39509]
-14/12/02 14:24:59 INFO Remoting: Remoting now listens on addresses: [akka.tcp://sparkDriver@spark-shell.weave.local:39509]
-14/12/02 14:24:59 INFO Utils: Successfully started service 'sparkDriver' on port 39509.
-14/12/02 14:24:59 INFO SparkEnv: Registering MapOutputTracker
-14/12/02 14:24:59 INFO SparkEnv: Registering BlockManagerMaster
-14/12/02 14:24:59 INFO DiskBlockManager: Created local directory at /tmp/spark-local-20141202142459-bd6f
-14/12/02 14:24:59 INFO Utils: Successfully started service 'Connection manager for block manager' on port 33592.
-14/12/02 14:24:59 INFO ConnectionManager: Bound socket to port 33592 with id = ConnectionManagerId(spark-shell.weave.local,33592)
-14/12/02 14:24:59 INFO MemoryStore: MemoryStore started with capacity 265.1 MB
-14/12/02 14:24:59 INFO BlockManagerMaster: Trying to register BlockManager
-14/12/02 14:24:59 INFO BlockManagerMasterActor: Registering block manager spark-shell.weave.local:33592 with 265.1 MB RAM
-14/12/02 14:24:59 INFO BlockManagerMaster: Registered BlockManager
-14/12/02 14:24:59 INFO HttpFileServer: HTTP File server directory is /tmp/spark-4b43d27c-e4f6-4771-9e35-d827b7a6b001
-14/12/02 14:24:59 INFO HttpServer: Starting HTTP Server
-14/12/02 14:24:59 INFO Utils: Successfully started service 'HTTP file server' on port 52608.
-14/12/02 14:25:10 INFO Utils: Successfully started service 'SparkUI' on port 4040.
-14/12/02 14:25:10 INFO SparkUI: Started SparkUI at http://spark-shell.weave.local:4040
-14/12/02 14:25:10 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-14/12/02 14:25:11 INFO SparkContext: Added JAR file:/usr/spark/lib/elasticsearch-spark_2.10-2.1.0.Beta3.jar at http://10.10.1.88:52608/jars/elasticsearch-spark_2.10-2.1.0.Beta3.jar with timestamp 1417530311085
-14/12/02 14:25:11 INFO AppClient$ClientActor: Connecting to master spark://spark-master-gce.weave.local:7077...
-14/12/02 14:25:11 INFO SparkDeploySchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
-14/12/02 14:25:11 INFO SparkILoop: Created spark context..
+14/12/02 15:44:21 INFO SecurityManager: Changing view acls to: root,
+14/12/02 15:44:21 INFO SecurityManager: Changing modify acls to: root,
+14/12/02 15:44:21 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: Set(root, ); users with modify permissions: Set(root, )
+14/12/02 15:44:21 INFO Slf4jLogger: Slf4jLogger started
+14/12/02 15:44:21 INFO Remoting: Starting remoting
+14/12/02 15:44:22 INFO Remoting: Remoting started; listening on addresses :[akka.tcp://sparkDriver@spark-shell.weave.local:56845]
+14/12/02 15:44:22 INFO Remoting: Remoting now listens on addresses: [akka.tcp://sparkDriver@spark-shell.weave.local:56845]
+14/12/02 15:44:22 INFO Utils: Successfully started service 'sparkDriver' on port 56845.
+14/12/02 15:44:22 INFO SparkEnv: Registering MapOutputTracker
+14/12/02 15:44:22 INFO SparkEnv: Registering BlockManagerMaster
+14/12/02 15:44:22 INFO DiskBlockManager: Created local directory at /tmp/spark-local-20141202154422-b2fb
+14/12/02 15:44:22 INFO Utils: Successfully started service 'Connection manager for block manager' on port 47051.
+14/12/02 15:44:22 INFO ConnectionManager: Bound socket to port 47051 with id = ConnectionManagerId(spark-shell.weave.local,47051)
+14/12/02 15:44:22 INFO MemoryStore: MemoryStore started with capacity 265.1 MB
+14/12/02 15:44:22 INFO BlockManagerMaster: Trying to register BlockManager
+14/12/02 15:44:22 INFO BlockManagerMasterActor: Registering block manager spark-shell.weave.local:47051 with 265.1 MB RAM
+14/12/02 15:44:22 INFO BlockManagerMaster: Registered BlockManager
+14/12/02 15:44:22 INFO HttpFileServer: HTTP File server directory is /tmp/spark-53cfd71e-4679-48c4-8af3-f46aed2155ce
+14/12/02 15:44:22 INFO HttpServer: Starting HTTP Server
+14/12/02 15:44:22 INFO Utils: Successfully started service 'HTTP file server' on port 47257.
+14/12/02 15:44:32 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+14/12/02 15:44:32 INFO SparkUI: Started SparkUI at http://spark-shell.weave.local:4040
+14/12/02 15:44:33 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+14/12/02 15:44:33 INFO SparkContext: Added JAR file:/usr/spark/lib/elasticsearch-spark_2.10-2.1.0.Beta3.jar at http://10.10.1.88:47257/jars/elasticsearch-spark_2.10-2.1.0.Beta3.jar with timestamp 1417535073460
+14/12/02 15:44:33 INFO AppClient$ClientActor: Connecting to master spark://spark-master-gce.weave.local:7077...
+14/12/02 15:44:33 INFO SparkDeploySchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+14/12/02 15:44:33 INFO SparkILoop: Created spark context..
 Spark context available as sc.
 
-scala> 14/12/02 14:25:12 INFO SparkDeploySchedulerBackend: Connected to Spark cluster with app ID app-20141202142512-0001
-14/12/02 14:25:12 INFO AppClient$ClientActor: Executor added: app-20141202142512-0001/0 on worker-20141202140948-spark-worker-aws-0.weave.local-56075 (spark-worker-aws-0.weave.local:56075) with 4 cores
-14/12/02 14:25:12 INFO SparkDeploySchedulerBackend: Granted executor ID app-20141202142512-0001/0 on hostPort spark-worker-aws-0.weave.local:56075 with 4 cores, 512.0 MB RAM
-14/12/02 14:25:12 INFO AppClient$ClientActor: Executor added: app-20141202142512-0001/1 on worker-20141202140945-spark-worker-aws-2.weave.local-46105 (spark-worker-aws-2.weave.local:46105) with 4 cores
-14/12/02 14:25:12 INFO SparkDeploySchedulerBackend: Granted executor ID app-20141202142512-0001/1 on hostPort spark-worker-aws-2.weave.local:46105 with 4 cores, 512.0 MB RAM
-14/12/02 14:25:12 INFO AppClient$ClientActor: Executor added: app-20141202142512-0001/2 on worker-20141202140950-spark-worker-aws-1.weave.local-42239 (spark-worker-aws-1.weave.local:42239) with 4 cores
-14/12/02 14:25:12 INFO SparkDeploySchedulerBackend: Granted executor ID app-20141202142512-0001/2 on hostPort spark-worker-aws-1.weave.local:42239 with 4 cores, 512.0 MB RAM
-14/12/02 14:25:12 INFO AppClient$ClientActor: Executor added: app-20141202142512-0001/3 on worker-20141202140909-spark-worker-gce-1.weave.local-39948 (spark-worker-gce-1.weave.local:39948) with 1 cores
-14/12/02 14:25:12 INFO SparkDeploySchedulerBackend: Granted executor ID app-20141202142512-0001/3 on hostPort spark-worker-gce-1.weave.local:39948 with 1 cores, 512.0 MB RAM
-14/12/02 14:25:12 INFO AppClient$ClientActor: Executor added: app-20141202142512-0001/4 on worker-20141202140915-spark-worker-gce-2.weave.local-48815 (spark-worker-gce-2.weave.local:48815) with 1 cores
-14/12/02 14:25:12 INFO SparkDeploySchedulerBackend: Granted executor ID app-20141202142512-0001/4 on hostPort spark-worker-gce-2.weave.local:48815 with 1 cores, 512.0 MB RAM
-14/12/02 14:25:12 INFO AppClient$ClientActor: Executor updated: app-20141202142512-0001/3 is now RUNNING
-14/12/02 14:25:12 INFO AppClient$ClientActor: Executor updated: app-20141202142512-0001/4 is now RUNNING
-14/12/02 14:25:12 INFO AppClient$ClientActor: Executor updated: app-20141202142512-0001/0 is now RUNNING
-14/12/02 14:25:12 INFO AppClient$ClientActor: Executor updated: app-20141202142512-0001/1 is now RUNNING
-14/12/02 14:25:12 INFO AppClient$ClientActor: Executor updated: app-20141202142512-0001/2 is now RUNNING
+scala> 14/12/02 15:44:34 INFO SparkDeploySchedulerBackend: Connected to Spark cluster with app ID app-20141202154434-0002
+14/12/02 15:44:34 INFO AppClient$ClientActor: Executor added: app-20141202154434-0002/0 on worker-20141202140948-spark-worker-aws-0.weave.local-56075 (spark-worker-aws-0.weave.local:56075) with 4 cores
+14/12/02 15:44:34 INFO SparkDeploySchedulerBackend: Granted executor ID app-20141202154434-0002/0 on hostPort spark-worker-aws-0.weave.local:56075 with 4 cores, 512.0 MB RAM
+14/12/02 15:44:34 INFO AppClient$ClientActor: Executor added: app-20141202154434-0002/1 on worker-20141202140945-spark-worker-aws-2.weave.local-46105 (spark-worker-aws-2.weave.local:46105) with 4 cores
+14/12/02 15:44:34 INFO SparkDeploySchedulerBackend: Granted executor ID app-20141202154434-0002/1 on hostPort spark-worker-aws-2.weave.local:46105 with 4 cores, 512.0 MB RAM
+14/12/02 15:44:34 INFO AppClient$ClientActor: Executor added: app-20141202154434-0002/2 on worker-20141202140950-spark-worker-aws-1.weave.local-42239 (spark-worker-aws-1.weave.local:42239) with 4 cores
+14/12/02 15:44:34 INFO SparkDeploySchedulerBackend: Granted executor ID app-20141202154434-0002/2 on hostPort spark-worker-aws-1.weave.local:42239 with 4 cores, 512.0 MB RAM
+14/12/02 15:44:34 INFO AppClient$ClientActor: Executor added: app-20141202154434-0002/3 on worker-20141202140909-spark-worker-gce-1.weave.local-39948 (spark-worker-gce-1.weave.local:39948) with 1 cores
+14/12/02 15:44:34 INFO SparkDeploySchedulerBackend: Granted executor ID app-20141202154434-0002/3 on hostPort spark-worker-gce-1.weave.local:39948 with 1 cores, 512.0 MB RAM
+14/12/02 15:44:34 INFO AppClient$ClientActor: Executor added: app-20141202154434-0002/4 on worker-20141202140915-spark-worker-gce-2.weave.local-48815 (spark-worker-gce-2.weave.local:48815) with 1 cores
+14/12/02 15:44:34 INFO SparkDeploySchedulerBackend: Granted executor ID app-20141202154434-0002/4 on hostPort spark-worker-gce-2.weave.local:48815 with 1 cores, 512.0 MB RAM
+14/12/02 15:44:34 INFO AppClient$ClientActor: Executor updated: app-20141202154434-0002/3 is now RUNNING
+14/12/02 15:44:34 INFO AppClient$ClientActor: Executor updated: app-20141202154434-0002/4 is now RUNNING
+14/12/02 15:44:34 INFO AppClient$ClientActor: Executor updated: app-20141202154434-0002/0 is now RUNNING
+14/12/02 15:44:34 INFO AppClient$ClientActor: Executor updated: app-20141202154434-0002/1 is now RUNNING
+14/12/02 15:44:34 INFO AppClient$ClientActor: Executor updated: app-20141202154434-0002/2 is now RUNNING
+14/12/02 15:44:37 INFO SparkDeploySchedulerBackend: Registered executor: Actor[akka.tcp://sparkExecutor@spark-worker-aws-1.weave.local:34625/user/Executor#-776677722] with ID 2
+14/12/02 15:44:37 INFO BlockManagerMasterActor: Registering block manager spark-worker-aws-1.weave.local:34187 with 265.1 MB RAM
+14/12/02 15:44:38 INFO SparkDeploySchedulerBackend: Registered executor: Actor[akka.tcp://sparkExecutor@spark-worker-aws-0.weave.local:43993/user/Executor#-1965329951] with ID 0
+14/12/02 15:44:38 INFO SparkDeploySchedulerBackend: Registered executor: Actor[akka.tcp://sparkExecutor@spark-worker-aws-2.weave.local:43055/user/Executor#-1312054579] with ID 1
+14/12/02 15:44:39 INFO SparkDeploySchedulerBackend: Registered executor: Actor[akka.tcp://sparkExecutor@spark-worker-gce-2.weave.local:58683/user/Executor#-1109005964] with ID 4
+14/12/02 15:44:39 INFO SparkDeploySchedulerBackend: Registered executor: Actor[akka.tcp://sparkExecutor@spark-worker-gce-1.weave.local:47386/user/Executor#-705189784] with ID 3
+14/12/02 15:44:39 INFO BlockManagerMasterActor: Registering block manager spark-worker-gce-2.weave.local:42653 with 267.3 MB RAM
+14/12/02 15:44:40 INFO BlockManagerMasterActor: Registering block manager spark-worker-gce-1.weave.local:56687 with 267.3 MB RAM
+14/12/02 15:44:40 INFO BlockManagerMasterActor: Registering block manager spark-worker-aws-0.weave.local:43691 with 265.1 MB RAM
+14/12/02 15:44:40 INFO BlockManagerMasterActor: Registering block manager spark-worker-aws-2.weave.local:37387 with 265.1 MB RAM
+
+
+scala> import org.elasticsearch.spark._
 import org.elasticsearch.spark._
-14/12/02 14:25:15 INFO SparkDeploySchedulerBackend: Registered executor: Actor[akka.tcp://sparkExecutor@spark-worker-aws-1.weave.local:57044/user/Executor#-1140755559] with ID 2
-import org.elasticsearch.spark._
 
-scala> 14/12/02 14:25:15 INFO BlockManagerMasterActor: Registering block manager spark-worker-aws-1.weave.local:57984 with 265.1 MB RAM
-14/12/02 14:25:16 INFO SparkDeploySchedulerBackend: Registered executor: Actor[akka.tcp://sparkExecutor@spark-worker-aws-0.weave.local:56532/user/Executor#-1921883774] with ID 0
-14/12/02 14:25:16 INFO SparkDeploySchedulerBackend: Registered executor: Actor[akka.tcp://sparkExecutor@spark-worker-aws-2.weave.local:38634/user/Executor#809274280] with ID 1
-14/12/02 14:25:16 INFO SparkDeploySchedulerBackend: Registered executor: Actor[akka.tcp://sparkExecutor@spark-worker-gce-1.weave.local:49006/user/Executor#-1189173371] with ID 3
-14/12/02 14:25:16 INFO SparkDeploySchedulerBackend: Registered executor: Actor[akka.tcp://sparkExecutor@spark-worker-gce-2.weave.local:43764/user/Executor#-683214813] with ID 4
-14/12/02 14:25:17 INFO BlockManagerMasterActor: Registering block manager spark-worker-gce-1.weave.local:41992 with 267.3 MB RAM
-14/12/02 14:25:17 INFO BlockManagerMasterActor: Registering block manager spark-worker-aws-2.weave.local:56019 with 265.1 MB RAM
-14/12/02 14:25:17 INFO BlockManagerMasterActor: Registering block manager spark-worker-aws-0.weave.local:33666 with 265.1 MB RAM
-14/12/02 14:25:18 INFO BlockManagerMasterActor: Registering block manager spark-worker-gce-2.weave.local:53426 with 267.3 MB RAM
-sc.esRDD("radio/artists", "?me*")
-res0: org.elasticsearch.spark.rdd.ScalaEsRDD = ScalaEsRDD[0] at RDD at AbstractEsRDD.scala:17
+scala> import org.apache.hadoop.mapreduce._
+import org.apache.hadoop.mapreduce._
 
-scala> sc.esRDD("twitter/status", "?me*")
-res1: org.elasticsearch.spark.rdd.ScalaEsRDD = ScalaEsRDD[1] at RDD at AbstractEsRDD.scala:17
+scala> import org.elasticsearch.hadoop.cfg._
+import org.elasticsearch.hadoop.cfg._
 
-scala> sc.esRDD("twitter/status", "docker")
-res2: org.elasticsearch.spark.rdd.ScalaEsRDD = ScalaEsRDD[2] at RDD at AbstractEsRDD.scala:17
+scala> import org.elasticsearch.hadoop.mr._
+import org.elasticsearch.hadoop.mr._
 
-scala> sc.esRDD("twitter/status", "*docker*")
-res3: org.elasticsearch.spark.rdd.ScalaEsRDD = ScalaEsRDD[3] at RDD at AbstractEsRDD.scala:17
-
-scala> sc.esRDD("twitter", "*docker*")
-res4: org.elasticsearch.spark.rdd.ScalaEsRDD = ScalaEsRDD[4] at RDD at AbstractEsRDD.scala:17
-
-scala> conf
-<console>:14: error: not found: value conf
-              conf
-              ^
-
-scala> sc
-res6: org.apache.spark.SparkContext = org.apache.spark.SparkContext@1d17423f
-
-scala> 
-<init>                           SPARK_JOB_DESCRIPTION            SPARK_JOB_GROUP_ID               SPARK_JOB_INTERRUPT_ON_CANCEL    SPARK_UNKNOWN_USER               
-SPARK_VERSION                    boolToBoolWritable               booleanWritableConverter         bytesToBytesWritable             bytesWritableConverter           
-classOf                          clone                            doubleRDDToDoubleRDDFunctions    doubleToDoubleWritable           doubleWritableConverter          
-eq                               equals                           finalize                         floatToFloatWritable             floatWritableConverter           
-getClass                         hashCode                         intToIntWritable                 intWritableConverter             isTraceEnabled                   
-jarOfClass                       jarOfObject                      log                              logDebug                         logError                         
-logInfo                          logName                          logTrace                         logWarning                       longToLongWritable               
-longWritableConverter            ne                               notify                           notifyAll                        numericRDDToDoubleRDDFunctions   
-rddToAsyncRDDActions             rddToOrderedRDDFunctions         rddToPairRDDFunctions            rddToSequenceFileRDDFunctions    res0                             
-res1                             res2                             res3                             res4                             res6                             
-sc                               stringToText                     stringWritableConverter          synchronized                     toString                         
-updatedConf                      wait                             writableWritableConverter        
+scala> import org.apache.hadoop.io._
+import org.apache.hadoop.io._
 
 scala> val es_master = "elasticsearch-gce-0.weave.local"
 es_master: String = elasticsearch-gce-0.weave.local
 
 scala> val conf = new Configuration()
-<console>:13: error: not found: type Configuration
+<console>:25: error: not found: type Configuration
        val conf = new Configuration()
                       ^
 
-scala> SharedESConfig
-<console>:14: error: not found: value SharedESConfig
-              SharedESConfig
-              ^
-
-scala> job.getConfiguration(
-     | )
-<console>:14: error: not found: value job
-              job.getConfiguration(
-              ^
-
-scala> import org.apache.hadoop.mapreduce._
-import org.apache.hadoop.mapreduce._
-
-scala> val conf = new Configuration()
-<console>:16: error: not found: type Configuration
-       val conf = new Configuration()
-                      ^
-
-scala> val conf = new Configuration() 
-<console>:16: error: not found: type Configuration
-       val conf = new Configuration() 
-                      ^
-
-scala> import import org.elasticsearch.hadoop.cfg._
-<console>:1: error: identifier expected but 'import' found.
-       import import org.elasticsearch.hadoop.cfg._
-              ^
-
-scala> import org.elasticsearch.hadoop.cfg._
-import org.elasticsearch.hadoop.cfg._
-
-scala> val conf = new Configuration() 
-<console>:19: error: not found: type Configuration
-       val conf = new Configuration() 
-                      ^
-
-scala> EsInputFormat
-<console>:20: error: not found: value EsInputFormat
-              EsInputFormat
-              ^
-
-scala> ConfigurationOptions
-<console>:20: error: object org.elasticsearch.hadoop.cfg.ConfigurationOptions is not a value
-              ConfigurationOptions
-              ^
-
-scala> es_master
-res11: String = elasticsearch-gce-0.weave.local
-
-scala> sc.set("es.host", es_master)
-<console>:24: error: value set is not a member of org.apache.spark.SparkContext
-              sc.set("es.host", es_master)
-                 ^
-
-scala> JobConf
-<console>:20: error: not found: value JobConf
-              JobConf
-              ^
-
-scala> KryoSerializer
-<console>:20: error: not found: value KryoSerializer
-              KryoSerializer
-              ^
-
-scala> sc.set
-<console>:22: error: value set is not a member of org.apache.spark.SparkContext
-              sc.set
-                 ^
+scala> import org.elasticsearch.hadoop.conf._
+<console>:25: error: object conf is not a member of package org.elasticsearch.hadoop
+       import org.elasticsearch.hadoop.conf._
+                                       ^
 
 scala> import org.apache.hadoop.conf._
 import org.apache.hadoop.conf._
 
-scala> Configuration
-<console>:23: error: object org.apache.hadoop.conf.Configuration is not a value
-              Configuration
-              ^
-
-scala> 
-
-scala> val conf = new Configuration() 
+scala> val conf = new Configuration()
 conf: org.apache.hadoop.conf.Configuration = Configuration: core-default.xml, core-site.xml, mapred-default.xml, mapred-site.xml
 
-scala> conf.set("es.host", es_master)
+scala> conf.set("es.nodes", es_master)
+
+scala> conf.set("es.nodes.discovery", "true")
 
 scala> conf.set("es.resource", "twitter/status")
 
 scala> conf.set("es.query", "?q=me*")
 
-scala> val esRDD = sc.newHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable]))
-<console>:1: error: ';' expected but ')' found.
-       val esRDD = sc.newHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable]))
-                                                                                                                        ^
+scala> val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
+14/12/02 15:49:44 INFO MemoryStore: ensureFreeSpace(67949) called with curMem=0, maxMem=278019440
+14/12/02 15:49:44 INFO MemoryStore: Block broadcast_0 stored as values in memory (estimated size 66.4 KB, free 265.1 MB)
+14/12/02 15:49:44 INFO MemoryStore: ensureFreeSpace(6072) called with curMem=67949, maxMem=278019440
+14/12/02 15:49:44 INFO MemoryStore: Block broadcast_0_piece0 stored as bytes in memory (estimated size 5.9 KB, free 265.1 MB)
+14/12/02 15:49:44 INFO BlockManagerInfo: Added broadcast_0_piece0 in memory on spark-shell.weave.local:47051 (size: 5.9 KB, free: 265.1 MB)
+14/12/02 15:49:44 INFO BlockManagerMaster: Updated info of block broadcast_0_piece0
+esRDD: org.apache.spark.rdd.RDD[(org.apache.hadoop.io.Text, org.apache.hadoop.io.MapWritable)] = NewHadoopRDD[0] at newAPIHadoopRDD at <console>:32
 
-scala> val esRDD = sc.newHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-<console>:26: error: value newHadoopRDD is not a member of org.apache.spark.SparkContext
-       val esRDD = sc.newHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-                      ^
-
-scala> val esRDD = sc.HadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-<console>:26: error: value HadoopRDD is not a member of org.apache.spark.SparkContext
-       val esRDD = sc.HadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-                      ^
+scala> conf.set("es.query", "?q=docker")
 
 scala> val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-<console>:26: error: not found: type EsInputFormat
-       val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-                                                    ^
-<console>:26: error: not found: type Text
-       val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-                                                                                               ^
-<console>:26: error: not found: type MapWritable
-       val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-                                                                                                              ^
-
-scala> import org.elasticsearch.hadoop.mr._
-import org.elasticsearch.hadoop.mr._
-
-scala> val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-<console>:29: error: not found: type Text
-       val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-                                                                  ^
-<console>:29: error: not found: type MapWritable
-       val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-                                                                        ^
-<console>:29: error: not found: type Text
-       val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-                                                                                               ^
-<console>:29: error: not found: type MapWritable
-       val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-                                                                                                              ^
-
-scala> import org.apache.hadoop.io._
-import org.apache.hadoop.io._
-
-scala> val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-14/12/02 15:17:41 INFO MemoryStore: ensureFreeSpace(67304) called with curMem=0, maxMem=278019440
-14/12/02 15:17:41 INFO MemoryStore: Block broadcast_0 stored as values in memory (estimated size 65.7 KB, free 265.1 MB)
-14/12/02 15:17:41 INFO MemoryStore: ensureFreeSpace(6059) called with curMem=67304, maxMem=278019440
-14/12/02 15:17:41 INFO MemoryStore: Block broadcast_0_piece0 stored as bytes in memory (estimated size 5.9 KB, free 265.1 MB)
-14/12/02 15:17:41 INFO BlockManagerInfo: Added broadcast_0_piece0 in memory on spark-shell.weave.local:33592 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:17:41 INFO BlockManagerMaster: Updated info of block broadcast_0_piece0
-esRDD: org.apache.spark.rdd.RDD[(org.apache.hadoop.io.Text, org.apache.hadoop.io.MapWritable)] = NewHadoopRDD[5] at newAPIHadoopRDD at <console>:32
+14/12/02 15:50:10 INFO MemoryStore: ensureFreeSpace(68028) called with curMem=74021, maxMem=278019440
+14/12/02 15:50:10 INFO MemoryStore: Block broadcast_1 stored as values in memory (estimated size 66.4 KB, free 265.0 MB)
+14/12/02 15:50:10 INFO MemoryStore: ensureFreeSpace(6066) called with curMem=142049, maxMem=278019440
+14/12/02 15:50:10 INFO MemoryStore: Block broadcast_1_piece0 stored as bytes in memory (estimated size 5.9 KB, free 265.0 MB)
+14/12/02 15:50:10 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on spark-shell.weave.local:47051 (size: 5.9 KB, free: 265.1 MB)
+14/12/02 15:50:10 INFO BlockManagerMaster: Updated info of block broadcast_1_piece0
+esRDD: org.apache.spark.rdd.RDD[(org.apache.hadoop.io.Text, org.apache.hadoop.io.MapWritable)] = NewHadoopRDD[1] at newAPIHadoopRDD at <console>:32
 
 scala> esRDD.count()
-org.elasticsearch.hadoop.EsHadoopIllegalArgumentException: `es.host` property has been deprecated - use `es.nodes` instead
-	at org.elasticsearch.hadoop.cfg.Settings.getNodes(Settings.java:46)
-	at org.elasticsearch.hadoop.util.SettingsUtils.declaredNodes(SettingsUtils.java:79)
-	at org.elasticsearch.hadoop.util.SettingsUtils.discoveredOrDeclaredNodes(SettingsUtils.java:85)
-	at org.elasticsearch.hadoop.rest.NetworkClient.<init>(NetworkClient.java:53)
-	at org.elasticsearch.hadoop.rest.RestClient.<init>(RestClient.java:80)
-	at org.elasticsearch.hadoop.rest.InitializationUtils.discoverNodesIfNeeded(InitializationUtils.java:55)
-	at org.elasticsearch.hadoop.rest.RestService.findPartitions(RestService.java:221)
-	at org.elasticsearch.hadoop.mr.EsInputFormat.getSplits(EsInputFormat.java:406)
-	at org.elasticsearch.hadoop.mr.EsInputFormat.getSplits(EsInputFormat.java:387)
-	at org.apache.spark.rdd.NewHadoopRDD.getPartitions(NewHadoopRDD.scala:94)
-	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:204)
-	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:202)
-	at scala.Option.getOrElse(Option.scala:120)
-	at org.apache.spark.rdd.RDD.partitions(RDD.scala:202)
-	at org.apache.spark.SparkContext.runJob(SparkContext.scala:1135)
-	at org.apache.spark.rdd.RDD.count(RDD.scala:904)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:35)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:40)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:42)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:44)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:46)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:48)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:50)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:52)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:54)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:56)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:58)
-	at $iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:60)
-	at $iwC$$iwC$$iwC$$iwC.<init>(<console>:62)
-	at $iwC$$iwC$$iwC.<init>(<console>:64)
-	at $iwC$$iwC.<init>(<console>:66)
-	at $iwC.<init>(<console>:68)
-	at <init>(<console>:70)
-	at .<init>(<console>:74)
-	at .<clinit>(<console>)
-	at .<init>(<console>:7)
-	at .<clinit>(<console>)
-	at $print(<console>)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:483)
-	at org.apache.spark.repl.SparkIMain$ReadEvalPrint.call(SparkIMain.scala:789)
-	at org.apache.spark.repl.SparkIMain$Request.loadAndRun(SparkIMain.scala:1062)
-	at org.apache.spark.repl.SparkIMain.loadAndRunReq$1(SparkIMain.scala:615)
-	at org.apache.spark.repl.SparkIMain.interpret(SparkIMain.scala:646)
-	at org.apache.spark.repl.SparkIMain.interpret(SparkIMain.scala:610)
-	at org.apache.spark.repl.SparkILoop.reallyInterpret$1(SparkILoop.scala:814)
-	at org.apache.spark.repl.SparkILoop.interpretStartingWith(SparkILoop.scala:859)
-	at org.apache.spark.repl.SparkILoop.command(SparkILoop.scala:771)
-	at org.apache.spark.repl.SparkILoop.processLine$1(SparkILoop.scala:616)
-	at org.apache.spark.repl.SparkILoop.innerLoop$1(SparkILoop.scala:624)
-	at org.apache.spark.repl.SparkILoop.loop(SparkILoop.scala:629)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply$mcZ$sp(SparkILoop.scala:954)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply(SparkILoop.scala:902)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply(SparkILoop.scala:902)
-	at scala.tools.nsc.util.ScalaClassLoader$.savingContextLoader(ScalaClassLoader.scala:135)
-	at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:902)
-	at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:997)
-	at org.apache.spark.repl.Main$.main(Main.scala:31)
-	at org.apache.spark.repl.Main.main(Main.scala)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:483)
-	at org.apache.spark.deploy.SparkSubmit$.launch(SparkSubmit.scala:328)
-	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:75)
-	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+14/12/02 15:50:24 INFO Version: Elasticsearch Hadoop v2.1.0.Beta3 [157763564e]
+14/12/02 15:50:24 INFO EsInputFormat: Reading from [twitter/status]
+14/12/02 15:50:25 INFO EsInputFormat: Discovered mapping {twitter=[mappings=[status=[created_at=DATE, hashtag=[end=LONG, start=LONG, text=STRING], in_reply=[status=LONG, user_id=LONG, user_screen_name=STRING], language=STRING, link=[display_url=STRING, end=LONG, expand_url=STRING, start=LONG, url=STRING], location=GEO_POINT, mention=[end=LONG, id=LONG, name=STRING, screen_name=STRING, start=LONG], place=[country=STRING, country_code=STRING, full_name=STRING, id=STRING, name=STRING, type=STRING, url=STRING], retweet=[id=LONG, retweet_count=LONG, user_id=LONG, user_screen_name=STRING], retweet_count=LONG, source=STRING, text=STRING, truncated=BOOLEAN, user=[description=STRING, id=LONG, location=STRING, name=STRING, profile_image_url=STRING, profile_image_url_https=STRING, screen_name=STRING]]]]} for [twitter/status]
+14/12/02 15:50:25 INFO EsInputFormat: Created [5] shard-splits
+14/12/02 15:50:25 INFO SparkContext: Starting job: count at <console>:35
+14/12/02 15:50:25 INFO DAGScheduler: Got job 0 (count at <console>:35) with 5 output partitions (allowLocal=false)
+14/12/02 15:50:25 INFO DAGScheduler: Final stage: Stage 0(count at <console>:35)
+14/12/02 15:50:25 INFO DAGScheduler: Parents of final stage: List()
+14/12/02 15:50:25 INFO DAGScheduler: Missing parents: List()
+14/12/02 15:50:25 INFO DAGScheduler: Submitting Stage 0 (NewHadoopRDD[1] at newAPIHadoopRDD at <console>:32), which has no missing parents
+14/12/02 15:50:25 INFO MemoryStore: ensureFreeSpace(1568) called with curMem=148115, maxMem=278019440
+14/12/02 15:50:25 INFO MemoryStore: Block broadcast_2 stored as values in memory (estimated size 1568.0 B, free 265.0 MB)
+14/12/02 15:50:25 INFO MemoryStore: ensureFreeSpace(1013) called with curMem=149683, maxMem=278019440
+14/12/02 15:50:25 INFO MemoryStore: Block broadcast_2_piece0 stored as bytes in memory (estimated size 1013.0 B, free 265.0 MB)
+14/12/02 15:50:25 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on spark-shell.weave.local:47051 (size: 1013.0 B, free: 265.1 MB)
+14/12/02 15:50:25 INFO BlockManagerMaster: Updated info of block broadcast_2_piece0
+14/12/02 15:50:25 INFO DAGScheduler: Submitting 5 missing tasks from Stage 0 (NewHadoopRDD[1] at newAPIHadoopRDD at <console>:32)
+14/12/02 15:50:25 INFO TaskSchedulerImpl: Adding task set 0.0 with 5 tasks
+14/12/02 15:50:25 INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0, spark-worker-aws-1.weave.local, ANY, 13833 bytes)
+14/12/02 15:50:25 INFO TaskSetManager: Starting task 1.0 in stage 0.0 (TID 1, spark-worker-gce-2.weave.local, ANY, 13839 bytes)
+14/12/02 15:50:25 INFO TaskSetManager: Starting task 2.0 in stage 0.0 (TID 2, spark-worker-aws-0.weave.local, ANY, 13833 bytes)
+14/12/02 15:50:25 INFO TaskSetManager: Starting task 3.0 in stage 0.0 (TID 3, spark-worker-aws-2.weave.local, ANY, 13832 bytes)
+14/12/02 15:50:25 INFO TaskSetManager: Starting task 4.0 in stage 0.0 (TID 4, spark-worker-gce-1.weave.local, ANY, 13834 bytes)
+14/12/02 15:50:25 INFO ConnectionManager: Accepted connection from [spark-worker-aws-1.weave.local/10.10.1.31:57898]
+14/12/02 15:50:25 INFO SendingConnection: Initiating connection to [spark-worker-aws-1.weave.local/10.10.1.31:34187]
+14/12/02 15:50:25 INFO SendingConnection: Connected to [spark-worker-aws-1.weave.local/10.10.1.31:34187], 1 messages pending
+14/12/02 15:50:25 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on spark-worker-aws-1.weave.local:34187 (size: 1013.0 B, free: 265.1 MB)
+14/12/02 15:50:25 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on spark-worker-aws-1.weave.local:34187 (size: 5.9 KB, free: 265.1 MB)
+14/12/02 15:50:26 INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 1525 ms on spark-worker-aws-1.weave.local (1/5)
+14/12/02 15:50:37 INFO ConnectionManager: Accepted connection from [10.10.1.12/10.10.1.12:34949]
+14/12/02 15:50:47 INFO SendingConnection: Initiating connection to [/10.10.1.12:42653]
+14/12/02 15:50:47 INFO SendingConnection: Connected to [/10.10.1.12:42653], 1 messages pending
+14/12/02 15:51:07 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on spark-worker-gce-2.weave.local:42653 (size: 1013.0 B, free: 267.3 MB)
+14/12/02 15:51:27 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on spark-worker-aws-0.weave.local:43691 (size: 1013.0 B, free: 265.1 MB)
+14/12/02 15:51:27 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on spark-worker-aws-2.weave.local:37387 (size: 1013.0 B, free: 265.1 MB)
+14/12/02 15:51:28 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on spark-worker-gce-2.weave.local:42653 (size: 5.9 KB, free: 267.3 MB)
+14/12/02 15:51:29 INFO TaskSetManager: Finished task 1.0 in stage 0.0 (TID 1) in 64462 ms on spark-worker-gce-2.weave.local (2/5)
+14/12/02 15:51:37 INFO ConnectionManager: Accepted connection from [10.10.1.11/10.10.1.11:56484]
+14/12/02 15:51:47 INFO ConnectionManager: Accepted connection from [10.10.1.30/10.10.1.30:49132]
+14/12/02 15:51:57 INFO ConnectionManager: Accepted connection from [10.10.1.32/10.10.1.32:55862]
+14/12/02 15:52:07 INFO SendingConnection: Initiating connection to [/10.10.1.30:43691]
+14/12/02 15:52:07 INFO SendingConnection: Initiating connection to [/10.10.1.32:37387]
+14/12/02 15:52:07 INFO SendingConnection: Initiating connection to [/10.10.1.11:56687]
+14/12/02 15:52:07 INFO SendingConnection: Connected to [/10.10.1.11:56687], 1 messages pending
+14/12/02 15:52:07 INFO SendingConnection: Connected to [/10.10.1.30:43691], 1 messages pending
+14/12/02 15:52:07 INFO SendingConnection: Connected to [/10.10.1.32:37387], 1 messages pending
+14/12/02 15:52:26 WARN TaskSetManager: Lost task 4.0 in stage 0.0 (TID 4, spark-worker-gce-1.weave.local): java.io.IOException: unexpected exception type
+        java.io.ObjectStreamClass.throwMiscException(ObjectStreamClass.java:1538)
+        java.io.ObjectStreamClass.invokeReadObject(ObjectStreamClass.java:1025)
+        java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1896)
+        java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1801)
+        java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1351)
+        java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:1993)
+        java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1918)
+        java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1801)
+        java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1351)
+        java.io.ObjectInputStream.readObject(ObjectInputStream.java:371)
+        org.apache.spark.serializer.JavaDeserializationStream.readObject(JavaSerializer.scala:62)
+        org.apache.spark.serializer.JavaSerializerInstance.deserialize(JavaSerializer.scala:87)
+        org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:159)
+        java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+        java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+        java.lang.Thread.run(Thread.java:745)
+14/12/02 15:52:26 INFO TaskSetManager: Starting task 4.1 in stage 0.0 (TID 5, spark-worker-gce-1.weave.local, ANY, 13834 bytes)
+14/12/02 15:52:27 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on spark-worker-aws-0.weave.local:43691 (size: 5.9 KB, free: 265.1 MB)
+14/12/02 15:52:27 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on spark-worker-aws-2.weave.local:37387 (size: 5.9 KB, free: 265.1 MB)
+14/12/02 15:52:28 INFO TaskSetManager: Finished task 2.0 in stage 0.0 (TID 2) in 123136 ms on spark-worker-aws-0.weave.local (3/5)
+14/12/02 15:52:28 INFO TaskSetManager: Finished task 3.0 in stage 0.0 (TID 3) in 123636 ms on spark-worker-aws-2.weave.local (4/5)
+14/12/02 15:53:07 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on spark-worker-gce-1.weave.local:56687 (size: 1013.0 B, free: 267.3 MB)
+14/12/02 15:53:28 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on spark-worker-gce-1.weave.local:56687 (size: 5.9 KB, free: 267.3 MB)
+14/12/02 15:53:29 INFO TaskSetManager: Finished task 4.1 in stage 0.0 (TID 5) in 62250 ms on spark-worker-gce-1.weave.local (5/5)
+14/12/02 15:53:29 INFO TaskSchedulerImpl: Removed TaskSet 0.0, whose tasks have all completed, from pool 
+14/12/02 15:53:29 INFO DAGScheduler: Stage 0 (count at <console>:35) finished in 183.843 s
+14/12/02 15:53:29 INFO SparkContext: Job finished: count at <console>:35, took 183.900310308 s
+res5: Long = 6
 
-
-scala> conf.set("es.hodes", es_master)
-
-scala> val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-14/12/02 15:18:46 INFO MemoryStore: ensureFreeSpace(67488) called with curMem=73363, maxMem=278019440
-14/12/02 15:18:46 INFO MemoryStore: Block broadcast_1 stored as values in memory (estimated size 65.9 KB, free 265.0 MB)
-14/12/02 15:18:46 INFO MemoryStore: ensureFreeSpace(6073) called with curMem=140851, maxMem=278019440
-14/12/02 15:18:46 INFO MemoryStore: Block broadcast_1_piece0 stored as bytes in memory (estimated size 5.9 KB, free 265.0 MB)
-14/12/02 15:18:46 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on spark-shell.weave.local:33592 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:18:46 INFO BlockManagerMaster: Updated info of block broadcast_1_piece0
-esRDD: org.apache.spark.rdd.RDD[(org.apache.hadoop.io.Text, org.apache.hadoop.io.MapWritable)] = NewHadoopRDD[6] at newAPIHadoopRDD at <console>:32
-
-scala> esRDD.count()
-org.elasticsearch.hadoop.EsHadoopIllegalArgumentException: `es.host` property has been deprecated - use `es.nodes` instead
-	at org.elasticsearch.hadoop.cfg.Settings.getNodes(Settings.java:46)
-	at org.elasticsearch.hadoop.util.SettingsUtils.declaredNodes(SettingsUtils.java:79)
-	at org.elasticsearch.hadoop.util.SettingsUtils.discoveredOrDeclaredNodes(SettingsUtils.java:85)
-	at org.elasticsearch.hadoop.rest.NetworkClient.<init>(NetworkClient.java:53)
-	at org.elasticsearch.hadoop.rest.RestClient.<init>(RestClient.java:80)
-	at org.elasticsearch.hadoop.rest.InitializationUtils.discoverNodesIfNeeded(InitializationUtils.java:55)
-	at org.elasticsearch.hadoop.rest.RestService.findPartitions(RestService.java:221)
-	at org.elasticsearch.hadoop.mr.EsInputFormat.getSplits(EsInputFormat.java:406)
-	at org.elasticsearch.hadoop.mr.EsInputFormat.getSplits(EsInputFormat.java:387)
-	at org.apache.spark.rdd.NewHadoopRDD.getPartitions(NewHadoopRDD.scala:94)
-	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:204)
-	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:202)
-	at scala.Option.getOrElse(Option.scala:120)
-	at org.apache.spark.rdd.RDD.partitions(RDD.scala:202)
-	at org.apache.spark.SparkContext.runJob(SparkContext.scala:1135)
-	at org.apache.spark.rdd.RDD.count(RDD.scala:904)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:35)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:40)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:42)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:44)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:46)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:48)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:50)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:52)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:54)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:56)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:58)
-	at $iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:60)
-	at $iwC$$iwC$$iwC$$iwC.<init>(<console>:62)
-	at $iwC$$iwC$$iwC.<init>(<console>:64)
-	at $iwC$$iwC.<init>(<console>:66)
-	at $iwC.<init>(<console>:68)
-	at <init>(<console>:70)
-	at .<init>(<console>:74)
-	at .<clinit>(<console>)
-	at .<init>(<console>:7)
-	at .<clinit>(<console>)
-	at $print(<console>)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:483)
-	at org.apache.spark.repl.SparkIMain$ReadEvalPrint.call(SparkIMain.scala:789)
-	at org.apache.spark.repl.SparkIMain$Request.loadAndRun(SparkIMain.scala:1062)
-	at org.apache.spark.repl.SparkIMain.loadAndRunReq$1(SparkIMain.scala:615)
-	at org.apache.spark.repl.SparkIMain.interpret(SparkIMain.scala:646)
-	at org.apache.spark.repl.SparkIMain.interpret(SparkIMain.scala:610)
-	at org.apache.spark.repl.SparkILoop.reallyInterpret$1(SparkILoop.scala:814)
-	at org.apache.spark.repl.SparkILoop.interpretStartingWith(SparkILoop.scala:859)
-	at org.apache.spark.repl.SparkILoop.command(SparkILoop.scala:771)
-	at org.apache.spark.repl.SparkILoop.processLine$1(SparkILoop.scala:616)
-	at org.apache.spark.repl.SparkILoop.innerLoop$1(SparkILoop.scala:624)
-	at org.apache.spark.repl.SparkILoop.loop(SparkILoop.scala:629)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply$mcZ$sp(SparkILoop.scala:954)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply(SparkILoop.scala:902)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply(SparkILoop.scala:902)
-	at scala.tools.nsc.util.ScalaClassLoader$.savingContextLoader(ScalaClassLoader.scala:135)
-	at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:902)
-	at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:997)
-	at org.apache.spark.repl.Main$.main(Main.scala:31)
-	at org.apache.spark.repl.Main.main(Main.scala)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:483)
-	at org.apache.spark.deploy.SparkSubmit$.launch(SparkSubmit.scala:328)
-	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:75)
-	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
-
-
-scala> conf.set("es.nodes", es_master)
+scalascala> conf.set("es.query", "?q=rocket")
 
 scala> val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-14/12/02 15:19:03 INFO MemoryStore: ensureFreeSpace(67576) called with curMem=146924, maxMem=278019440
-14/12/02 15:19:03 INFO MemoryStore: Block broadcast_2 stored as values in memory (estimated size 66.0 KB, free 264.9 MB)
-14/12/02 15:19:03 INFO MemoryStore: ensureFreeSpace(6093) called with curMem=214500, maxMem=278019440
-14/12/02 15:19:03 INFO MemoryStore: Block broadcast_2_piece0 stored as bytes in memory (estimated size 6.0 KB, free 264.9 MB)
-14/12/02 15:19:03 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on spark-shell.weave.local:33592 (size: 6.0 KB, free: 265.1 MB)
-14/12/02 15:19:03 INFO BlockManagerMaster: Updated info of block broadcast_2_piece0
-esRDD: org.apache.spark.rdd.RDD[(org.apache.hadoop.io.Text, org.apache.hadoop.io.MapWritable)] = NewHadoopRDD[7] at newAPIHadoopRDD at <console>:32
+14/12/02 15:57:07 INFO MemoryStore: ensureFreeSpace(68076) called with curMem=150696, maxMem=278019440
+14/12/02 15:57:07 INFO MemoryStore: Block broadcast_3 stored as values in memory (estimated size 66.5 KB, free 264.9 MB)
+14/12/02 15:57:07 INFO MemoryStore: ensureFreeSpace(6062) called with curMem=218772, maxMem=278019440
+14/12/02 15:57:07 INFO MemoryStore: Block broadcast_3_piece0 stored as bytes in memory (estimated size 5.9 KB, free 264.9 MB)
+14/12/02 15:57:07 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-shell.weave.local:47051 (size: 5.9 KB, free: 265.1 MB)
+14/12/02 15:57:07 INFO BlockManagerMaster: Updated info of block broadcast_3_piece0
+esRDD: org.apache.spark.rdd.RDD[(org.apache.hadoop.io.Text, org.apache.hadoop.io.MapWritable)] = NewHadoopRDD[2] at newAPIHadoopRDD at <console>:32
 
 scala> esRDD.count()
-org.elasticsearch.hadoop.EsHadoopIllegalArgumentException: `es.host` property has been deprecated - use `es.nodes` instead
-	at org.elasticsearch.hadoop.cfg.Settings.getNodes(Settings.java:46)
-	at org.elasticsearch.hadoop.util.SettingsUtils.declaredNodes(SettingsUtils.java:79)
-	at org.elasticsearch.hadoop.util.SettingsUtils.discoveredOrDeclaredNodes(SettingsUtils.java:85)
-	at org.elasticsearch.hadoop.rest.NetworkClient.<init>(NetworkClient.java:53)
-	at org.elasticsearch.hadoop.rest.RestClient.<init>(RestClient.java:80)
-	at org.elasticsearch.hadoop.rest.InitializationUtils.discoverNodesIfNeeded(InitializationUtils.java:55)
-	at org.elasticsearch.hadoop.rest.RestService.findPartitions(RestService.java:221)
-	at org.elasticsearch.hadoop.mr.EsInputFormat.getSplits(EsInputFormat.java:406)
-	at org.elasticsearch.hadoop.mr.EsInputFormat.getSplits(EsInputFormat.java:387)
-	at org.apache.spark.rdd.NewHadoopRDD.getPartitions(NewHadoopRDD.scala:94)
-	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:204)
-	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:202)
-	at scala.Option.getOrElse(Option.scala:120)
-	at org.apache.spark.rdd.RDD.partitions(RDD.scala:202)
-	at org.apache.spark.SparkContext.runJob(SparkContext.scala:1135)
-	at org.apache.spark.rdd.RDD.count(RDD.scala:904)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:35)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:40)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:42)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:44)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:46)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:48)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:50)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:52)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:54)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:56)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:58)
-	at $iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:60)
-	at $iwC$$iwC$$iwC$$iwC.<init>(<console>:62)
-	at $iwC$$iwC$$iwC.<init>(<console>:64)
-	at $iwC$$iwC.<init>(<console>:66)
-	at $iwC.<init>(<console>:68)
-	at <init>(<console>:70)
-	at .<init>(<console>:74)
-	at .<clinit>(<console>)
-	at .<init>(<console>:7)
-	at .<clinit>(<console>)
-	at $print(<console>)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:483)
-	at org.apache.spark.repl.SparkIMain$ReadEvalPrint.call(SparkIMain.scala:789)
-	at org.apache.spark.repl.SparkIMain$Request.loadAndRun(SparkIMain.scala:1062)
-	at org.apache.spark.repl.SparkIMain.loadAndRunReq$1(SparkIMain.scala:615)
-	at org.apache.spark.repl.SparkIMain.interpret(SparkIMain.scala:646)
-	at org.apache.spark.repl.SparkIMain.interpret(SparkIMain.scala:610)
-	at org.apache.spark.repl.SparkILoop.reallyInterpret$1(SparkILoop.scala:814)
-	at org.apache.spark.repl.SparkILoop.interpretStartingWith(SparkILoop.scala:859)
-	at org.apache.spark.repl.SparkILoop.command(SparkILoop.scala:771)
-	at org.apache.spark.repl.SparkILoop.processLine$1(SparkILoop.scala:616)
-	at org.apache.spark.repl.SparkILoop.innerLoop$1(SparkILoop.scala:624)
-	at org.apache.spark.repl.SparkILoop.loop(SparkILoop.scala:629)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply$mcZ$sp(SparkILoop.scala:954)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply(SparkILoop.scala:902)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply(SparkILoop.scala:902)
-	at scala.tools.nsc.util.ScalaClassLoader$.savingContextLoader(ScalaClassLoader.scala:135)
-	at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:902)
-	at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:997)
-	at org.apache.spark.repl.Main$.main(Main.scala:31)
-	at org.apache.spark.repl.Main.main(Main.scala)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:483)
-	at org.apache.spark.deploy.SparkSubmit$.launch(SparkSubmit.scala:328)
-	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:75)
-	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
-
-
-scala> conf.unset("es.host")
-
-scala> val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-14/12/02 15:19:25 INFO MemoryStore: ensureFreeSpace(67488) called with curMem=220593, maxMem=278019440
-14/12/02 15:19:25 INFO MemoryStore: Block broadcast_3 stored as values in memory (estimated size 65.9 KB, free 264.9 MB)
-14/12/02 15:19:25 INFO MemoryStore: ensureFreeSpace(6049) called with curMem=288081, maxMem=278019440
-14/12/02 15:19:25 INFO MemoryStore: Block broadcast_3_piece0 stored as bytes in memory (estimated size 5.9 KB, free 264.9 MB)
-14/12/02 15:19:25 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-shell.weave.local:33592 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:19:25 INFO BlockManagerMaster: Updated info of block broadcast_3_piece0
-esRDD: org.apache.spark.rdd.RDD[(org.apache.hadoop.io.Text, org.apache.hadoop.io.MapWritable)] = NewHadoopRDD[8] at newAPIHadoopRDD at <console>:32
-
-scala> esRDD.count()
-14/12/02 15:19:31 INFO Version: Elasticsearch Hadoop v2.1.0.Beta3 [157763564e]
-14/12/02 15:19:31 INFO EsInputFormat: Reading from [twitter/status]
-14/12/02 15:19:31 INFO EsInputFormat: Discovered mapping {twitter=[mappings=[status=[created_at=DATE, hashtag=[end=LONG, start=LONG, text=STRING], in_reply=[status=LONG, user_id=LONG, user_screen_name=STRING], language=STRING, link=[display_url=STRING, end=LONG, expand_url=STRING, start=LONG, url=STRING], location=GEO_POINT, mention=[end=LONG, id=LONG, name=STRING, screen_name=STRING, start=LONG], place=[country=STRING, country_code=STRING, full_name=STRING, id=STRING, name=STRING, type=STRING, url=STRING], retweet=[id=LONG, retweet_count=LONG, user_id=LONG, user_screen_name=STRING], retweet_count=LONG, source=STRING, text=STRING, truncated=BOOLEAN, user=[description=STRING, id=LONG, location=STRING, name=STRING, profile_image_url=STRING, profile_image_url_https=STRING, screen_name=STRING]]]]} for [twitter/status]
-14/12/02 15:19:31 INFO EsInputFormat: Created [5] shard-splits
-14/12/02 15:19:31 INFO SparkContext: Starting job: count at <console>:35
-14/12/02 15:19:31 INFO DAGScheduler: Got job 0 (count at <console>:35) with 5 output partitions (allowLocal=false)
-14/12/02 15:19:31 INFO DAGScheduler: Final stage: Stage 0(count at <console>:35)
-14/12/02 15:19:31 INFO DAGScheduler: Parents of final stage: List()
-14/12/02 15:19:31 INFO DAGScheduler: Missing parents: List()
-14/12/02 15:19:31 INFO DAGScheduler: Submitting Stage 0 (NewHadoopRDD[8] at newAPIHadoopRDD at <console>:32), which has no missing parents
-14/12/02 15:19:31 INFO MemoryStore: ensureFreeSpace(1568) called with curMem=294130, maxMem=278019440
-14/12/02 15:19:31 INFO MemoryStore: Block broadcast_4 stored as values in memory (estimated size 1568.0 B, free 264.9 MB)
-14/12/02 15:19:31 INFO MemoryStore: ensureFreeSpace(1015) called with curMem=295698, maxMem=278019440
-14/12/02 15:19:31 INFO MemoryStore: Block broadcast_4_piece0 stored as bytes in memory (estimated size 1015.0 B, free 264.9 MB)
-14/12/02 15:19:31 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-shell.weave.local:33592 (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:19:31 INFO BlockManagerMaster: Updated info of block broadcast_4_piece0
-14/12/02 15:19:31 INFO DAGScheduler: Submitting 5 missing tasks from Stage 0 (NewHadoopRDD[8] at newAPIHadoopRDD at <console>:32)
-14/12/02 15:19:31 INFO TaskSchedulerImpl: Adding task set 0.0 with 5 tasks
-14/12/02 15:19:31 INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0, spark-worker-aws-1.weave.local, ANY, 13847 bytes)
-14/12/02 15:19:31 INFO TaskSetManager: Starting task 1.0 in stage 0.0 (TID 1, spark-worker-aws-0.weave.local, ANY, 13853 bytes)
-14/12/02 15:19:31 INFO TaskSetManager: Starting task 2.0 in stage 0.0 (TID 2, spark-worker-aws-2.weave.local, ANY, 13847 bytes)
-14/12/02 15:19:31 INFO TaskSetManager: Starting task 3.0 in stage 0.0 (TID 3, spark-worker-gce-1.weave.local, ANY, 13846 bytes)
-14/12/02 15:19:31 INFO TaskSetManager: Starting task 4.0 in stage 0.0 (TID 4, spark-worker-gce-2.weave.local, ANY, 13848 bytes)
-14/12/02 15:19:32 INFO ConnectionManager: Accepted connection from [spark-worker-aws-1.weave.local/10.10.1.31:49203]
-14/12/02 15:19:32 INFO SendingConnection: Initiating connection to [spark-worker-aws-1.weave.local/10.10.1.31:57984]
-14/12/02 15:19:32 INFO SendingConnection: Connected to [spark-worker-aws-1.weave.local/10.10.1.31:57984], 1 messages pending
-14/12/02 15:19:32 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-worker-aws-1.weave.local:57984 (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:19:32 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-worker-aws-1.weave.local:57984 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:19:46 INFO ConnectionManager: Accepted connection from [10.10.1.30/10.10.1.30:56319]
-14/12/02 15:19:56 INFO SendingConnection: Initiating connection to [/10.10.1.30:33666]
-14/12/02 15:19:56 INFO SendingConnection: Connected to [/10.10.1.30:33666], 1 messages pending
-14/12/02 15:20:17 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-worker-aws-0.weave.local:33666 (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:20:34 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-worker-aws-2.weave.local:56019 (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:20:43 INFO ConnectionManager: Accepted connection from [10.10.1.12/10.10.1.12:55526]
-14/12/02 15:20:44 INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 72485 ms on spark-worker-aws-1.weave.local (1/5)
-14/12/02 15:20:53 INFO ConnectionManager: Accepted connection from [10.10.1.11/10.10.1.11:49660]
-14/12/02 15:20:55 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-worker-aws-2.weave.local:56019 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:20:59 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-worker-aws-0.weave.local:33666 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:21:03 INFO SendingConnection: Initiating connection to [/10.10.1.11:41992]
-14/12/02 15:21:03 INFO SendingConnection: Initiating connection to [/10.10.1.12:53426]
-14/12/02 15:21:03 INFO SendingConnection: Connected to [/10.10.1.12:53426], 1 messages pending
-14/12/02 15:21:03 INFO SendingConnection: Connected to [/10.10.1.11:41992], 1 messages pending
-14/12/02 15:21:24 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-worker-gce-1.weave.local:41992 (size: 1015.0 B, free: 267.3 MB)
-14/12/02 15:21:24 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-worker-gce-2.weave.local:53426 (size: 1015.0 B, free: 267.3 MB)
-14/12/02 15:21:45 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-worker-gce-2.weave.local:53426 (size: 5.9 KB, free: 267.3 MB)
-14/12/02 15:21:52 INFO TaskSetManager: Finished task 4.0 in stage 0.0 (TID 4) in 141031 ms on spark-worker-gce-2.weave.local (2/5)
-14/12/02 15:22:05 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-worker-gce-1.weave.local:41992 (size: 5.9 KB, free: 267.3 MB)
-14/12/02 15:22:08 INFO TaskSetManager: Finished task 2.0 in stage 0.0 (TID 2) in 156690 ms on spark-worker-aws-2.weave.local (3/5)
-14/12/02 15:22:11 INFO TaskSetManager: Finished task 1.0 in stage 0.0 (TID 1) in 159663 ms on spark-worker-aws-0.weave.local (4/5)
-14/12/02 15:22:15 INFO TaskSetManager: Finished task 3.0 in stage 0.0 (TID 3) in 163220 ms on spark-worker-gce-1.weave.local (5/5)
-14/12/02 15:22:15 INFO TaskSchedulerImpl: Removed TaskSet 0.0, whose tasks have all completed, from pool 
-14/12/02 15:22:15 INFO DAGScheduler: Stage 0 (count at <console>:35) finished in 163.231 s
-14/12/02 15:22:15 INFO SparkContext: Job finished: count at <console>:35, took 163.310649981 s
-res26: Long = 67449
-
-scala> conf.unset("es.nodes")
-
-scala> conf.unset("es.nodes.discovery", "true")
-<console>:31: error: too many arguments for method unset: (x$1: String)Unit
-              conf.unset("es.nodes.discovery", "true")
-                        ^
-
-scala> conf.set("es.nodes.discovery", "true")
-
-scala> val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-14/12/02 15:23:55 INFO MemoryStore: ensureFreeSpace(68045) called with curMem=296713, maxMem=278019440
-14/12/02 15:23:55 INFO MemoryStore: Block broadcast_5 stored as values in memory (estimated size 66.5 KB, free 264.8 MB)
-14/12/02 15:23:55 INFO MemoryStore: ensureFreeSpace(6080) called with curMem=364758, maxMem=278019440
-14/12/02 15:23:55 INFO MemoryStore: Block broadcast_5_piece0 stored as bytes in memory (estimated size 5.9 KB, free 264.8 MB)
-14/12/02 15:23:55 INFO BlockManagerInfo: Added broadcast_5_piece0 in memory on spark-shell.weave.local:33592 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:23:55 INFO BlockManagerMaster: Updated info of block broadcast_5_piece0
-esRDD: org.apache.spark.rdd.RDD[(org.apache.hadoop.io.Text, org.apache.hadoop.io.MapWritable)] = NewHadoopRDD[9] at newAPIHadoopRDD at <console>:32
-
-scala> esRDD.count()
-14/12/02 15:23:59 INFO HttpMethodDirector: I/O exception (java.net.ConnectException) caught when processing request: Connection refused
-14/12/02 15:23:59 INFO HttpMethodDirector: Retrying request
-14/12/02 15:23:59 INFO HttpMethodDirector: I/O exception (java.net.ConnectException) caught when processing request: Connection refused
-14/12/02 15:23:59 INFO HttpMethodDirector: Retrying request
-14/12/02 15:23:59 INFO HttpMethodDirector: I/O exception (java.net.ConnectException) caught when processing request: Connection refused
-14/12/02 15:23:59 INFO HttpMethodDirector: Retrying request
-14/12/02 15:23:59 ERROR NetworkClient: Node [Connection refused] failed (localhost:9200); no other nodes left - aborting...
-org.elasticsearch.hadoop.rest.EsHadoopNoNodesLeftException: Connection error (check network and/or proxy settings)- all nodes failed; tried [[localhost:9200]] 
-	at org.elasticsearch.hadoop.rest.NetworkClient.execute(NetworkClient.java:123)
-	at org.elasticsearch.hadoop.rest.RestClient.execute(RestClient.java:303)
-	at org.elasticsearch.hadoop.rest.RestClient.execute(RestClient.java:287)
-	at org.elasticsearch.hadoop.rest.RestClient.execute(RestClient.java:291)
-	at org.elasticsearch.hadoop.rest.RestClient.get(RestClient.java:118)
-	at org.elasticsearch.hadoop.rest.RestClient.discoverNodes(RestClient.java:100)
-	at org.elasticsearch.hadoop.rest.InitializationUtils.discoverNodesIfNeeded(InitializationUtils.java:57)
-	at org.elasticsearch.hadoop.rest.RestService.findPartitions(RestService.java:221)
-	at org.elasticsearch.hadoop.mr.EsInputFormat.getSplits(EsInputFormat.java:406)
-	at org.elasticsearch.hadoop.mr.EsInputFormat.getSplits(EsInputFormat.java:387)
-	at org.apache.spark.rdd.NewHadoopRDD.getPartitions(NewHadoopRDD.scala:94)
-	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:204)
-	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:202)
-	at scala.Option.getOrElse(Option.scala:120)
-	at org.apache.spark.rdd.RDD.partitions(RDD.scala:202)
-	at org.apache.spark.SparkContext.runJob(SparkContext.scala:1135)
-	at org.apache.spark.rdd.RDD.count(RDD.scala:904)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:35)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:40)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:42)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:44)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:46)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:48)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:50)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:52)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:54)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:56)
-	at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:58)
-	at $iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:60)
-	at $iwC$$iwC$$iwC$$iwC.<init>(<console>:62)
-	at $iwC$$iwC$$iwC.<init>(<console>:64)
-	at $iwC$$iwC.<init>(<console>:66)
-	at $iwC.<init>(<console>:68)
-	at <init>(<console>:70)
-	at .<init>(<console>:74)
-	at .<clinit>(<console>)
-	at .<init>(<console>:7)
-	at .<clinit>(<console>)
-	at $print(<console>)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:483)
-	at org.apache.spark.repl.SparkIMain$ReadEvalPrint.call(SparkIMain.scala:789)
-	at org.apache.spark.repl.SparkIMain$Request.loadAndRun(SparkIMain.scala:1062)
-	at org.apache.spark.repl.SparkIMain.loadAndRunReq$1(SparkIMain.scala:615)
-	at org.apache.spark.repl.SparkIMain.interpret(SparkIMain.scala:646)
-	at org.apache.spark.repl.SparkIMain.interpret(SparkIMain.scala:610)
-	at org.apache.spark.repl.SparkILoop.reallyInterpret$1(SparkILoop.scala:814)
-	at org.apache.spark.repl.SparkILoop.interpretStartingWith(SparkILoop.scala:859)
-	at org.apache.spark.repl.SparkILoop.command(SparkILoop.scala:771)
-	at org.apache.spark.repl.SparkILoop.processLine$1(SparkILoop.scala:616)
-	at org.apache.spark.repl.SparkILoop.innerLoop$1(SparkILoop.scala:624)
-	at org.apache.spark.repl.SparkILoop.loop(SparkILoop.scala:629)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply$mcZ$sp(SparkILoop.scala:954)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply(SparkILoop.scala:902)
-	at org.apache.spark.repl.SparkILoop$$anonfun$process$1.apply(SparkILoop.scala:902)
-	at scala.tools.nsc.util.ScalaClassLoader$.savingContextLoader(ScalaClassLoader.scala:135)
-	at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:902)
-	at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:997)
-	at org.apache.spark.repl.Main$.main(Main.scala:31)
-	at org.apache.spark.repl.Main.main(Main.scala)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:483)
-	at org.apache.spark.deploy.SparkSubmit$.launch(SparkSubmit.scala:328)
-	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:75)
-	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
-
-
-scala> conf.set("es.nodes", es_master)
-
-scala> val esRDD = sc.newAPIHadoopRDD(conf, classOf[EsInputFormat[Text, MapWritable]], classOf[Text], classOf[MapWritable])
-14/12/02 15:24:44 INFO BlockManager: Removing broadcast 4
-14/12/02 15:24:44 INFO BlockManager: Removing block broadcast_4_piece0
-14/12/02 15:24:44 INFO MemoryStore: Block broadcast_4_piece0 of size 1015 dropped from memory (free 277649617)
-14/12/02 15:24:44 INFO BlockManagerInfo: Removed broadcast_4_piece0 on spark-shell.weave.local:33592 in memory (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:24:44 INFO BlockManagerMaster: Updated info of block broadcast_4_piece0
-14/12/02 15:24:44 INFO BlockManager: Removing block broadcast_4
-14/12/02 15:24:44 INFO MemoryStore: Block broadcast_4 of size 1568 dropped from memory (free 277651185)
-14/12/02 15:24:44 INFO BlockManagerInfo: Removed broadcast_4_piece0 on spark-worker-aws-1.weave.local:57984 in memory (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:24:44 INFO MemoryStore: ensureFreeSpace(68133) called with curMem=368255, maxMem=278019440
-14/12/02 15:24:44 INFO MemoryStore: Block broadcast_6 stored as values in memory (estimated size 66.5 KB, free 264.7 MB)
-14/12/02 15:24:44 INFO MemoryStore: ensureFreeSpace(6087) called with curMem=436388, maxMem=278019440
-14/12/02 15:24:44 INFO MemoryStore: Block broadcast_6_piece0 stored as bytes in memory (estimated size 5.9 KB, free 264.7 MB)
-14/12/02 15:24:44 INFO BlockManagerInfo: Added broadcast_6_piece0 in memory on spark-shell.weave.local:33592 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:24:44 INFO BlockManagerMaster: Updated info of block broadcast_6_piece0
-esRDD: org.apache.spark.rdd.RDD[(org.apache.hadoop.io.Text, org.apache.hadoop.io.MapWritable)] = NewHadoopRDD[10] at newAPIHadoopRDD at <console>:32
-
-scala> 14/12/02 15:24:44 INFO BlockManagerInfo: Removed broadcast_4_piece0 on spark-worker-gce-1.weave.local:41992 in memory (size: 1015.0 B, free: 267.3 MB)
-14/12/02 15:24:44 INFO BlockManagerInfo: Removed broadcast_4_piece0 on spark-worker-gce-2.weave.local:53426 in memory (size: 1015.0 B, free: 267.3 MB)
-14/12/02 15:24:44 INFO BlockManagerInfo: Removed broadcast_4_piece0 on spark-worker-aws-2.weave.local:56019 in memory (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:24:44 INFO BlockManagerInfo: Removed broadcast_4_piece0 on spark-worker-aws-0.weave.local:33666 in memory (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:24:44 INFO ContextCleaner: Cleaned broadcast 4
-
-
-scala> conf.get("es.nodes")
-res32: String = elasticsearch-gce-0.weave.local
-
-scala> conf.get("es.nodes.discovery")
-res33: String = true
-
-scala> esRDD.count()
-14/12/02 15:25:15 INFO EsInputFormat: Reading from [twitter/status]
-14/12/02 15:25:15 INFO EsInputFormat: Discovered mapping {twitter=[mappings=[status=[created_at=DATE, hashtag=[end=LONG, start=LONG, text=STRING], in_reply=[status=LONG, user_id=LONG, user_screen_name=STRING], language=STRING, link=[display_url=STRING, end=LONG, expand_url=STRING, start=LONG, url=STRING], location=GEO_POINT, mention=[end=LONG, id=LONG, name=STRING, screen_name=STRING, start=LONG], place=[country=STRING, country_code=STRING, full_name=STRING, id=STRING, name=STRING, type=STRING, url=STRING], retweet=[id=LONG, retweet_count=LONG, user_id=LONG, user_screen_name=STRING], retweet_count=LONG, source=STRING, text=STRING, truncated=BOOLEAN, user=[description=STRING, id=LONG, location=STRING, name=STRING, profile_image_url=STRING, profile_image_url_https=STRING, screen_name=STRING]]]]} for [twitter/status]
-14/12/02 15:25:15 INFO EsInputFormat: Created [5] shard-splits
-14/12/02 15:25:15 INFO SparkContext: Starting job: count at <console>:35
-14/12/02 15:25:15 INFO DAGScheduler: Got job 1 (count at <console>:35) with 5 output partitions (allowLocal=false)
-14/12/02 15:25:15 INFO DAGScheduler: Final stage: Stage 1(count at <console>:35)
-14/12/02 15:25:15 INFO DAGScheduler: Parents of final stage: List()
-14/12/02 15:25:15 INFO DAGScheduler: Missing parents: List()
-14/12/02 15:25:15 INFO DAGScheduler: Submitting Stage 1 (NewHadoopRDD[10] at newAPIHadoopRDD at <console>:32), which has no missing parents
-14/12/02 15:25:15 INFO MemoryStore: ensureFreeSpace(1568) called with curMem=442475, maxMem=278019440
-14/12/02 15:25:15 INFO MemoryStore: Block broadcast_7 stored as values in memory (estimated size 1568.0 B, free 264.7 MB)
-14/12/02 15:25:15 INFO MemoryStore: ensureFreeSpace(1015) called with curMem=444043, maxMem=278019440
-14/12/02 15:25:15 INFO MemoryStore: Block broadcast_7_piece0 stored as bytes in memory (estimated size 1015.0 B, free 264.7 MB)
-14/12/02 15:25:15 INFO BlockManagerInfo: Added broadcast_7_piece0 in memory on spark-shell.weave.local:33592 (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:25:15 INFO BlockManagerMaster: Updated info of block broadcast_7_piece0
-14/12/02 15:25:15 INFO DAGScheduler: Submitting 5 missing tasks from Stage 1 (NewHadoopRDD[10] at newAPIHadoopRDD at <console>:32)
-14/12/02 15:25:15 INFO TaskSchedulerImpl: Adding task set 1.0 with 5 tasks
-14/12/02 15:25:15 INFO TaskSetManager: Starting task 0.0 in stage 1.0 (TID 5, spark-worker-gce-2.weave.local, ANY, 13870 bytes)
-14/12/02 15:25:15 INFO TaskSetManager: Starting task 1.0 in stage 1.0 (TID 6, spark-worker-aws-0.weave.local, ANY, 13879 bytes)
-14/12/02 15:25:15 INFO TaskSetManager: Starting task 2.0 in stage 1.0 (TID 7, spark-worker-aws-2.weave.local, ANY, 13868 bytes)
-14/12/02 15:25:15 INFO TaskSetManager: Starting task 3.0 in stage 1.0 (TID 8, spark-worker-aws-1.weave.local, ANY, 13868 bytes)
-14/12/02 15:25:15 INFO TaskSetManager: Starting task 4.0 in stage 1.0 (TID 9, spark-worker-gce-1.weave.local, ANY, 13879 bytes)
-14/12/02 15:25:15 INFO BlockManagerInfo: Added broadcast_7_piece0 in memory on spark-worker-aws-1.weave.local:57984 (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:25:15 INFO BlockManagerInfo: Added broadcast_6_piece0 in memory on spark-worker-aws-1.weave.local:57984 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:25:26 INFO ConnectionManager: Accepted connection from [10.10.1.32/10.10.1.32:37494]
-14/12/02 15:25:36 INFO BlockManagerInfo: Added broadcast_7_piece0 in memory on spark-worker-gce-2.weave.local:53426 (size: 1015.0 B, free: 267.3 MB)
-14/12/02 15:25:36 INFO SendingConnection: Initiating connection to [/10.10.1.32:56019]
-14/12/02 15:25:37 INFO BlockManagerInfo: Added broadcast_7_piece0 in memory on spark-worker-gce-1.weave.local:41992 (size: 1015.0 B, free: 267.3 MB)
-14/12/02 15:25:37 INFO SendingConnection: Connected to [/10.10.1.32:56019], 1 messages pending
-14/12/02 15:25:37 INFO BlockManagerInfo: Added broadcast_7_piece0 in memory on spark-worker-aws-0.weave.local:33666 (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:25:56 INFO BlockManagerInfo: Added broadcast_6_piece0 in memory on spark-worker-gce-2.weave.local:53426 (size: 5.9 KB, free: 267.3 MB)
-14/12/02 15:25:57 INFO BlockManagerInfo: Added broadcast_7_piece0 in memory on spark-worker-aws-2.weave.local:56019 (size: 1015.0 B, free: 265.1 MB)
-14/12/02 15:25:57 INFO BlockManagerInfo: Added broadcast_6_piece0 in memory on spark-worker-gce-1.weave.local:41992 (size: 5.9 KB, free: 267.3 MB)
-14/12/02 15:25:58 INFO BlockManagerInfo: Added broadcast_6_piece0 in memory on spark-worker-aws-0.weave.local:33666 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:26:04 INFO TaskSetManager: Finished task 0.0 in stage 1.0 (TID 5) in 48992 ms on spark-worker-gce-2.weave.local (1/5)
-14/12/02 15:26:05 INFO TaskSetManager: Finished task 4.0 in stage 1.0 (TID 9) in 49446 ms on spark-worker-gce-1.weave.local (2/5)
-14/12/02 15:26:37 INFO TaskSetManager: Finished task 1.0 in stage 1.0 (TID 6) in 82099 ms on spark-worker-aws-0.weave.local (3/5)
-14/12/02 15:26:38 INFO BlockManagerInfo: Added broadcast_6_piece0 in memory on spark-worker-aws-2.weave.local:56019 (size: 5.9 KB, free: 265.1 MB)
-14/12/02 15:26:41 INFO TaskSetManager: Finished task 2.0 in stage 1.0 (TID 7) in 85660 ms on spark-worker-aws-2.weave.local (4/5)
-14/12/02 15:27:28 INFO TaskSetManager: Finished task 3.0 in stage 1.0 (TID 8) in 132993 ms on spark-worker-aws-1.weave.local (5/5)
-14/12/02 15:27:28 INFO DAGScheduler: Stage 1 (count at <console>:35) finished in 132.996 s
-14/12/02 15:27:28 INFO TaskSchedulerImpl: Removed TaskSet 1.0, whose tasks have all completed, from pool 
-14/12/02 15:27:28 INFO SparkContext: Job finished: count at <console>:35, took 133.000841574 s
-res34: Long = 70350
+14/12/02 15:57:13 INFO EsInputFormat: Reading from [twitter/status]
+14/12/02 15:57:13 INFO EsInputFormat: Discovered mapping {twitter=[mappings=[status=[created_at=DATE, hashtag=[end=LONG, start=LONG, text=STRING], in_reply=[status=LONG, user_id=LONG, user_screen_name=STRING], language=STRING, link=[display_url=STRING, end=LONG, expand_url=STRING, start=LONG, url=STRING], location=GEO_POINT, mention=[end=LONG, id=LONG, name=STRING, screen_name=STRING, start=LONG], place=[country=STRING, country_code=STRING, full_name=STRING, id=STRING, name=STRING, type=STRING, url=STRING], retweet=[id=LONG, retweet_count=LONG, user_id=LONG, user_screen_name=STRING], retweet_count=LONG, source=STRING, text=STRING, truncated=BOOLEAN, user=[description=STRING, id=LONG, location=STRING, name=STRING, profile_image_url=STRING, profile_image_url_https=STRING, screen_name=STRING]]]]} for [twitter/status]
+14/12/02 15:57:13 INFO EsInputFormat: Created [5] shard-splits
+14/12/02 15:57:13 INFO SparkContext: Starting job: count at <console>:35
+14/12/02 15:57:13 INFO DAGScheduler: Got job 1 (count at <console>:35) with 5 output partitions (allowLocal=false)
+14/12/02 15:57:13 INFO DAGScheduler: Final stage: Stage 1(count at <console>:35)
+14/12/02 15:57:13 INFO DAGScheduler: Parents of final stage: List()
+14/12/02 15:57:13 INFO DAGScheduler: Missing parents: List()
+14/12/02 15:57:13 INFO DAGScheduler: Submitting Stage 1 (NewHadoopRDD[2] at newAPIHadoopRDD at <console>:32), which has no missing parents
+14/12/02 15:57:13 INFO MemoryStore: ensureFreeSpace(1568) called with curMem=224834, maxMem=278019440
+14/12/02 15:57:13 INFO MemoryStore: Block broadcast_4 stored as values in memory (estimated size 1568.0 B, free 264.9 MB)
+14/12/02 15:57:13 INFO MemoryStore: ensureFreeSpace(1015) called with curMem=226402, maxMem=278019440
+14/12/02 15:57:13 INFO MemoryStore: Block broadcast_4_piece0 stored as bytes in memory (estimated size 1015.0 B, free 264.9 MB)
+14/12/02 15:57:13 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-shell.weave.local:47051 (size: 1015.0 B, free: 265.1 MB)
+14/12/02 15:57:13 INFO BlockManagerMaster: Updated info of block broadcast_4_piece0
+14/12/02 15:57:13 INFO DAGScheduler: Submitting 5 missing tasks from Stage 1 (NewHadoopRDD[2] at newAPIHadoopRDD at <console>:32)
+14/12/02 15:57:13 INFO TaskSchedulerImpl: Adding task set 1.0 with 5 tasks
+14/12/02 15:57:13 INFO TaskSetManager: Starting task 0.0 in stage 1.0 (TID 6, spark-worker-gce-1.weave.local, ANY, 13832 bytes)
+14/12/02 15:57:13 INFO TaskSetManager: Starting task 1.0 in stage 1.0 (TID 7, spark-worker-aws-0.weave.local, ANY, 13841 bytes)
+14/12/02 15:57:13 INFO TaskSetManager: Starting task 2.0 in stage 1.0 (TID 8, spark-worker-gce-2.weave.local, ANY, 13830 bytes)
+14/12/02 15:57:13 INFO TaskSetManager: Starting task 3.0 in stage 1.0 (TID 9, spark-worker-aws-2.weave.local, ANY, 13830 bytes)
+14/12/02 15:57:13 INFO TaskSetManager: Starting task 4.0 in stage 1.0 (TID 10, spark-worker-aws-1.weave.local, ANY, 13841 bytes)
+14/12/02 15:57:13 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-worker-aws-1.weave.local:34187 (size: 1015.0 B, free: 265.1 MB)
+14/12/02 15:57:13 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-worker-aws-1.weave.local:34187 (size: 5.9 KB, free: 265.1 MB)
+14/12/02 15:57:14 INFO TaskSetManager: Finished task 4.0 in stage 1.0 (TID 10) in 877 ms on spark-worker-aws-1.weave.local (1/5)
+14/12/02 15:57:33 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-worker-gce-2.weave.local:42653 (size: 1015.0 B, free: 267.3 MB)
+14/12/02 15:57:33 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-worker-gce-1.weave.local:56687 (size: 1015.0 B, free: 267.3 MB)
+14/12/02 15:57:34 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-worker-aws-0.weave.local:43691 (size: 1015.0 B, free: 265.1 MB)
+14/12/02 15:57:34 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on spark-worker-aws-2.weave.local:37387 (size: 1015.0 B, free: 265.1 MB)
+14/12/02 15:57:54 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-worker-gce-1.weave.local:56687 (size: 5.9 KB, free: 267.3 MB)
+14/12/02 15:57:55 INFO TaskSetManager: Finished task 0.0 in stage 1.0 (TID 6) in 41723 ms on spark-worker-gce-1.weave.local (2/5)
+14/12/02 15:57:55 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-worker-aws-2.weave.local:37387 (size: 5.9 KB, free: 265.1 MB)
+14/12/02 15:57:55 INFO TaskSetManager: Finished task 3.0 in stage 1.0 (TID 9) in 42390 ms on spark-worker-aws-2.weave.local (3/5)
+14/12/02 15:58:05 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-worker-aws-0.weave.local:43691 (size: 5.9 KB, free: 265.1 MB)
+14/12/02 15:58:05 INFO TaskSetManager: Finished task 1.0 in stage 1.0 (TID 7) in 52366 ms on spark-worker-aws-0.weave.local (4/5)
+14/12/02 15:58:05 INFO BlockManager: Removing broadcast 2
+14/12/02 15:58:05 INFO BlockManager: Removing block broadcast_2_piece0
+14/12/02 15:58:05 INFO MemoryStore: Block broadcast_2_piece0 of size 1013 dropped from memory (free 277793036)
+14/12/02 15:58:05 INFO BlockManagerInfo: Removed broadcast_2_piece0 on spark-shell.weave.local:47051 in memory (size: 1013.0 B, free: 265.1 MB)
+14/12/02 15:58:05 INFO BlockManagerMaster: Updated info of block broadcast_2_piece0
+14/12/02 15:58:05 INFO BlockManager: Removing block broadcast_2
+14/12/02 15:58:05 INFO MemoryStore: Block broadcast_2 of size 1568 dropped from memory (free 277794604)
+14/12/02 15:58:05 INFO BlockManagerInfo: Removed broadcast_2_piece0 on spark-worker-aws-1.weave.local:34187 in memory (size: 1013.0 B, free: 265.1 MB)
+14/12/02 15:58:05 INFO BlockManagerInfo: Removed broadcast_2_piece0 on spark-worker-gce-2.weave.local:42653 in memory (size: 1013.0 B, free: 267.3 MB)
+14/12/02 15:58:05 INFO BlockManagerInfo: Removed broadcast_2_piece0 on spark-worker-gce-1.weave.local:56687 in memory (size: 1013.0 B, free: 267.3 MB)
+14/12/02 15:58:06 INFO BlockManagerInfo: Removed broadcast_2_piece0 on spark-worker-aws-2.weave.local:37387 in memory (size: 1013.0 B, free: 265.1 MB)
+14/12/02 15:58:06 INFO BlockManagerInfo: Removed broadcast_2_piece0 on spark-worker-aws-0.weave.local:43691 in memory (size: 1013.0 B, free: 265.1 MB)
+14/12/02 15:58:06 INFO ContextCleaner: Cleaned broadcast 2
+14/12/02 15:58:14 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on spark-worker-gce-2.weave.local:42653 (size: 5.9 KB, free: 267.3 MB)
+14/12/02 15:58:15 INFO TaskSetManager: Finished task 2.0 in stage 1.0 (TID 8) in 62227 ms on spark-worker-gce-2.weave.local (5/5)
+14/12/02 15:58:15 INFO DAGScheduler: Stage 1 (count at <console>:35) finished in 62.228 s
+14/12/02 15:58:15 INFO TaskSchedulerImpl: Removed TaskSet 1.0, whose tasks have all completed, from pool 
+14/12/02 15:58:15 INFO SparkContext: Job finished: count at <console>:35, took 62.233383437 s
+res7: Long = 113
 
 scala> 
