@@ -14,7 +14,7 @@ resource "aws_security_group" "default" {
 
 resource "aws_instance" "weave" {
     count = 3
-    instance_type = "t2.medium"
+    instance_type = "m3.large"
 
     ami = "ami-c6e858b1"
 
