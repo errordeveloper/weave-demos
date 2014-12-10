@@ -1,3 +1,4 @@
+/*
 resource "aws_security_group" "default" {
     name = "weave"
     description = "Only allow SSH"
@@ -14,22 +15,19 @@ resource "aws_security_group" "default" {
 
 resource "aws_instance" "weave" {
     count = 3
-    instance_type = "m3.xlarge"
+    instance_type = "t2.medium"
 
     ami = "ami-c6e858b1"
 
     key_name = "terraform"
 
-    # instead of using boostrap_env_file_on_aws.sh
-    # we can concat the vars inline here, but that
-    # requires some refactoring of cloud-config.yaml
     user_data = "${file("cloud-config.yaml")}"
 
     security_groups = ["${aws_security_group.default.name}"]
 
     provisioner "file" {
-        source = "boostrap_env_file_on_aws.sh"
-        destination = "/tmp/boostrap_env_file_on_aws.sh"
+        source = "genenv.sh"
+        destination = "/tmp/genenv.sh"
         connection {
             user = "core"
             key_file = "ec2_terraform.eu-west-1.pem"
@@ -37,7 +35,7 @@ resource "aws_instance" "weave" {
     }
     provisioner "remote-exec" {
         inline = [
-          "sudo sh /tmp/boostrap_env_file_on_aws.sh ${count.index} ${join(" ", google_compute_instance.weave.*.network.0.external_address)}",
+          "sudo sh /tmp/genenv.sh aws ${count.index} ${join(" ", google_compute_instance.weave.*.network.0.external_address)}",
         ]
         connection {
             user = "core"
@@ -48,6 +46,7 @@ resource "aws_instance" "weave" {
     #     command = "echo ${aws_instance.weave.public_dns} >> aws_instances"
     # }
 }
+*/
 
 resource "google_compute_instance" "weave" {
     count = 3
@@ -66,6 +65,36 @@ resource "google_compute_instance" "weave" {
 
     metadata {
         user-data = "${file("cloud-config.yaml")}"
+    }
+
+    provisioner "file" {
+        source = "genenv.sh"
+        destination = "/tmp/genenv.sh"
+        connection {
+            user = "core"
+            key_file = "google_compute_engine"
+        }
+    }
+
+    provisioner "file" {
+        source = "units"
+        destination = "/tmp/"
+        connection {
+            user = "core"
+            key_file = "google_compute_engine"
+        }
+    }
+
+    provisioner "remote-exec" {
+        inline = [
+          "sudo mv /tmp/units/*.service /etc/systemd/system/",
+          "sudo sh /tmp/genenv.sh gce ${count.index}",
+          "sudo systemctl start weave.service",
+        ]
+        connection {
+            user = "core"
+            key_file = "google_compute_engine"
+        }
     }
 }
 
