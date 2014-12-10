@@ -1,4 +1,3 @@
-/*
 resource "aws_security_group" "default" {
     name = "weave"
     description = "Only allow SSH"
@@ -33,20 +32,29 @@ resource "aws_instance" "weave" {
             key_file = "ec2_terraform.eu-west-1.pem"
         }
     }
+
+    provisioner "file" {
+        source = "units"
+        destination = "/tmp/"
+        connection {
+            user = "core"
+            key_file = "ec2_terraform.eu-west-1.pem"
+        }
+    }
+
     provisioner "remote-exec" {
         inline = [
-          "sudo sh /tmp/genenv.sh aws ${count.index} ${join(" ", google_compute_instance.weave.*.network.0.external_address)}",
+            "sudo mv /tmp/units/*.service /etc/systemd/system/",
+            "sudo sh /tmp/genenv.sh aws ${count.index} ${join(" ", google_compute_instance.weave.*.network.0.external_address)}",
+            "sudo systemctl start weave",
+            "sudo systemctl start elasticsearch spark",
         ]
         connection {
             user = "core"
             key_file = "ec2_terraform.eu-west-1.pem"
         }
     }
-    # provisioner "local-exec" {
-    #     command = "echo ${aws_instance.weave.public_dns} >> aws_instances"
-    # }
 }
-*/
 
 resource "google_compute_instance" "weave" {
     count = 3
@@ -87,9 +95,10 @@ resource "google_compute_instance" "weave" {
 
     provisioner "remote-exec" {
         inline = [
-          "sudo mv /tmp/units/*.service /etc/systemd/system/",
-          "sudo sh /tmp/genenv.sh gce ${count.index}",
-          "sudo systemctl start weave.service",
+            "sudo mv /tmp/units/*.service /etc/systemd/system/",
+            "sudo sh /tmp/genenv.sh gce ${count.index}",
+            "sudo systemctl start weave",
+            "sudo systemctl start elasticsearch spark",
         ]
         connection {
             user = "core"
