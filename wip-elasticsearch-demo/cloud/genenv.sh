@@ -12,7 +12,7 @@ case "weave-${cloud}-${count}" in
     ## it also happes to run Spark master JVM
     spark_role='master'
     spark_args=''
-    spark_node="spark-${role}-gce.weave.local"
+    spark_node="spark-${spark_role}-gce.weave.local"
     break
     ;;
   (weave-gce-*)
