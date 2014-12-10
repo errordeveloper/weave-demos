@@ -10,51 +10,54 @@ case "weave-${cloud}-${count}" in
     ## first machine in GCE doesn't yet know of any other peers
     known_weave_nodes=''
     ## it also happes to run Spark master JVM
-    spark_role='master'
-    spark_args=''
-    spark_node="spark-${spark_role}-gce.weave.local"
+    spark_node_role='master'
+    spark_container_args=''
+    spark_node_name="spark-${spark_node_role}-gce.weave.local"
     break
     ;;
   (weave-gce-*)
     ## any other node in GCE connects to the first one by native DNS name
     known_weave_nodes='weave-gce-0'
     ## these nodes run Spark worker JVM's and connect to master using weave DNS
-    spark_role='worker'
-    spark_args='spark://spark-master-gce.weave.local:7077'
-    spark_node="spark-${spark_role}-${cloud}-${count}.weave.local"
+    spark_node_role='worker'
+    spark_container_args='spark://spark-master-gce.weave.local:7077'
+    spark_node_name="spark-${spark_node_role}-${cloud}-${count}.weave.local"
     break
     ;;
   (weave-aws-*)
     ## every node in AWS connects to all GCE nodes by IP address
     known_weave_nodes="$@"
     ## same as in GCE
-    spark_role='worker'
-    spark_args='spark://spark-master-gce.weave.local:7077'
-    spark_node="spark-${spark_role}-${cloud}-${count}.weave.local"
+    spark_node_role='worker'
+    spark_container_args='spark://spark-master-gce.weave.local:7077'
+    spark_node_name="spark-${spark_node_role}-${cloud}-${count}.weave.local"
     break
     ;;
 esac
 
-case "weave-${cloud}-${count}" in
-  (weave-gce-0)
+case "${cloud}" in
+  (gce)
+    weavedns_addr="10.10.2.1${count}/16"
+    spark_node_addr="10.10.1.1${count}/24"
+    elasticsearch_node_addr="10.10.1.2${count}/24"
     break
     ;;
-  (*)
-    spark_role='worker'
-    spark_args='spark://spark-master-gce.weave.local:7077'
-    spark_node="spark-${spark_role}-${cloud}-${count}.weave.local"
+  (aws)
+    weavedns_addr="10.10.2.2${count}/16"
+    spark_node_addr="10.10.1.3${count}/24"
+    elasticsearch_node_addr="10.10.1.4${count}/24"
     break
     ;;
 esac
 
 cat << ENVIRON | sudo tee /etc/weave.env
 WEAVE_LAUNCH_ARGS="${known_weave_nodes}"
-WEAVE_LAUNCH_DNS_ARGS="10.10.2.2${count}/16"
-SPARK_NODE_ADDR="10.10.1.3${count}/24"
-SPARK_NODE_NAME="${spark_node}"
-SPARK_CONTAINER="errordeveloper/weave-spark-${spark_role}-minimal:latest"
-SPARK_CONTAINER_ARGS="${spark_args}"
-ELASTICSEARCH_NODE_ADDR="10.10.1.4${count}/24"
+WEAVE_LAUNCH_DNS_ARGS="${weavedns_addr}"
+SPARK_NODE_ADDR="${spark_node_addr}"
+SPARK_NODE_NAME="${spark_node_name}"
+SPARK_CONTAINER="errordeveloper/weave-spark-${spark_node_role}-minimal:latest"
+SPARK_CONTAINER_ARGS="${spark_container_args}"
+ELASTICSEARCH_NODE_ADDR="${elasticsearch_node_addr}"
 ELASTICSEARCH_NODE_NAME="elasticsearch-${cloud}-${count}.weave.local"
 ELASTICSEARCH_CONTAINER="errordeveloper/weave-twitter-river-minimal:latest"
 ENVIRON
