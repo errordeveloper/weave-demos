@@ -1,24 +1,22 @@
 resource "aws_security_group" "default" {
     name = "weave"
-    description = "Only allow SSH"
+    description = "SSH access from anywhere"
 
-    # SSH access from anywhere
     ingress {
         from_port = 22
         to_port = 22
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
-
 }
 
 resource "aws_instance" "weave" {
     count = 3
-    instance_type = "m3.large"
+    instance_type = "${var.aws_instance_type}"
 
-    ami = "ami-c6e858b1"
+    ami = "${var.aws_coreos_ami}"
 
-    key_name = "terraform"
+    key_name = "${var.aws_key_name}"
 
     user_data = "${file("cloud-config.yaml")}"
 
@@ -29,7 +27,7 @@ resource "aws_instance" "weave" {
         destination = "/tmp/genenv.sh"
         connection {
             user = "core"
-            key_file = "ec2_terraform.eu-west-1.pem"
+            key_file = "${var.aws_key_path}"
         }
     }
 
@@ -38,7 +36,7 @@ resource "aws_instance" "weave" {
         destination = "/tmp/"
         connection {
             user = "core"
-            key_file = "ec2_terraform.eu-west-1.pem"
+            key_file = "${var.aws_key_path}"
         }
     }
 
@@ -51,20 +49,20 @@ resource "aws_instance" "weave" {
         ]
         connection {
             user = "core"
-            key_file = "ec2_terraform.eu-west-1.pem"
+            key_file = "${var.aws_key_path}"
         }
     }
 }
 
 resource "google_compute_instance" "weave" {
     count = 3
-    machine_type = "n1-standard-1"
-    zone = "us-central1-a"
+    machine_type = "${var.gce_machine_type}"
+    zone = "${var.gce_zone}"
 
     name = "weave-gce-${count.index}"
 
     disk {
-        image = "coreos-alpha-509-1-0-v20141124"
+        image = "${var.gce_coreos_disk_image}"
     }
 
     network {
@@ -80,7 +78,7 @@ resource "google_compute_instance" "weave" {
         destination = "/tmp/genenv.sh"
         connection {
             user = "core"
-            key_file = "google_compute_engine"
+            key_file = "${var.gce_key_path}"
         }
     }
 
@@ -89,7 +87,7 @@ resource "google_compute_instance" "weave" {
         destination = "/tmp/"
         connection {
             user = "core"
-            key_file = "google_compute_engine"
+            key_file = "${var.gce_key_path}"
         }
     }
 
@@ -102,7 +100,7 @@ resource "google_compute_instance" "weave" {
         ]
         connection {
             user = "core"
-            key_file = "google_compute_engine"
+            key_file = "${var.gce_key_path}"
         }
     }
 }
