@@ -45,7 +45,6 @@ resource "aws_instance" "weave" {
             "sudo mv /tmp/units/*.service /etc/systemd/system/",
             "sudo sh /tmp/genenv.sh aws ${count.index} ${join(" ", google_compute_instance.weave.*.network.0.external_address)}",
             "sudo systemctl start weave",
-            "sudo systemctl start elasticsearch spark",
         ]
         connection {
             user = "core"
@@ -96,7 +95,6 @@ resource "google_compute_instance" "weave" {
             "sudo mv /tmp/units/*.service /etc/systemd/system/",
             "sudo sh /tmp/genenv.sh gce ${count.index}",
             "sudo systemctl start weave",
-            "sudo systemctl start elasticsearch spark",
         ]
         connection {
             user = "core"

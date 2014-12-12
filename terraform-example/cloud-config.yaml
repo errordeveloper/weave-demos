@@ -56,8 +56,4 @@ write_files:
       PRE_FETCH_CONTAINER_IMAGES="\
         zettio/weave:latest \
         zettio/weavedns:latest \
-        errordeveloper/weave-spark-master-minimal:latest \
-        errordeveloper/weave-worker-master-minimal:latest \
-        errordeveloper/weave-shell-master-minimal:latest \
-        errordeveloper/weave-twitter-river-minimal:latest \
       "
