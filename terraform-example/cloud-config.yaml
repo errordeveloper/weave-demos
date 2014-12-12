@@ -1,0 +1,63 @@
+#cloud-config
+coreos:
+  update:
+    reboot-strategy: 'off'
+  units:
+    - name: 10-weave.network
+      runtime: false
+      content: |
+        [Match]
+        Type=bridge
+        Name=weave*
+
+        [Network]
+
+    - name: install-weave.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=pre-fetch-container-images.service
+        After=network-online.target
+        After=docker.service
+        Description=Install Weave
+        Documentation=http://zettio.github.io/weave/
+        Requires=pre-fetch-container-images.service
+        Requires=network-online.target
+        Requires=docker.service
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin \
+            https://raw.github.com/zettio/weave/master/weave 
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
+        ExecStart=/bin/echo Wave Installed
+
+    - name: pre-fetch-container-images.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        EnvironmentFile=/etc/pre-fetch-container-images.env
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/bin/sh -c 'for i in $PRE_FETCH_CONTAINER_IMAGES; do /usr/bin/docker pull $i; done'
+
+write_files:
+  - path: /etc/pre-fetch-container-images.env
+    permissions: 0644
+    owner: root
+    content: |
+      PRE_FETCH_CONTAINER_IMAGES="\
+        zettio/weave:latest \
+        zettio/weavedns:latest \
+        errordeveloper/weave-spark-master-minimal:latest \
+        errordeveloper/weave-worker-master-minimal:latest \
+        errordeveloper/weave-shell-master-minimal:latest \
+        errordeveloper/weave-twitter-river-minimal:latest \
+      "

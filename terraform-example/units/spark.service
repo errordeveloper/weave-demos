@@ -1,0 +1,18 @@
+[Unit]
+After=weave.service
+Description=Apache Spark Cluster
+Documentation=https://spark.apache.org/docs/latest/
+Requires=weave.service
+
+[Service]
+EnvironmentFile=/etc/weave.env
+ExecStartPre=/opt/bin/weave \
+  run --with-dns $SPARK_NODE_ADDR \
+  --name=spark \
+  -h $SPARK_NODE_NAME \
+  $SPARK_CONTAINER \
+  $SPARK_CONTAINER_ARGS
+ExecStart=/usr/bin/docker attach spark
+SuccessExitStatus=255
+Restart=always
+ExecStop=/usr/bin/docker kill spark ; /usr/bin/docker rm spark
