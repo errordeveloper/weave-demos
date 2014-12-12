@@ -3,7 +3,8 @@
 ## It only generates and writes /etc/weave.env, and doesn't run anything.
 cloud=$1
 count=$2
-shift 2
+crypt=$3
+shift 3
 
 case "weave-${cloud}-${count}" in
   (weave-gce-0)
@@ -35,6 +36,7 @@ case "${cloud}" in
 esac
 
 cat << ENVIRON | sudo tee /etc/weave.env
-WEAVE_LAUNCH_ARGS="${known_weave_nodes}"
+WEAVE_LAUNCH_KNOW_NODES="${known_weave_nodes}"
+WEAVE_LAUNCH_PASSWORD="${crypt}"
 WEAVE_LAUNCH_DNS_ARGS="${weavedns_addr}"
 ENVIRON

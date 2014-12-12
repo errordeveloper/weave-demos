@@ -43,7 +43,7 @@ resource "aws_instance" "weave" {
     provisioner "remote-exec" {
         inline = [
             "sudo mv /tmp/units/*.service /etc/systemd/system/",
-            "sudo sh /tmp/genenv.sh aws ${count.index} ${join(" ", google_compute_instance.weave.*.network.0.external_address)}",
+            "sudo sh /tmp/genenv.sh aws ${count.index} '${var.weave_launch_password}' ${join(" ", google_compute_instance.weave.*.network.0.external_address)}",
             "sudo systemctl start weave",
         ]
         connection {
@@ -93,7 +93,7 @@ resource "google_compute_instance" "weave" {
     provisioner "remote-exec" {
         inline = [
             "sudo mv /tmp/units/*.service /etc/systemd/system/",
-            "sudo sh /tmp/genenv.sh gce ${count.index}",
+            "sudo sh /tmp/genenv.sh gce ${count.index} '${var.weave_launch_password}'",
             "sudo systemctl start weave",
         ]
         connection {
