@@ -12,6 +12,22 @@ coreos:
 
         [Network]
 
+    - name: weave.service
+      content: |
+        [Unit]
+        After=install-weave.service
+        Description=Weave Network
+        Documentation=http://zettio.github.io/weave/
+        Requires=install-weave.service
+
+        [Service]
+        EnvironmentFile=/etc/weave.env
+        ExecStartPre=/opt/bin/weave launch -password ${WEAVE_LAUNCH_PASSWORD} $WEAVE_LAUNCH_KNOW_NODES
+        ExecStartPre=/opt/bin/weave launch-dns $WEAVE_LAUNCH_DNS_ARGS -debug
+        ExecStart=/usr/bin/docker logs -f weave
+        SuccessExitStatus=2
+        ExecStop=/opt/bin/weave stop
+
     - name: install-weave.service
       command: start
       enable: true

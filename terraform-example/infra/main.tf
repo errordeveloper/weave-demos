@@ -26,18 +26,8 @@ resource "google_compute_instance" "weave" {
         }
     }
 
-    provisioner "file" {
-        source = "units"
-        destination = "/tmp/"
-        connection {
-            user = "core"
-            key_file = "${var.gce_key_path}"
-        }
-    }
-
     provisioner "remote-exec" {
         inline = [
-            "sudo mv /tmp/units/*.service /etc/systemd/system/",
             "sudo sh /tmp/genenv.sh gce ${count.index} '${var.weave_launch_password}'",
             "sudo systemctl start weave",
         ]
