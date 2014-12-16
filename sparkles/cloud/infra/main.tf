@@ -31,18 +31,8 @@ resource "aws_instance" "weave" {
         }
     }
 
-    provisioner "file" {
-        source = "units"
-        destination = "/tmp/"
-        connection {
-            user = "core"
-            key_file = "${var.aws_key_path}"
-        }
-    }
-
     provisioner "remote-exec" {
         inline = [
-            "sudo mv /tmp/units/*.service /etc/systemd/system/",
             "sudo sh /tmp/genenv.sh aws ${count.index} ${join(" ", google_compute_instance.weave.*.network.0.external_address)}",
             "sudo systemctl start weave",
             "sudo systemctl start elasticsearch spark",
@@ -82,18 +72,8 @@ resource "google_compute_instance" "weave" {
         }
     }
 
-    provisioner "file" {
-        source = "units"
-        destination = "/tmp/"
-        connection {
-            user = "core"
-            key_file = "${var.gce_key_path}"
-        }
-    }
-
     provisioner "remote-exec" {
         inline = [
-            "sudo mv /tmp/units/*.service /etc/systemd/system/",
             "sudo sh /tmp/genenv.sh gce ${count.index}",
             "sudo systemctl start weave",
             "sudo systemctl start elasticsearch spark",

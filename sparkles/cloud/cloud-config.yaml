@@ -9,8 +9,60 @@ coreos:
         [Match]
         Type=bridge
         Name=weave*
-
         [Network]
+
+    - name: weave.service
+      content: |
+        [Unit]
+        After=install-weave.service
+        Description=Weave Network
+        Documentation=http://zettio.github.io/weave/
+        Requires=install-weave.service
+        [Service]
+        EnvironmentFile=/etc/weave.env
+        ExecStartPre=/opt/bin/weave launch $WEAVE_LAUNCH_ARGS
+        ExecStartPre=/opt/bin/weave launch-dns $WEAVE_LAUNCH_DNS_ARGS -debug
+        ExecStart=/usr/bin/docker logs -f weave
+        SuccessExitStatus=2
+        ExecStop=/opt/bin/weave stop
+
+    - name: elasticsearch.service
+      content: |
+        [Unit]
+        After=weave.service
+        Description=ElasticSearch on Weave
+        Documentation=https://registry.hub.docker.com/u/errordeveloper/weave-elasticsearch-minimal/
+        Requires=weave.service
+        [Service]
+        EnvironmentFile=/etc/weave.env
+        ExecStartPre=/opt/bin/weave \
+          run --with-dns $ELASTICSEARCH_NODE_ADDR \
+          --name=elasticsearch \
+          -h $ELASTICSEARCH_NODE_NAME \
+          $ELASTICSEARCH_CONTAINER
+        ExecStart=/usr/bin/docker attach elasticsearch
+        SuccessExitStatus=255
+        ExecStop=/usr/bin/docker kill elasticsearch ; /usr/bin/docker rm elasticsearch
+
+    - name: spark.service
+      content: |
+        [Unit]
+        After=weave.service
+        Description=Apache Spark Cluster
+        Documentation=https://spark.apache.org/docs/latest/
+        Requires=weave.service
+        [Service]
+        EnvironmentFile=/etc/weave.env
+        ExecStartPre=/opt/bin/weave \
+          run --with-dns $SPARK_NODE_ADDR \
+          --name=spark \
+          -h $SPARK_NODE_NAME \
+          $SPARK_CONTAINER \
+          $SPARK_CONTAINER_ARGS
+        ExecStart=/usr/bin/docker attach spark
+        SuccessExitStatus=255
+        Restart=always
+        ExecStop=/usr/bin/docker kill spark ; /usr/bin/docker rm spark
 
     - name: install-weave.service
       command: start
@@ -25,7 +77,6 @@ coreos:
         Requires=pre-fetch-container-images.service
         Requires=network-online.target
         Requires=docker.service
-
         [Service]
         Type=oneshot
         RemainAfterExit=yes
@@ -41,7 +92,6 @@ coreos:
         [Unit]
         After=docker.service
         Requires=docker.service
-
         [Service]
         EnvironmentFile=/etc/pre-fetch-container-images.env
         Type=oneshot
