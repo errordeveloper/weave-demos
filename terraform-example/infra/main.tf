@@ -85,18 +85,8 @@ resource "aws_instance" "weave" {
         }
     }
 
-    provisioner "file" {
-        source = "units"
-        destination = "/tmp/"
-        connection {
-            user = "core"
-            key_file = "${var.aws_key_path}"
-        }
-    }
-
     provisioner "remote-exec" {
         inline = [
-            "sudo mv /tmp/units/*.service /etc/systemd/system/",
             "sudo sh /tmp/genenv.sh aws ${count.index} '${var.weave_launch_password}' ${join(" ", google_compute_instance.weave.*.network.0.external_address)}",
             "sudo systemctl start weave",
         ]
