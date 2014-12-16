@@ -9,7 +9,6 @@ coreos:
         [Match]
         Type=bridge
         Name=weave*
-
         [Network]
 
     - name: weave.service
@@ -19,7 +18,6 @@ coreos:
         Description=Weave Network
         Documentation=http://zettio.github.io/weave/
         Requires=install-weave.service
-
         [Service]
         EnvironmentFile=/etc/weave.env
         ExecStartPre=/opt/bin/weave launch -password ${WEAVE_LAUNCH_PASSWORD} $WEAVE_LAUNCH_KNOW_NODES
@@ -41,7 +39,6 @@ coreos:
         Requires=pre-fetch-container-images.service
         Requires=network-online.target
         Requires=docker.service
-
         [Service]
         Type=oneshot
         RemainAfterExit=yes
@@ -57,7 +54,6 @@ coreos:
         [Unit]
         After=docker.service
         Requires=docker.service
-
         [Service]
         EnvironmentFile=/etc/pre-fetch-container-images.env
         Type=oneshot
