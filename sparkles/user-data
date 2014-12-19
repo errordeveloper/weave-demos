@@ -75,7 +75,7 @@ coreos:
             https://raw.github.com/zettio/weave/master/weave 
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStartPre=/usr/bin/docker pull zettio/weave:latest
-        ExecStart=/bin/echo Wave Installed
+        ExecStart=/bin/echo Weave Installed
 
     - name: weave.service
       command: start

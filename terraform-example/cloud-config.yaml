@@ -45,7 +45,7 @@ coreos:
         ExecStartPre=/usr/bin/wget -N -P /opt/bin \
             https://raw.github.com/zettio/weave/master/weave 
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
-        ExecStart=/bin/echo Wave Installed
+        ExecStart=/bin/echo Weave Installed
 
     - name: pre-fetch-container-images.service
       command: start

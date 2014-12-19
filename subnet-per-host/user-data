@@ -82,7 +82,7 @@ coreos:
         RemainAfterExit=yes
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.github.com/errordeveloper/weave-demos/master/poseidon/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
-        ExecStart=/bin/echo Wave Installed
+        ExecStart=/bin/echo Weave Installed
 
         [Install]
         WantedBy=weave-network.target
