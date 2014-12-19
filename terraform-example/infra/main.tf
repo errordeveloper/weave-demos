@@ -13,9 +13,10 @@ resource "google_compute_instance" "weave" {
         image = "${var.gce_coreos_disk_image}"
     }
 
-    // Attach to a network with some custom firewall rules (details further down)
+    // Attach to a network with some custom firewall rules and static IPs (details further down)
     network {
         source = "${google_compute_network.weave.name}"
+        address = "${element(google_compute_address.weave.*.address, count.index)}"
     }
 
     // Provisioning
@@ -76,6 +77,13 @@ resource "google_compute_firewall" "weave" {
     }
 
     source_ranges = ["0.0.0.0/0"]
+}
+
+// Allocate static IPs for each of the instances, so if reboots occur
+// the AWS nodes can rejoin the weave network
+resource "google_compute_address" "weave" {
+    count = 3
+    name = "weave-gce-${count.index}-addr"
 }
 
 // Declare and provision 3 AWS instances

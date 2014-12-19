@@ -1,6 +1,10 @@
 #cloud-config
 coreos:
   update:
+    ## NB: You should enable updates in production
+    ## Terraform already takes care of static IPs
+    ## in GCE, so it should be safe for weave nodes
+    ## to rejoin after reboot
     reboot-strategy: 'off'
   units:
     - name: 10-weave.network
