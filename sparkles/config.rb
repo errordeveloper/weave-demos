@@ -65,7 +65,7 @@ if File.exists?('cloud/cloud-config.yaml') && ARGV[0].eql?('up')
     'content' =>
       "[Unit]\n" \
       "Requires=weave.service elasticsearch.service spark.service\n" \
-      "RefuseManualStart=on\n" \
+      "RefuseManualStart=no\n" \
       "Wants=weave.service elasticsearch.service spark.service\n" \
       "[Install]\n" \
       "WantedBy=multi-user.target\n" \
