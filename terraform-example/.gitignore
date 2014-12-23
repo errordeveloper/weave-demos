@@ -1,0 +1,7 @@
+account.json
+client_secrets.json
+kill*
+terraform-bin*
+terraform.tfstate
+terraform.tfstate.backup
+tfvars
