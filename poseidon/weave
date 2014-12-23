@@ -144,7 +144,7 @@ case "$COMMAND" in
         # Set WEAVE_DOCKER_ARGS in the environment in order to supply
         # additional parameters, such as resource limits, to docker
         # when launching the weave container.
-        CONTAINER=$(docker run --net=host --privileged -d --name=$CONTAINER_NAME -p $PORT:$PORT/tcp -p $PORT:$PORT/udp $WEAVE_DOCKER_ARGS $IMAGE -name $MACADDR "$@" | tail -n 1)
+        CONTAINER=$(docker run --net=host --privileged -d --name=$CONTAINER_NAME -p $PORT:$PORT/tcp -p $PORT:$PORT/udp $WEAVE_DOCKER_ARGS $IMAGE -name $MACADDR -iface $CONTAINER_IFNAME  "$@" | tail -n 1)
         CONTAINER_PID=$(docker inspect --format='{{ .State.Pid }}' $CONTAINER)
 
         if [ "$CONTAINER_PID" = 0 ] ; then
