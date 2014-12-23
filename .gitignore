@@ -1,3 +1,4 @@
 .vagrant/machines/
 log/
 .*.sw?
+.DS_Store

@@ -1,8 +1,8 @@
-cloud/kill
-cloud/terraform-bin/
+cloud/kill*
+cloud/terraform-bin*
 cloud/terraform-playgound/
 cloud/terraform.tfstate
 cloud/terraform.tfstate.backup
-cloud/infra/aws.tf
-cloud/infra/account.json
-cloud/infra/client_secrets.json
+cloud/account.json
+cloud/client_secrets.json
+user-data
