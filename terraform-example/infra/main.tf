@@ -53,8 +53,8 @@ resource "google_compute_instance" "weave" {
 
 // Custom GCE network declaration, so we can set firewall rules below
 resource "google_compute_network" "weave" {
-    name = "default"
-    ipv4_range = "10.240.0.0/16"
+    name = "weave"
+    ipv4_range = "10.220.0.0/16"
 }
 
 // Firewall rules for the network (allow inbound ssh and weave connections)
@@ -90,7 +90,6 @@ resource "google_compute_address" "weave" {
 resource "aws_instance" "weave" {
     count = 3
     // By default (see variables.tf), these are going to be of type 'm3.large' in region 'eu-west-1'.
-    count = 3
     instance_type = "${var.aws_instance_type}"
 
     // Use an alpha image of CoreOS
@@ -103,7 +102,9 @@ resource "aws_instance" "weave" {
 
     user_data = "${file("cloud-config.yaml")}"
 
-    security_groups = ["${aws_security_group.default.name}"]
+    #security_groups = ["${aws_security_group.weave.id}"]
+    subnet_id = "${aws_subnet.weave.id}"
+    associate_public_ip_address = true
 
     provisioner "file" {
         source = "genenv.sh"
@@ -127,15 +128,27 @@ resource "aws_instance" "weave" {
     }
 }
 
+// Create a VPC for Terraform to manage, so it doesn't mess with the default one
+resource "aws_vpc" "weave" {
+    cidr_block = "10.220.0.0/16"
+}
+
+// With a non-default VPC we have to create a subnet also
+resource "aws_subnet" "weave" {
+    vpc_id = "${aws_vpc.weave.id}"
+    cidr_block = "10.220.1.0/24"
+}
+
 // Firewall rules for our security group only need to allow inbound ssh connections
-resource "aws_security_group" "default" {
-    name = "weave"
-    description = "SSH access from anywhere"
+resource "aws_network_acl" "weave" {
+    vpc_id = "${aws_vpc.weave.id}"
 
     ingress {
+        rule_no = 1
+        action = "allow"
         from_port = 22
         to_port = 22
         protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
+        cidr_block = "0.0.0.0/0"
     }
 }
