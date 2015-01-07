@@ -2,6 +2,6 @@
 #    value = "AWS instances:\n - ${join("\n - ", aws_instance.weave.*.public_dns)}"
 #}
 
-output "gce_instances" {
-    value = "GCE instances:\n - ${join("\n - ", google_compute_instance.weave.*.network.0.external_address)}"
-}
+#output "gce_instances" {
+#    value = "GCE instances:\n - ${join("\n - ", google_compute_instance.weave.*.network.0.external_address)}"
+#}
