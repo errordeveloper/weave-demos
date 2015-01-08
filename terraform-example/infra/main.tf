@@ -130,6 +130,10 @@ resource "aws_instance" "weave" {
 }
 
 // Create a VPC for Terraform to manage, so it doesn't mess with the default one
+// NOTE: this not meant to make the configuration more complex, it's just that
+// I have found some issues with creating and destroying resources on default VPC,
+// so I decided to make it safer with dedicating a VPC to Terraform.
+// TODO: refactor this as a module
 resource "aws_vpc" "weave" {
     cidr_block = "10.220.0.0/16"
 }
