@@ -23,9 +23,9 @@ resource "google_compute_instance" "weave" {
 
     // 1. Cloud Config phase writes systemd unit definitions and only starts two host-independent units —
     // `pre-fetch-container-images.service` and `install-weave.service`
-    #metadata {
-    #    user-data = "${file("cloud-config.yaml")}"
-    #}
+    metadata {
+        user-data = "${file("cloud-config.yaml")}"
+    }
 
     // 2. Upload shell script that generates host-specific environment file to be used by `weave.service`
     provisioner "file" {
