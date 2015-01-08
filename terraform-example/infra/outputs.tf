@@ -1,5 +1,5 @@
 #output "aws_instances" {
-#    value = "AWS instances:\n - ${join("\n - ", aws_instance.weave.*.public_dns)}"
+#    value = "AWS instances:\n - ${join("\n - ", aws_instance.weave.*.public_ip)}"
 #}
 
 #output "gce_instances" {
