@@ -36,7 +36,7 @@ case "${cloud}" in
 esac
 
 cat << ENVIRON | sudo tee /etc/weave.env
-WEAVE_LAUNCH_KNOW_NODES="${known_weave_nodes}"
-WEAVE_LAUNCH_PASSWORD="${crypt}"
-WEAVE_LAUNCH_DNS_ARGS="${weavedns_addr}"
+WEAVE_PEERS="${known_weave_nodes}"
+WEAVE_PASSWORD="${crypt}"
+WEAVEDNS_ADDR="${weavedns_addr}"
 ENVIRON

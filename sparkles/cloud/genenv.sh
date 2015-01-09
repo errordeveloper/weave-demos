@@ -3,7 +3,8 @@
 ## It only generates and writes /etc/weave.env, and doesn't run anything.
 cloud=$1
 count=$2
-shift 2
+crypt=$3
+shift 3
 
 case "weave-${cloud}-${count}" in
   (weave-gce-0)
@@ -51,8 +52,9 @@ case "${cloud}" in
 esac
 
 cat << ENVIRON | sudo tee /etc/weave.env
-WEAVE_LAUNCH_ARGS="${known_weave_nodes}"
-WEAVE_LAUNCH_DNS_ARGS="${weavedns_addr}"
+WEAVE_PEERS="${known_weave_nodes}"
+WEAVE_PASSWORD="${crypt}"
+WEAVEDNS_ADDR="${weavedns_addr}"
 SPARK_NODE_ADDR="${spark_node_addr}"
 SPARK_NODE_NAME="${spark_node_name}"
 SPARK_CONTAINER="errordeveloper/weave-spark-${spark_node_role}-minimal:latest"

@@ -1,6 +1,9 @@
 $num_instances=3
 $vb_memory=2048
 
+require 'securerandom'
+$password = SecureRandom.uuid
+
 def genenv_content(count)
   case count
   when 0
@@ -19,15 +22,18 @@ def genenv_content(count)
   spark_node_addr="10.10.1.1#{count}/24"
   elasticsearch_node_addr="10.10.1.2#{count}/24"
 
-  "WEAVE_LAUNCH_ARGS=\"#{known_weave_nodes}\"\n" \
-  "WEAVE_LAUNCH_DNS_ARGS=\"#{weavedns_addr}\"\n" \
-  "SPARK_NODE_ADDR=\"#{spark_node_addr}\"\n" \
-  "SPARK_NODE_NAME=\"#{spark_node_name}\"\n" \
-  "SPARK_CONTAINER=\"errordeveloper/weave-spark-#{spark_node_role}-minimal:latest\"\n" \
-  "SPARK_CONTAINER_ARGS=\"#{spark_container_args}\"\n" \
-  "ELASTICSEARCH_NODE_ADDR=\"#{elasticsearch_node_addr}\"\n" \
-  "ELASTICSEARCH_NODE_NAME=\"elasticsearch-#{count}.weave.local\"\n" \
-  "ELASTICSEARCH_CONTAINER=\"errordeveloper/weave-twitter-river-minimal:latest\"\n"
+  %W(
+    WEAVE_PEERS="#{known_weave_nodes}"
+    WEAVE_PASSWORD="#{$password}"
+    WEAVEDNS_ADDR="#{weavedns_addr}"
+    SPARK_NODE_ADDR="#{spark_node_addr}"
+    SPARK_NODE_NAME="#{spark_node_name}"
+    SPARK_CONTAINER="errordeveloper/weave-spark-#{spark_node_role}-minimal:latest"
+    SPARK_CONTAINER_ARGS="#{spark_container_args}"
+    ELASTICSEARCH_NODE_ADDR="#{elasticsearch_node_addr}"
+    ELASTICSEARCH_NODE_NAME="elasticsearch-#{count}.weave.local"
+    ELASTICSEARCH_CONTAINER="errordeveloper/weave-twitter-river-minimal:latest"
+  ).join("\n")
 end
 
 def genenv(count)

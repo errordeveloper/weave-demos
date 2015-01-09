@@ -20,11 +20,12 @@ coreos:
         Requires=install-weave.service
         [Service]
         EnvironmentFile=/etc/weave.env
-        ExecStartPre=/opt/bin/weave launch $WEAVE_LAUNCH_ARGS
-        ExecStartPre=/opt/bin/weave launch-dns $WEAVE_LAUNCH_DNS_ARGS -debug
+        ExecStartPre=/opt/bin/weave launch $WEAVE_PEERS
+        ExecStartPre=/opt/bin/weave launch-dns $WEAVEDNS_ADDR
         ExecStart=/usr/bin/docker logs -f weave
         SuccessExitStatus=2
         ExecStop=/opt/bin/weave stop
+        ExecStop=/opt/bin/weave stop-dns
 
     - name: elasticsearch.service
       content: |
@@ -81,7 +82,7 @@ coreos:
         Type=oneshot
         RemainAfterExit=yes
         ExecStartPre=/usr/bin/wget -N -P /opt/bin \
-            https://raw.github.com/zettio/weave/master/weave 
+            https://raw.github.com/zettio/weave/master/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStart=/bin/echo Weave Installed
 
@@ -106,6 +107,7 @@ write_files:
       PRE_FETCH_CONTAINER_IMAGES="\
         zettio/weave:latest \
         zettio/weavedns:latest \
+        zettio/weavetools:latest \
         errordeveloper/weave-spark-master-minimal:latest \
         errordeveloper/weave-worker-master-minimal:latest \
         errordeveloper/weave-shell-master-minimal:latest \
