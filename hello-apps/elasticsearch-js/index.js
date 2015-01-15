@@ -65,7 +65,7 @@ server.post('/hello/:name', function (req, res, next) {
     if (error) {
       res.send(500, { msg: error.message });
     } else {
-      res.send(201, { msg: server_res });
+      res.send(201, { msg: es_res });
     }
   });
   return next();
