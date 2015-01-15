@@ -1,5 +1,5 @@
 var elasticsearch = require('elasticsearch');
-var client = new elasticsearch.Client({
+var es = new elasticsearch.Client({
     hosts: [ 'es-1.weave.local:9200', 'es-2.weave.local:9200', 'es-3.weave.local:9200', ],
       log: 'trace'
 });
@@ -14,7 +14,7 @@ server.use(restify.bodyParser({ mapParams: false }));
 
 server.listen(80);
 
-client.ping({
+es.ping({
   requestTimeout: 1000,
   // undocumented params are appended to the query string
   hello: "elasticsearch!"
@@ -26,7 +26,7 @@ client.ping({
   }
 });
 
-client.indices.create({
+es.indices.create({
   index: "hello",
 }, function (error) {
   if (error) {
@@ -37,7 +37,7 @@ client.indices.create({
 });
 
 server.post('/hello/:name', function (req, res, next) {
-  client.create({
+  es.create({
     index: 'hello',
     type: 'json',
     //id: 'h1',
@@ -46,31 +46,31 @@ server.post('/hello/:name', function (req, res, next) {
       published: true,
       text: req.body,
     },
-  }, function (error, response) {
+  }, function (error, es_res) {
     if (error) {
       res.send(500, { msg: error.message });
     } else {
-      res.send(201, { msg: 'created' });
+      res.send(201, { msg: server_res });
     }
   });
   return next();
 });
 
 server.get('/hello/:name', function (req, res, next) {
-  client.search({
+  es.search({
     index: 'hello',
     type: 'json',
     //id: 'h1',
     q: "title:"+req.params.name,
-  }, function (error, response) {
+  }, function (error, es_res) {
     if (error) {
       res.send(500, { msg: error.message });
     } else {
-      if (response.hits.total === 1) {
-        res.send(200, { msg: response.hits.hits[0]._source.text });
-      } else if (response.hits.total === 0) {
+      if (es_res.hits.total === 1) {
+        res.send(200, { msg: es_res.hits.hits[0]._source.text });
+      } else if (es_res.hits.total === 0) {
         res.send(404, { msg: "There're none of those, I'm afraid!" });
-      } else if (response.hits.total > 1) {
+      } else if (es_re.hits.total > 1) {
         res.send(500, { msg: "There're too many of those, I'm sorry!" });
       }
     }
