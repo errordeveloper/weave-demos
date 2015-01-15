@@ -36,6 +36,21 @@ es.indices.create({
   }
 });
 
+server.get('/', function (req, res, next) {
+  es.nodes.info({
+    human: true,
+    metrics: [ 'host', 'ip' ],
+  }, function (error, es_res) {
+    if (error) {
+      res.send(500, { msg: error.message });
+    } else {
+    //res.send(200, { msg: "ElasticSearch cluster has _ nodes and all are well!" });
+      res.send(200, es_res);
+    }
+  });
+  return next();
+});
+
 server.post('/hello/:name', function (req, res, next) {
   es.create({
     index: 'hello',
