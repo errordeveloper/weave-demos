@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 for i in 1 2 3 ; do
   ip_addr="10.10.1.${i}/24"
