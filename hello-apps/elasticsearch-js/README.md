@@ -215,4 +215,4 @@ curl localhost:9200/_cat/nodes
 ```
 and you will see the same list of nodes as show above.
  
-You can now [download and extract the Kibana release](http://www.elasticsearch.org/overview/kibana/installation/) and use it with the default URL. To use a plugin, you would need to modify the container image, which is outside of the scope here.
+You can now [download and extract the Kibana release](http://www.elasticsearch.org/overview/kibana/installation/) and use it with the default URL. To use a plugin, you would need to install it on the container image, which is outside of the scope here.
