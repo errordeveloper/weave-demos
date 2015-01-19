@@ -18,7 +18,6 @@ server.listen(8080);
 
 es.ping({
   requestTimeout: 1000,
-  // undocumented params are appended to the query string
   hello: "elasticsearch!"
 }, function (error) {
   if (error) {
@@ -52,9 +51,9 @@ server.get('/', function (req, res, next) {
   return next();
 });
 
-server.get('/search/:name', function (req, res, next) {
-  if (req.params.name !== "") {
-    t = req.params.name;
+server.get('/search/:title', function (req, res, next) {
+  if (req.params.title !== "") {
+    t = req.params.title;
   } else {
     t = "*";
   }
@@ -87,12 +86,12 @@ server.get('/search/:name', function (req, res, next) {
   return next();
 });
 
-server.post('/hello/:name', function (req, res, next) {
+server.post('/hello/:title', function (req, res, next) {
   es.create({
     index: 'hello',
     type: 'json',
     body: {
-      title: req.params.name,
+      title: req.params.title,
       published: true,
       text: req.body,
     },
@@ -106,11 +105,21 @@ server.post('/hello/:name', function (req, res, next) {
   return next();
 });
 
-server.get('/hello/:name', function (req, res, next) {
+server.get('/hello/:title', function (req, res, next) {
+  var redirect = function() {
+    res.header('Location', '/search/'+req.params.title);
+    res.send(302, { msg: "There're too many of those, I'm sorry! But you can try `GET /search/:title` ;)" });
+  }
+
+  if (req.params.title === "") {
+    redirect();
+    return next();
+  }
+
   es.search({
     index: 'hello',
     type: 'json',
-    q: "title:"+req.params.name,
+    q: "title:"+req.params.title,
   }, function (error, es_res) {
     if (error) {
       res.send(500, { msg: error.message });
@@ -120,7 +129,7 @@ server.get('/hello/:name', function (req, res, next) {
       } else if (es_res.hits.total === 0) {
         res.send(404, { msg: "There're none of those, I'm afraid!" });
       } else if (es_res.hits.total > 1) {
-        res.send(500, { msg: "There're too many of those, I'm sorry! But you can try `/search/:name` ;)" });
+        redirect();
       }
     }
   });
