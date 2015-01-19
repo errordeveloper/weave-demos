@@ -31,7 +31,7 @@ sudo weave run \
     errordeveloper/weave-elasticsearch-minimal:latest
 ```
 
-_NOTE: the above command uses a container of my own, however you can use any other, given you have set configuration options correctly. Please refer to my [Dockerfile](https://github.com/errordeveloper/weave-demos/blob/master/java-containers/elasticsearch/Dockerfile#L32-L33) for details._
+_NOTE: the above command uses a container of my own, however you can use any other, given you have set configuration options correctly. Please refer to my Dockerfile lines [16](https://github.com/errordeveloper/weave-demos/blob/d2c2a00/java-containers/elasticsearch/Dockerfile#L16) and [33-35](https://github.com/errordeveloper/weave-demos/blob/d2c2a00/java-containers/elasticsearch/Dockerfile#L33-L35) and  for details._
 
 You would substitute `X` with 1, 2 and 3 for each of the nodes. To keep it simple for you, I have created a little shell script that starts all 3 of these:
 
@@ -215,8 +215,8 @@ curl localhost:9200/_cat/nodes
 ```
 and you will see the same list of nodes as show above.
  
-You can now [download and extract the Kibana release](http://www.elasticsearch.org/overview/kibana/installation/) and use it with the default URL. To use a plugin, you would need to install it on the container image, which is outside of the scope here.
+You can now [download and extract the Kibana release](http://www.elasticsearch.org/overview/kibana/installation/) and use it with the default URL. To use a plugin, you would need to install it on the container image, which is outside of the scope here to go into detail, but if you are not sure you can look at [one of my other examples](https://github.com/errordeveloper/weave-demos/blob/d2c2a00/java-containers/elasticsearch-river-twitter/Dockerfile).
 
 ### Running multiple clusters
 
-There could be different reason why you may wish to run multiple clusters of Elasticsearch on the infrastructure. It might happen that someone wants to try something for the project of their own and you'd prefer they don't mess with your data, or you may wish to utilise Weave's isolation for spinning up a new version of Elasticsearch in production, while keeping previous version running. In any case, it's rather simple to do with Weave and you can see how it can be done with a simple shell script ([run_elasticsearch_2_clusters.sh](https://github.com/errordeveloper/weave-demos/blob/master/hello-apps/elasticsearch-js/scripts/run_elasticsearch_2_clusters.sh)).
+There could be different reasons why you may wish to run multiple clusters of Elasticsearch on the infrastructure. It might happen that someone wants to try something for the project of their own and you'd prefer they don't mess with your data, or you may wish to utilise Weave's isolation for spinning up a new version of Elasticsearch in production, while keeping previous version running. In any case, it's rather simple to do with Weave and you can see how it can be done with a simple shell script ([run_elasticsearch_2_clusters.sh](https://github.com/errordeveloper/weave-demos/blob/d2c2a00/hello-apps/elasticsearch-js/scripts/run_elasticsearch_2_clusters.sh)).
