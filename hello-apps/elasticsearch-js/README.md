@@ -67,10 +67,7 @@ var es = new elasticsearch.Client({
 });
 ```
 
-> ***Advanced Topics***
->
-> - If you require to re-organise the IP addresses, e.g. you are already using the `10.10.1.0/24` subnet elsewhere,  you can change the IP assigned to each of these, but keep the DNS names identical. This requires no code changes.
-> - If you wish to run multiple clusters on the same network, you will need to change the cluster name (replace `-Des.cluster.name=elasticsearch` with `-Des.cluster.name=es-team1` in Dockerfile) and add a subdomain to your naming scheme, i.e. instead of passing `-h es-1.weave.local` to weave run, use `-h es-1.team1.weave.local`.
+DNS in Weave is much more dynamic then traditional DNS, any container on the network gets a DNS record automatically, there is no management tools or in-app self-registration required. It will make your app config more human-friendly and the underlying IP addresses can be re-organised transparently when needed.
 
 Let's deploy it on `core-01`:
 
@@ -78,7 +75,6 @@ Let's deploy it on `core-01`:
 git clone https://github.com/errordeveloper/weave-demos
 cd weave-demos/hello-apps/elasticsearch-js/
 ```
-
 
 First, run a build script that will install the dependencies and create a new container that you can run.
 
@@ -200,7 +196,9 @@ All done, have fun weaving Elasticsearch and Node.js (or IO.js) apps!
 
 In this post, I have demonstrated how Weave helps with deploying a distributed database engine and an example of a microservice to go along with it. Weave makes it very easy to run containerised applications on any network, in particular, for Elasticsearch it enables out-of-the-box discovery mechanism to work and provides DNS for apps to find the database wherever it lives on the network. We would love to hear about your usecases, do get in touch with [team@weave.works](mailto:team@weave.works) and make sure to follow [@weaveworks](https://twitter.com/weaveworks) on twitter.
 
-## Appendix - Using Kibana or plugins
+## Appendix
+
+### Using Kibana or plugins
 
 I have shown how you can access Elasticsearch API on Weave network from the Docker host by running `weave expose 10.10.1.100/24`. If you want to access it from your own machine and hook-up Kibana or use BigDesk or other plugins through your browser, you will need to setup port forwarding.
 
@@ -218,3 +216,7 @@ curl localhost:9200/_cat/nodes
 and you will see the same list of nodes as show above.
  
 You can now [download and extract the Kibana release](http://www.elasticsearch.org/overview/kibana/installation/) and use it with the default URL. To use a plugin, you would need to install it on the container image, which is outside of the scope here.
+
+### Running multiple clusters
+
+There could be different reason why you may wish to run multiple clusters of Elasticsearch on the infrastructure. It might happen that someone wants to try something for the project of their own and you'd prefer they don't mess with your data, or you may wish to utilise Weave's isolation for spinning up a new version of Elasticsearch in production, while keeping previous version running. In any case, it's rather simple to do with Weave and you can see how it can be done with a simple shell script ([run_elasticsearch_2_clusters.sh](https://github.com/errordeveloper/weave-demos/blob/master/hello-apps/elasticsearch-js/scripts/run_elasticsearch_2_clusters.sh)).
