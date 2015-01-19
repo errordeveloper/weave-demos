@@ -30,9 +30,10 @@ sudo weave run \
     --hostname=es-X.weave.local \
     errordeveloper/weave-elasticsearch-minimal:latest
 ```
+
 _NOTE: the above command uses a container of my own, however you can use any other, given you have set configuration options correctly. Please refer to my [Dockerfile](https://github.com/errordeveloper/weave-demos/blob/master/java-containers/elasticsearch/Dockerfile#L32-L33) for details._
 
-To keep it simple for you, I have created a little shell script that starts all 3 of these:
+You would substitute `X` with 1, 2 and 3 for each of the nodes. To keep it simple for you, I have created a little shell script that starts all 3 of these:
 
 ```
 cd ../hello-apps/elasticsearch-js/
@@ -75,7 +76,7 @@ Let's deploy it on `core-01`:
 
 ```
 git clone https://github.com/errordeveloper/weave-demos
-cd weave-demos/hello-apps/elasticsearch-js/
+cd weave-demos/hello-apps/elasticsearch-js/
 ```
 
 
