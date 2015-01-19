@@ -68,4 +68,26 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get update
   #   sudo apt-get install -y apache2
   # SHELL
+  config.vm.provision 'shell', privileged: true,
+    inline: 'snappy install docker'
+  config.vm.provision "file",
+    source: "profile_docker",
+    destination: "/tmp/profile_docker"
+
+  profile_docker_path = '/var/lib/apparmor/profiles/profile_docker_docker_1.3.3.001'
+  config.vm.provision "shell", privileged: true,
+    inline: "mv /tmp/profile_docker #{profile_docker_path} && apparmor_parser -v -r #{profile_docker_path}"
+
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    docker pull errordeveloper/curl:latest
+    docker run errordeveloper/curl:latest curl \
+      --location \
+      --silent \
+      --insecure \
+      https://github.com/zettio/weave/releases/download/latest_release/weave \
+      > ~/weave
+    chmod +x ~/weave
+    sudo env PATH=$PATH ./weave launch
+    #sudo env PATH=$PATH ./weave launch-dns 10.20.1.1/16
+  SHELL
 end
