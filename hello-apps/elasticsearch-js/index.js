@@ -1,7 +1,6 @@
 var elasticsearch = require('elasticsearch');
 var es = new elasticsearch.Client({
-    //hosts: [ 'es-1.weave.local:9200', 'es-2.weave.local:9200', 'es-3.weave.local:9200', ],
-  host: 'localhost:9200',
+    hosts: [ 'es-1.weave.local:9200', 'es-2.weave.local:9200', 'es-3.weave.local:9200', ],
       log: 'trace'
 });
 
@@ -13,8 +12,7 @@ var server = restify.createServer({
 
 server.use(restify.bodyParser({ mapParams: false }));
 
-//server.listen(80);
-server.listen(8080);
+server.listen(80);
 
 es.ping({
   requestTimeout: 1000,
