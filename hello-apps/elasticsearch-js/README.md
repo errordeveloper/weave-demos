@@ -105,6 +105,7 @@ The API defined by our app is pretty simple:
    - `GET /` will give you some basic info about the database cluster
    - `POST /hello/:title` will store body in a document with title `:title`
    - `GET /hello/:title` will retrieve contents of document with tile `:title`
+   - `GET /search/:title` will search by title
 
 So let's create our first document:
 
