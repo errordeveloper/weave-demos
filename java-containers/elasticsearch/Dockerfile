@@ -31,6 +31,7 @@ CMD [ \
   "-Des.path.data=/data", \
   "-Des.network.bind_host=_ethwe:ipv4_", \
   "-Des.network.publish_host=_ethwe:ipv4_", \
+  "-Des.discovery.zen.ping.multicast.address=_ethwe:ipv4_", \
   "-Des.cluster.name=elasticsearch", \
   "-Des.http.cors.enabled=true", \
   "-cp", ":/usr/elasticsearch/lib/elasticsearch-*.jar:/usr/elasticsearch/lib/*:/usr/elasticsearch/lib/sigar/*", \
