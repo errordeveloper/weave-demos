@@ -4,7 +4,7 @@ tags: nodejs, iojs, javascript, docker, coreos, guide, elasticsearch, vagrant, c
 published: false
 ---
 
-This guide will demonstrate how to deploy an Elasticsearch cluster on Weave as well as a JavaScript microservice application for it.
+This guide will demonstrate how to deploy an [Elasticsearch](http://www.elasticsearch.org/) cluster on [Weave](https://github.com/zettio/weave#weave---the-docker-network) as well as a JavaScript microservice application for it.
 
 There are a few major advantages of using Weave for Elasticsearch. Firstly, you will gain [Zen discovery](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-discovery-zen.html) working out of the box on any infrastructure. Secondly, you can encrypt the communication and avoid having to setup authentication and an HTTPS proxy. Additionally, you can also run a number of clusters across any number of hosts, which can be particularly useful in development, where teams want to have their own cluster instances but the number of physical machines is limited. There are other advantages of using Weave, however the above are the most critical for Elasticsearch.
 
