@@ -31,7 +31,7 @@ sudo weave run \
     errordeveloper/weave-elasticsearch-minimal:latest
 ```
 
-_NOTE: the above command uses a container of my own, however you can use any other, given you have set configuration options correctly. Please refer to my Dockerfile lines [16](https://github.com/errordeveloper/weave-demos/blob/d2c2a00/java-containers/elasticsearch/Dockerfile#L16) and [33-35](https://github.com/errordeveloper/weave-demos/blob/d2c2a00/java-containers/elasticsearch/Dockerfile#L33-L35) and  for details._
+> _NOTE: the above command uses a container of my own, however you can use any other, given you have set configuration options correctly. Please refer to my Dockerfile lines [16](https://github.com/errordeveloper/weave-demos/blob/d2c2a00/java-containers/elasticsearch/Dockerfile#L16) and [33-35](https://github.com/errordeveloper/weave-demos/blob/d2c2a00/java-containers/elasticsearch/Dockerfile#L33-L35) and  for details._
 
 You would substitute `X` with 1, 2 and 3 for each of the nodes. To keep it simple for you, I have created a little shell script that starts all 3 of these:
 
