@@ -1,7 +1,7 @@
 ---
 title: Elasticsearch and Weave
 tags: nodejs, iojs, javascript, docker, coreos, guide, elasticsearch, vagrant, coreos
-published: false
+published: true
 ---
 
 This guide will demonstrate how to deploy an [Elasticsearch](http://www.elasticsearch.org/) cluster on [Weave](https://github.com/zettio/weave#weave---the-docker-network) as well as a JavaScript microservice application for it.
