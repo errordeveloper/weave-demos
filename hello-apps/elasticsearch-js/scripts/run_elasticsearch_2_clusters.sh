@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(git rev-parse --show-toplevel)/felix
+
 for t in 1 2; do
   team="team-${t}"
   for i in 1 2 3 ; do

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(git rev-parse --show-toplevel)/felix
+
 for i in 1 2 3 ; do
   ip_addr="10.10.1.${i}/24"
   hostname="es-${i}.weave.local"
