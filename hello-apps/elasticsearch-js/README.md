@@ -2,7 +2,6 @@
 title: Elasticsearch, Weave and Docker
 tags: nodejs, iojs, javascript, docker, coreos, guide, usecase, elasticsearch, vagrant, coreos
 published: true
-categories: Guide
 ---
 
 This guide will demonstrate how to deploy an [Elasticsearch](http://www.elasticsearch.org/) cluster on [Weave](https://github.com/zettio/weave#weave---the-docker-network) as well as a JavaScript microservice application for it.
@@ -102,7 +101,7 @@ The API defined by our app is pretty simple:
 
    - `GET /` will give you some basic info about the database cluster
    - `POST /hello/:title` will store body in a document with title `:title`
-   - `GET /hello/:title` will retrieve contents of document with tile `:title`
+   - `GET /hello/:title` will retrieve contents of document with title `:title`
    - `GET /search/:title` will search by title
 
 So let's create our first document:
@@ -160,7 +159,7 @@ curl -s \
   --request GET \
   http://172.17.8.101/hello/sample1
 {
-  "msg": "There're too many of those, I'm sorry! But you can try `/search/:title` ;)"
+  "msg": "There're too many of those, I'm sorry! But you can try `/hello/_search/:title` ;)"
 }
 ```
 
@@ -169,7 +168,7 @@ So we no longer can use `GET /hello/:title`, however search comes to rescue:
 ```
 curl -s \
   --request GET \
-  http://172.17.8.101/search/sample1
+  http://172.17.8.101/hello/_search/sample1
 {
   "msg": "Found 2 matching documents...",
   "hits": [
