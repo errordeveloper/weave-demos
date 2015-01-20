@@ -49,7 +49,7 @@ server.get('/', function (req, res, next) {
   return next();
 });
 
-server.get('/search/:title', function (req, res, next) {
+server.get('/hello/_search/:title', function (req, res, next) {
   if (req.params.title !== "") {
     t = req.params.title;
   } else {
@@ -105,8 +105,8 @@ server.post('/hello/:title', function (req, res, next) {
 
 server.get('/hello/:title', function (req, res, next) {
   var redirect = function() {
-    res.header('Location', '/search/'+req.params.title);
-    res.send(302, { msg: "There're too many of those, I'm sorry! But you can try `GET /search/:title` ;)" });
+    res.header('Location', '/hello/_search/'+req.params.title);
+    res.send(302, { msg: "There're too many of those, I'm sorry! But you can try `GET /hello/_search/:title` ;)" });
   }
 
   if (req.params.title === "") {
