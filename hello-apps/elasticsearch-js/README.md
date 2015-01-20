@@ -1,5 +1,5 @@
 ---
-title: Elasticsearch and Weave
+title: Elasticsearch, Weave and Docker
 tags: nodejs, iojs, javascript, docker, coreos, guide, elasticsearch, vagrant, coreos
 published: true
 ---
