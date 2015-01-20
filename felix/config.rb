@@ -40,6 +40,13 @@ if File.exists?('cloud-config.yaml') && ARGV[0].eql?('up')
 
     data['write_files'] = $num_instances.times.map { |x| genenv(x) }
 
+    data['write_files'] << {
+      'path' => '/run/docker_opts.env',
+      'permissions' => '0600',
+      'owner' => 'root',
+      'content' => "DOCKER_OPTS='--insecure-registry=\"0.0.0.0/0\" --icc=false'\n"
+    }
+
     open('user-data', 'w') do |f|
       lines = YAML.dump(data).split("\n")
       lines[0] = '#cloud-config'
