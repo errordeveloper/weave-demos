@@ -1,6 +1,6 @@
 ---
 title: Elasticsearch, Weave and Docker
-tags: nodejs, iojs, javascript, docker, coreos, guide, usecase, elasticsearch, vagrant, coreos
+tags: nodejs, iojs, javascript, docker, coreos, guide, usecase, elasticsearch, vagrant, coreos, bigdata
 published: true
 ---
 
