@@ -74,12 +74,19 @@ Vagrant.configure(2) do |config|
   config.vm.provision 'shell', privileged: true,
     inline: 'snappy install /tmp/docker_1.4.1.001_amd64.snap'
   config.vm.provision "file",
-    source: "profile_docker",
-    destination: "/tmp/profile_docker"
+    source: "docker.profile",
+    destination: "/tmp/docker.profile"
 
   profile_docker_path = '/var/lib/apparmor/profiles/profile_docker_docker_1.4.1.001'
   config.vm.provision "shell", privileged: true,
-    inline: "mv /tmp/profile_docker #{profile_docker_path} && apparmor_parser -v -r #{profile_docker_path}"
+    inline: "mv /tmp/docker.profile #{profile_docker_path} && apparmor_parser -v -r #{profile_docker_path}"
+
+  config.vm.provision "file",
+    source: "weave.profile",
+    destination: "/tmp/weave.profile"
+
+  config.vm.provision "shell", privileged: true,
+    inline: "apparmor_parser -v -r /tmp/weave.profile"
 
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
     docker pull errordeveloper/curl:latest
@@ -90,7 +97,8 @@ Vagrant.configure(2) do |config|
       https://github.com/zettio/weave/releases/download/latest_release/weave \
       > ~/weave
     chmod +x ~/weave
-    sudo env PATH=$PATH ./weave launch
+    #sudo env PATH=$PATH ./weave launch
+    #aa-exec -p weave -- ./weave launch
     #sudo env PATH=$PATH ./weave launch-dns 10.20.1.1/16
   SHELL
 end

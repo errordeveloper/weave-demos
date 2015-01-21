@@ -145,7 +145,8 @@ profile "docker_docker_1.4.1.001" (attach_disconnected) {
   /dev/mapper/ r,
   /dev/mqueue/ r,
 
-  #@{PROC} r,
+  /proc r, # for some reason only this works and not @{PROC} or anything
+
   change_profile -> unconfined,
   ptrace (read) peer=unconfined,
   signal (send) peer=unconfined,
