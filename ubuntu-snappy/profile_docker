@@ -146,4 +146,7 @@ profile "docker_docker_1.4.1.001" (attach_disconnected) {
   /dev/mqueue/ r,
 
   #@{PROC} r,
+  change_profile -> unconfined,
+  ptrace (read) peer=unconfined,
+  signal (send) peer=unconfined,
 }
