@@ -14,4 +14,5 @@ profile weave (attach_disconnected) {
   signal,
   ptrace,
   unix,
+  change_profile -> docker_docker_*,
 }
