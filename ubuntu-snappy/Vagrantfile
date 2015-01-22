@@ -97,8 +97,7 @@ Vagrant.configure(2) do |config|
       https://github.com/zettio/weave/releases/download/latest_release/weave \
       > ~/weave
     chmod +x ~/weave
-    #sudo env PATH=$PATH ./weave launch
-    #aa-exec -p weave -- ./weave launch
+    sudo env PATH=$PATH aa-exec -p weave -- ./weave launch
     #sudo env PATH=$PATH ./weave launch-dns 10.20.1.1/16
   SHELL
 end
