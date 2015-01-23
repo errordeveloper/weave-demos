@@ -1,6 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+KUBE_RELEASE_VERSION = 'v0.8.2'
+KUBE_RELEASE_TARBALL_URL = "https://github.com/GoogleCloudPlatform/kubernetes/releases/download/#{KUBE_RELEASE_VERSION}/kubernetes.tar.gz"
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -64,8 +67,21 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   sudo apt-get update
-  #   sudo apt-get install -y apache2
-  # SHELL
+  config.vm.provision "shell", privileged: true, inline: <<-SHELL
+    mkdir -p /opt/
+    curl -s -L #{KUBE_RELEASE_TARBALL_URL} | tar xzv -C /tmp/
+    tar xzvf /tmp/kubernetes/server/kubernetes-server-linux-amd64.tar.gz -C /opt
+    ln -s /opt/kubernetes/server/bin/kubectl /usr/local/bin/
+    mv /tmp/kubernetes/examples/guestbook /home/vagrant/guestbook-example
+    rm -rf /tmp/kubernetes
+    curl https://raw.github.com/zettio/weave/master/weave /usr/local/sbin/weave
+    chmod +x /usr/local/sbin/weave
+    weave create-bridge
+    ip addr add dev weave 10.9.1.1/24
+    ip route add 10.9.0.0/16 dev weave scope link
+    ip route add 224.0.0.0/4 dev weave
+  SHELL
+
+  config.vm.provision "docker", images: [ "zettio/weave", "zettio/weavetools" ]
+
 end
