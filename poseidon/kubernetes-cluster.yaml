@@ -181,7 +181,7 @@ coreos:
         ExecStartPre=/usr/bin/ip addr add dev weave $BRIDGE_ADDRESS_CIDR
         ExecStartPre=/usr/bin/ip route add $BREAKOUT_ROUTE dev weave scope link
         ExecStartPre=/usr/bin/ip route add 224.0.0.0/4 dev weave
-        ExecStart=/usr/bin/docker --daemon --storage-driver=btrfs -H fd:// --bridge=weave --iptables=false --ip-masq=false -r=false
+        ExecStart=/usr/bin/docker --daemon -H fd:// --bridge=weave --iptables=false --ip-masq=false -r=false
 
         [Install]
         WantedBy=multi-user.target
