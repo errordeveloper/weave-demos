@@ -1,6 +1,11 @@
 #cloud-config
 
 write_files:
+  - path: /run/docker_opts.env
+    permissions: 0644
+    owner: root
+    content: |
+      DOCKER_OPTS='--insecure-registry="0.0.0.0/0" --bridge="weave" -r="false"'
   - path: /etc/weave.core-01.env
     permissions: 0644
     owner: root
@@ -160,13 +165,14 @@ coreos:
         [Install]
         WantedBy=weave-network.target
 
-    - name: docker.service
+    - name: weave-create-bridge.service
       enable: true
       content: |
         [Unit]
         After=network.target
         After=install-weave.service
         Before=weave.service
+        Before=docker.service
         Description=Docker Application Container Engine
         Documentation=http://docs.docker.io
         Requires=network.target
@@ -174,12 +180,10 @@ coreos:
 
         [Service]
         EnvironmentFile=/etc/weave.%H.env
-        ExecStartPre=/bin/mount --make-rprivate /
-        ExecStartPre=/opt/bin/weave create-bridge
-        ExecStartPre=/usr/bin/ip addr add dev weave $BRIDGE_ADDRESS_CIDR
-        ExecStartPre=/usr/bin/ip route add $BREAKOUT_ROUTE dev weave scope link
-        ExecStartPre=/usr/bin/ip route add 224.0.0.0/4 dev weave
-        ExecStart=/usr/bin/docker --daemon -H fd:// --bridge=weave -r=false
+        ExecStart=/opt/bin/weave create-bridge
+        ExecStart=/usr/bin/ip addr add dev weave $BRIDGE_ADDRESS_CIDR
+        ExecStart=/usr/bin/ip route add $BREAKOUT_ROUTE dev weave scope link
+        ExecStart=/usr/bin/ip route add 224.0.0.0/4 dev weave
 
         [Install]
         WantedBy=multi-user.target
