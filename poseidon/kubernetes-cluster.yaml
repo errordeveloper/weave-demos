@@ -114,6 +114,7 @@ coreos:
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.github.com/zettio/weave/master/weave
         ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.github.com/errordeveloper/weave-demos/master/poseidon/weave-helper
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/weave-helper
         ExecStart=/bin/echo Weave Installed
 
         [Install]
