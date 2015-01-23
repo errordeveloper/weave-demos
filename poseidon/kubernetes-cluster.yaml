@@ -5,28 +5,25 @@ write_files:
     permissions: 0644
     owner: root
     content: |
-      WEAVE_LAUCH_ARGS=""
+      WEAVE_PEERS=""
       BRIDGE_ADDRESS_CIDR="10.9.1.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
-      CONTAINER_INTERFACE="eth0"
 
   - path: /etc/weave.core-02.env
     permissions: 0644
     owner: root
     content: |
-      WEAVE_LAUCH_ARGS="172.17.8.101"
+      WEAVE_PEERS="172.17.8.101"
       BRIDGE_ADDRESS_CIDR="10.9.2.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
-      CONTAINER_INTERFACE="eth0"
 
   - path: /etc/weave.core-03.env
     permissions: 0644
     owner: root
     content: |
-      WEAVE_LAUCH_ARGS="172.17.8.101"
+      WEAVE_PEERS="172.17.8.101"
       BRIDGE_ADDRESS_CIDR="10.9.3.1/24"
       BREAKOUT_ROUTE="10.9.0.0/16"
-      CONTAINER_INTERFACE="eth0"
 
 coreos:
   update:
@@ -135,8 +132,7 @@ coreos:
         Requires=install-weave.service
 
         [Service]
-        EnvironmentFile=/etc/weave.%H.env
-        ExecStart=/opt/bin/weave helper $CONTAINER_INTERFACE $BREAKOUT_ROUTE
+        ExecStart=/opt/bin/weave-helper
 
         [Install]
         WantedBy=weave-network.target
@@ -155,7 +151,7 @@ coreos:
         [Service]
         EnvironmentFile=/etc/weave.%H.env
         ExecStartPre=/usr/bin/docker pull zettio/weave:latest
-        ExecStartPre=/opt/bin/weave launch $WEAVE_LAUCH_ARGS
+        ExecStartPre=/opt/bin/weave launch $WEAVE_PEERS
         ExecStart=/usr/bin/docker logs -f weave
         SuccessExitStatus=2
         ExecStop=/opt/bin/weave stop

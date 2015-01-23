@@ -1,16 +1,4 @@
 #!/bin/sh -x
-set -e
-
-[ `id -u` = 0 ] || {
-    echo "weave must be run as 'root'" >&2
-    exit 1
-
-[ $# -eq 2 ] || {
-    echo "Usage:"
-    echo "weave-helper <container_interface>"
-    exit 1
-}
-
 set +e
 
 container_interface="${1:-'eth0'}"
