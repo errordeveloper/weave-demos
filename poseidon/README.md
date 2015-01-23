@@ -13,7 +13,7 @@ vagrant ssh core-01
 
 Now, on the master machine (`core-01`), let’s try deploying the guestbook example.
 
-As part of the provisioning process we have placed Kubernetes examples in your home directory. You should see a symlink called `guestbook-example`, if it’s not there check if a `curl` process is still running.
+As part of the provisioning process we have placed Kubernetes examples in your home directory. You should see a directory called `guestbook-example`, if it’s not there check if a `curl` process is still running.
 
 ```
 core@core-01 ~ $ ls

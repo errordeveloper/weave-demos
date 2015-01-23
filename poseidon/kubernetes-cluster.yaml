@@ -202,9 +202,13 @@ coreos:
         Requires=network-online.target
 
         [Service]
+        Environment=KUBE_RELEASE_TARBALL=https://github.com/GoogleCloudPlatform/kubernetes/releases/download/v0.8.2/kubernetes.tar.gz
         ExecStartPre=/bin/mkdir -p /opt/
-        ExecStart=/bin/bash -c "curl -s -L 'https://github.com/errordeveloper/weave-demos/releases/download/kube-blog-post-1/kube-v0.7.1.txz' | tar xJv -C /opt/"
-        ExecStartPost=/bin/ln -s -f /opt/guestbook-example /home/core/
+        ExecStart=/bin/bash -c "curl -s -L $KUBE_RELEASE_TARBALL | tar xzv -C /tmp/"
+        ExecStart=/bin/tar xzvf /tmp/kubernetes/server/kubernetes-server-linux-amd64.tar.gz -C /opt
+        ExecStartPost=/bin/ln -s /opt/kubernetes/server/bin/kubectl /opt/bin/
+        ExecStartPost=/bin/mv /tmp/kubernetes/examples/guestbook /home/core/guestbook-example
+        ExecStartPost=/bin/rm -rf /tmp/kubernetes
         RemainAfterExit=yes
         Type=oneshot
 
@@ -220,7 +224,7 @@ coreos:
         After=download-kubernetes.service
         Before=controller-manager.service
         Before=scheduler.service
-        ConditionFileIsExecutable=/opt/bin/kube-apiserver
+        ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-apiserver
         Description=Kubernetes API Server
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=etcd.service
@@ -228,13 +232,13 @@ coreos:
         ConditionHost=core-01
 
         [Service]
-        ExecStart=/opt/bin/kube-apiserver \
-        --address=0.0.0.0 \
-        --port=8080 \
-        --etcd_servers=http://127.0.0.1:4001 \
-        --portal_net=10.0.0.0/16 \
-        --cloud_provider=vagrant \
-        --logtostderr=true -v=3
+        ExecStart=/opt/kubernetes/server/bin/kube-apiserver \
+            --address=0.0.0.0 \
+            --port=8080 \
+            --etcd_servers=http://127.0.0.1:4001 \
+            --portal_net=10.0.0.0/16 \
+            --cloud_provider=vagrant \
+            --logtostderr=true -v=3
         Restart=always
         RestartSec=10
 
@@ -247,16 +251,16 @@ coreos:
         [Unit]
         After=apiserver.service
         After=download-kubernetes.service
-        ConditionFileIsExecutable=/opt/bin/kube-scheduler
+        ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-scheduler
         Description=Kubernetes Scheduler
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=apiserver.service
         ConditionHost=core-01
 
         [Service]
-        ExecStart=/opt/bin/kube-scheduler \
-        --logtostderr=true \
-        --master=127.0.0.1:8080
+        ExecStart=/opt/kubernetes/server/bin/kube-scheduler \
+            --logtostderr=true \
+            --master=127.0.0.1:8080
         Restart=always
         RestartSec=10
 
@@ -270,7 +274,7 @@ coreos:
         After=etcd.service
         After=download-kubernetes.service
         After=apiserver.service
-        ConditionFileIsExecutable=/opt/bin/kube-controller-manager
+        ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-controller-manager
         Description=Kubernetes Controller Manager
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=apiserver.service
@@ -280,11 +284,11 @@ coreos:
 
         [Service]
         ExecStartPre=/bin/bash -x -c 'result=`wget --retry-connrefused --tries=5 127.0.0.1:8080/healthz -O -` && test -n "$${result}" && test "$${result}" = ok'
-        ExecStart=/opt/bin/kube-controller-manager \
-        --machines=172.17.8.101,172.17.8.102,172.17.8.103 \
-        --cloud_provider=vagrant \
-        --master=127.0.0.1:8080 \
-        --logtostderr=true
+        ExecStart=/opt/kubernetes/server/bin/kube-controller-manager \
+            --machines=172.17.8.101,172.17.8.102,172.17.8.103 \
+            --cloud_provider=vagrant \
+            --master=127.0.0.1:8080 \
+            --logtostderr=true
         Restart=always
         RestartSec=10
 
@@ -296,19 +300,19 @@ coreos:
         [Unit]
         After=etcd.service
         After=download-kubernetes.service
-        ConditionFileIsExecutable=/opt/bin/kubelet
+        ConditionFileIsExecutable=/opt/kubernetes/server/bin/kubelet
         Description=Kubernetes Kubelet
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=etcd.service
         Wants=download-kubernetes.service
 
         [Service]
-        ExecStart=/opt/bin/kubelet \
-        --address=0.0.0.0 \
-        --port=10250 \
-        --hostname_override=$public_ipv4 \
-        --etcd_servers=http://127.0.0.1:4001 \
-        --logtostderr=true
+        ExecStart=/opt/kubernetes/server/bin/kubelet \
+            --address=0.0.0.0 \
+            --port=10250 \
+            --hostname_override=$public_ipv4 \
+            --etcd_servers=http://127.0.0.1:4001 \
+            --logtostderr=true
         Restart=always
         RestartSec=10
 
@@ -320,14 +324,14 @@ coreos:
         [Unit]
         After=etcd.service
         After=download-kubernetes.service
-        ConditionFileIsExecutable=/opt/bin/kube-proxy
+        ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-proxy
         Description=Kubernetes Proxy
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=etcd.service
         Wants=download-kubernetes.service
 
         [Service]
-        ExecStart=/opt/bin/kube-proxy --etcd_servers=http://127.0.0.1:4001 --logtostderr=true
+        ExecStart=/opt/kubernetes/server/bin/kube-proxy --etcd_servers=http://127.0.0.1:4001 --logtostderr=true
         Restart=always
         RestartSec=10
 
