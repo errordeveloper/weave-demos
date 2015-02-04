@@ -116,8 +116,17 @@ coreos:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.github.com/zettio/weave/master/weave
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://raw.github.com/errordeveloper/weave-demos/master/poseidon/weave-helper
+        ExecStartPre=/bin/mkdir -p /opt/bin/
+        ExecStartPre=/usr/bin/curl \
+          --silent \
+          --location \
+          https://github.com/zettio/weave/releases/download/latest_release/weave \
+          --output /opt/bin/weave
+        ExecStartPre=/usr/bin/curl \
+          --silent \
+          --location \
+          https://raw.github.com/errordeveloper/weave-demos/master/poseidon/weave-helper \
+          --output /opt/bin/weave-helper
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave-helper
         ExecStart=/bin/echo Weave Installed
@@ -205,7 +214,7 @@ coreos:
         Requires=network-online.target
 
         [Service]
-        Environment=KUBE_RELEASE_TARBALL=https://github.com/GoogleCloudPlatform/kubernetes/releases/download/v0.8.2/kubernetes.tar.gz
+        Environment=KUBE_RELEASE_TARBALL=https://github.com/GoogleCloudPlatform/kubernetes/releases/download/v0.9.3/kubernetes.tar.gz
         ExecStartPre=/bin/mkdir -p /opt/
         ExecStart=/bin/bash -c "curl -s -L $KUBE_RELEASE_TARBALL | tar xzv -C /tmp/"
         ExecStart=/bin/tar xzvf /tmp/kubernetes/server/kubernetes-server-linux-amd64.tar.gz -C /opt
@@ -241,7 +250,7 @@ coreos:
             --etcd_servers=http://127.0.0.1:4001 \
             --portal_net=10.0.0.0/16 \
             --cloud_provider=vagrant \
-            --logtostderr=true -v=3
+            --logtostderr=true --v=3
         Restart=always
         RestartSec=10
 
