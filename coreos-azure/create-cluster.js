@@ -13,8 +13,6 @@ var coreos_image_ids = {
 var AzureCli = require('azure-cli');
 var cli = new AzureCli();
 
-process.argv.shift(2);
-
 var weave_salt = function make_weave_salt () {
   var crypto = require('crypto');
   var shasum = crypto.createHash('sha256');
@@ -63,7 +61,7 @@ var make_node_config = function (n) {
     salt: weave_salt,
   };
 
-  elected_node = 0;
+  var elected_node = 0;
   if (n === elected_node) {
     weave_env.peers = "";
   } else {
@@ -81,10 +79,8 @@ var node_count = 3;
 
 write_cloud_config_data(_(node_count).times(make_node_config));
 
-
 var vm_name_arg = _.template("--vm-name=<%= name %>")
 var vm_ssh_port = _.template("--ssh=<%= port %>")
-
 
 var tasks = {
   todo: _(node_count).times(function (n) {
