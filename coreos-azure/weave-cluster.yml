@@ -1,32 +1,6 @@
 #cloud-config
 
-write_files:
-  - path: /etc/weave.core-01.env
-    permissions: 0644
-    owner: root
-    content: |
-      WEAVE_PEERS=""
-      WEAVEDNS_ADDR="10.10.1.1/16"
-  - path: /etc/weave.core-02.env
-    permissions: 0644
-    owner: root
-    content: |
-      WEAVE_PEERS="core-01"
-      WEAVEDNS_ADDR="10.10.1.2/16"
-  - path: /etc/weave.core-03.env
-    permissions: 0644
-    owner: root
-    content: |
-      WEAVE_PEERS="core-01"
-      WEAVEDNS_ADDR="10.10.1.3/16"
-
 coreos:
-  update:
-    ## NB: You should enable updates in production
-    ## Terraform already takes care of static IPs
-    ## in GCE, so it should be safe for weave nodes
-    ## to rejoin after reboot
-    #reboot-strategy: 'off'
   etcd:
     # generate a new token for each unique cluster from https://discovery.etcd.io/new
     # uncomment the following line and replace it with your discovery URL
@@ -44,10 +18,6 @@ coreos:
     # allow etcd to slow down at times
     etcd_request_timeout: 3
   units:
-  - name: etcd.service
-    command: start
-  - name: fleet.service
-    command: start
   - name: format-ephemeral.service
     command: start
     content: |
