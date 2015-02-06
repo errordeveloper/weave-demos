@@ -63,10 +63,11 @@ var make_node_config = function (n) {
     salt: weave_salt,
   };
 
-  if (n === 0) {
+  elected_node = 0;
+  if (n === elected_node) {
     weave_env.peers = "";
   } else {
-    weave_env.peers = hostname(1);
+    weave_env.peers = hostname(elected_node);
   }
 
   var env_file = _.clone(env_file_template);

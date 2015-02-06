@@ -84,7 +84,6 @@ coreos:
       ExecStartPre=/usr/bin/docker pull zettio/weavetools:latest
       ExecStartPre=/usr/bin/wget -N -P /opt/bin \
           https://raw.github.com/zettio/weave/master/weave
-      #ExecStartPre=/bin/ln -s /etc/weave.%H.env /etc/weave.env
       ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
       ExecStart=/bin/echo Weave Installed
 
