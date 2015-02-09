@@ -130,7 +130,7 @@ exports.create_kube_node_cloud_config = function (node_count) {
 
   var make_node_config = function (n) {
     var weave_env = {
-      name: exports.hostname(n),
+      name: exports.hostname(n, 'kube'),
       cluster_addr_base: [10, 2].join('.'),
       cluster_addr_pad: [0, 0].join('.'),
       cluster_addr_cidr: 16,
