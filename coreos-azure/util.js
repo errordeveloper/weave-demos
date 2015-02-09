@@ -51,7 +51,7 @@ var write_basic_weave_cluster_cloud_config = function (env_files) {
 };
 
 exports.create_basic_weave_cluster_cloud_config = function (node_count) {
-  var basic_weave_env_file_template = {
+  var weave_env_file_template = {
     permissions: '0644',
     owner: 'root',
     content: _.template([
@@ -78,7 +78,7 @@ exports.create_basic_weave_cluster_cloud_config = function (node_count) {
       weave_env.peers = exports.hostname(elected_node);
     }
 
-    var env_file = _.clone(basic_weave_env_file_template);
+    var env_file = _.clone(weave_env_file_template);
     env_file.path = env_file.path(weave_env);
     env_file.content = env_file.content(weave_env);
 
@@ -89,16 +89,6 @@ exports.create_basic_weave_cluster_cloud_config = function (node_count) {
 };
 
 exports.create_kube_etcd_cloud_config = function (node_count) {
-
-  /* This is how we can get a discovery token, but for now let's keep this more static */
-  //require('http').get("http://discovery.etcd.io/new", function(res) {
-  //  res.setEncoding('utf8');
-  //  res.on('data', function(data) {
-  //    cloud_config.coreos.etcd.discovery = data;
-  //    write_cloud_config_from_object(node_cloud_config, './kubernetes-etcd-nodes.yml');
-  //  });
-  //});
-
   var elected_node = 0;
 
   return _(node_count).times(function (n) {
@@ -116,7 +106,7 @@ exports.create_kube_etcd_cloud_config = function (node_count) {
 };
 
 exports.create_kube_node_cloud_config = function (node_count) {
-  var basic_weave_env_file_template = {
+  var weave_env_file_template = {
     permissions: '0644',
     owner: 'root',
     content: _.template([
@@ -146,7 +136,7 @@ exports.create_kube_node_cloud_config = function (node_count) {
       weave_env.peers = exports.hostname(elected_node);
     }
 
-    var env_file = _.clone(basic_weave_env_file_template);
+    var env_file = _.clone(weave_env_file_template);
     env_file.path = env_file.path(weave_env);
     env_file.content = env_file.content(weave_env);
 
