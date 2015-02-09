@@ -82,18 +82,28 @@ write_cloud_config_data(_(node_count).times(make_node_config));
 var vm_name_arg = _.template("--vm-name=<%= name %>")
 var vm_ssh_port = _.template("--ssh=<%= port %>")
 
+var initial_tasks = [
+  ['network', 'vnet', 'create',
+    '--location=West Europe',
+    '--address-space=172.16.0.0',
+    'weave-cluster-internal-vnet-1'
+  ],
+];
+
 var tasks = {
-  todo: _(node_count).times(function (n) {
+  todo: initial_tasks.concat(_(node_count).times(function (n) {
     return ['vm', 'create'].concat([
+        '--location=West Europe',
+        '--connect=weave-cluster-service-1',
+        '--virtual-network-name=weave-cluster-internal-vnet-1',
         '--custom-data=./cloud-config.yml',
         '--no-ssh-password',
         '--ssh-cert=../azure-linux/coreos/cluster/ssh-cert.pem',
-        '--connect=weave-testing-1', '--location=West Europe',
         coreos_image_ids['stable'], 'core',
         vm_name_arg({ name: hostname(n) }),
         vm_ssh_port({ port: 2200 + n }),
       ]);
-  }),
+  })),
   done: [],
 };
 
