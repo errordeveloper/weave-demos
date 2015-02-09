@@ -76,7 +76,7 @@ var initial_tasks = [
   ['network', 'vnet', 'create',
     '--location=West Europe',
     '--address-space=172.16.0.0',
-    'weave-cluster-internal-vnet-1'
+    'weave-cluster-internal-vnet-1',
   ],
 ];
 
@@ -94,4 +94,4 @@ var main_tasks = _(node_count).times(function (n) {
   ]);
 });
 
-util.run_task_queue(initial_tasks, main_tasks);
+util.run_task_queue(initial_tasks.concat(main_tasks));

@@ -10,9 +10,9 @@ exports.hostname = function (n) {
   });
 };
 
-exports.run_task_queue = function (initial_tasks, main_task) {
+exports.run_task_queue = function (given_tasks) {
   var tasks = {
-    todo: initial_tasks.concat(main_task),
+    todo: given_tasks,
     done: [],
   };
 
