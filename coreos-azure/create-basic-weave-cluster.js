@@ -10,7 +10,7 @@ var coreos_image_ids = {
 
 var node_count = 3;
 
-util.write_std_cluster_cloud_config(node_count);
+var cloud_config_file = util.write_std_cluster_cloud_config(node_count);
 
 var vm_name_arg = _.template("--vm-name=<%= name %>")
 var vm_ssh_port = _.template("--ssh=<%= port %>")
@@ -28,7 +28,7 @@ var main_tasks = _(node_count).times(function (n) {
     '--location=West Europe',
     '--connect=weave-cluster-service-1',
     '--virtual-network-name=weave-cluster-internal-vnet-1',
-    '--custom-data=./cloud-config.yml',
+    '--custom-data=' + cloud_config_file,
     '--no-ssh-password',
     '--ssh-cert=../azure-linux/coreos/cluster/ssh-cert.pem',
     coreos_image_ids['stable'], 'core',
