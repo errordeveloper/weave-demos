@@ -1,17 +1,14 @@
 #!/usr/bin/env node
 
 var _ = require('underscore');
-_.mixin(require('underscore.string').exports());
 
 var fs = require('fs');
-var cp = require('child_process');
+
+var util = require('./util.js');
 
 var coreos_image_ids = {
   'stable': '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-522.6.0',
 };
-
-var AzureCli = require('azure-cli');
-var cli = new AzureCli();
 
 var weave_salt = function make_weave_salt () {
   var crypto = require('crypto');
@@ -19,13 +16,6 @@ var weave_salt = function make_weave_salt () {
   shasum.update(crypto.randomBytes(256));
   return shasum.digest('hex');
 }();
-
-var hostname = function (n) {
-  return _.template("<%= pre %>-<%= seq %>")({
-    pre: 'core',
-    seq: _.pad(n, 2, '0'),
-  });
-};
 
 var write_cloud_config_data = function (env_files) {
   try {
@@ -54,7 +44,7 @@ var env_file_template = {
 
 var make_node_config = function (n) {
   var weave_env = {
-    name: hostname(n),
+    name: util.hostname(n),
     dns_addr_cidr: 24,
     dns_addr_node: 10+n,
     dns_addr_base: '10.10.1',
@@ -65,7 +55,7 @@ var make_node_config = function (n) {
   if (n === elected_node) {
     weave_env.peers = "";
   } else {
-    weave_env.peers = hostname(elected_node);
+    weave_env.peers = util.hostname(elected_node);
   }
 
   var env_file = _.clone(env_file_template);
@@ -90,44 +80,18 @@ var initial_tasks = [
   ],
 ];
 
-var tasks = {
-  todo: initial_tasks.concat(_(node_count).times(function (n) {
-    return ['vm', 'create'].concat([
-        '--location=West Europe',
-        '--connect=weave-cluster-service-1',
-        '--virtual-network-name=weave-cluster-internal-vnet-1',
-        '--custom-data=./cloud-config.yml',
-        '--no-ssh-password',
-        '--ssh-cert=../azure-linux/coreos/cluster/ssh-cert.pem',
-        coreos_image_ids['stable'], 'core',
-        vm_name_arg({ name: hostname(n) }),
-        vm_ssh_port({ port: 2200 + n }),
-      ]);
-  })),
-  done: [],
-};
+var main_tasks = _(node_count).times(function (n) {
+  return ['vm', 'create'].concat([
+    '--location=West Europe',
+    '--connect=weave-cluster-service-1',
+    '--virtual-network-name=weave-cluster-internal-vnet-1',
+    '--custom-data=./cloud-config.yml',
+    '--no-ssh-password',
+    '--ssh-cert=../azure-linux/coreos/cluster/ssh-cert.pem',
+    coreos_image_ids['stable'], 'core',
+    vm_name_arg({ name: util.hostname(n) }),
+    vm_ssh_port({ port: 2200 + n }),
+  ]);
+});
 
-var pop_task = function() {
-  var ret = {};
-  ret.current = tasks.todo.shift();
-  ret.remaining = tasks.todo.length;
-  console.log(tasks);
-  return ret;
-};
-
-(function iter (task) {
-  if (task.current === undefined) {
-    return;
-  } else {
-    cp.fork('node_modules/azure-cli/bin/azure', task.current)
-      .on('exit', function (code, signal) {
-        tasks.done.push({
-          code: code,
-          signal: signal,
-          what: task.current.join(' '),
-          remaining: task.remaining,
-        });
-        iter(pop_task());
-    });
-  }
-})(pop_task());
+util.run_task_queue(initial_tasks, main_tasks);
