@@ -10,7 +10,7 @@ var coreos_image_ids = {
 
 var node_count = 3;
 
-var cloud_config_file = util.write_std_cluster_cloud_config(node_count);
+var cloud_config_file = util.create_basic_weave_cluster_cloud_config(node_count);
 
 var vm_name_arg = _.template("--vm-name=<%= name %>")
 var vm_ssh_port = _.template("--ssh=<%= port %>")

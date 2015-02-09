@@ -1,4 +1,6 @@
-#cloud-config
+## This file is used as input to deployment script, which ammends it as needed.
+## More specifically, we need to add environment files for as many nodes as we
+## are going to deploy.
 
 write_files:
   - path: /run/docker_opts.env
@@ -6,29 +8,6 @@ write_files:
     owner: root
     content: |
       DOCKER_OPTS='--insecure-registry="0.0.0.0/0" --bridge="weave" -r="false"'
-  - path: /etc/weave.kube-00.env
-    permissions: 0644
-    owner: root
-    content: |
-      WEAVE_PEERS=""
-      BRIDGE_ADDRESS_CIDR="10.2.0.1/24"
-      BREAKOUT_ROUTE="10.2.0.0/16"
-
-  - path: /etc/weave.kube-01.env
-    permissions: 0644
-    owner: root
-    content: |
-      WEAVE_PEERS="kube-00"
-      BRIDGE_ADDRESS_CIDR="10.2.1.1/24"
-      BREAKOUT_ROUTE="10.2.0.0/16"
-
-  - path: /etc/weave.kube-02.env
-    permissions: 0644
-    owner: root
-    content: |
-      WEAVE_PEERS="kube-00"
-      BRIDGE_ADDRESS_CIDR="10.2.2.1/24"
-      BREAKOUT_ROUTE="10.2.0.0/16"
 
 coreos:
   update:

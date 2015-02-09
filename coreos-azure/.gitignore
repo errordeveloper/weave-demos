@@ -1,4 +1,3 @@
 node_modules/
-cloud-config.yml
-etcd-node-*.yml
+*-generated.yml
 *~
