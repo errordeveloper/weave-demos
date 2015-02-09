@@ -38,13 +38,13 @@ var vm_create_base_args = [
 
 var etcd_cloud_config_files = util.write_kube_etcd_cloud_config(nodes.etcd);
 
-var main_tasks = _(nodes.etcd).times(function (n) {
+var create_etcd_cluster = _(nodes.etcd).times(function (n) {
   return vm_create_base_args.concat([
-    '--custom-data=kubernetes-etcd-nodes.yml', // + etcd_cloud_config_files[n],
+    '--custom-data=' + etcd_cloud_config_files[n],
     coreos_image_ids['stable'], 'core',
     vm_name_arg({ name: util.hostname(n, 'kube-etcd') }),
     vm_ssh_port({ port: 2200 + n }),
   ]);
 });
 
-util.run_task_queue(initial_tasks.concat(main_tasks));
+util.run_task_queue(initial_tasks.concat(create_etcd_cluster));
