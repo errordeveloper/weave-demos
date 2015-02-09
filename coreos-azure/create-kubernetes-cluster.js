@@ -42,9 +42,18 @@ var create_etcd_cluster = _(nodes.etcd).times(function (n) {
   return vm_create_base_args.concat([
     '--custom-data=' + etcd_cloud_config_files[n],
     coreos_image_ids['stable'], 'core',
-    vm_name_arg({ name: util.hostname(n, 'kube-etcd') }),
+    vm_name_arg({ name: util.hostname(n, 'etcd') }),
     vm_ssh_port({ port: 2200 + n }),
   ]);
 });
 
-util.run_task_queue(initial_tasks.concat(create_etcd_cluster));
+var create_kube_cluster = _(nodes.etcd).times(function (n) {
+  return vm_create_base_args.concat([
+    '--custom-data=kube-nodes.yml',
+    coreos_image_ids['stable'], 'core',
+    vm_name_arg({ name: util.hostname(n, 'kube') }),
+    vm_ssh_port({ port: 2210 + n }),
+  ]);
+});
+
+util.run_task_queue(initial_tasks.concat(create_etcd_cluster, create_kube_cluster));

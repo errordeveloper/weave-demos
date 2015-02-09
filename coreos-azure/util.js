@@ -117,10 +117,10 @@ exports.write_kube_etcd_cloud_config = function (node_count) {
 
   return _(node_count).times(function (n) {
     var node_cloud_config = _.clone(cloud_config);
-    output_file = './kube-cluster-etcd-' + n + '.yaml';
+    output_file = './etcd-node-' + n + '.yml';
     if (n !== elected_node) {
       node_cloud_config.coreos.etcd.peers = [
-        exports.hostname(elected_node, 'kube-etcd'), 7001
+        exports.hostname(elected_node, 'etcd'), 7001
       ].join(':');
     }
     write_cloud_config_from_object(node_cloud_config, output_file);
