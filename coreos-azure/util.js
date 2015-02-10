@@ -124,7 +124,7 @@ exports.create_kube_node_cloud_config = function (node_count) {
       cluster_addr_base: [10, 2].join('.'),
       cluster_addr_pad: [0, 0].join('.'),
       cluster_addr_cidr: 16,
-      docker_addr_node: [n, 0].join('.'),
+      docker_addr_node: [n, 1].join('.'),
       docker_addr_cidr: 24,
       salt: weave_salt,
     };
@@ -133,7 +133,7 @@ exports.create_kube_node_cloud_config = function (node_count) {
     if (n === elected_node) {
       weave_env.peers = "";
     } else {
-      weave_env.peers = exports.hostname(elected_node);
+      weave_env.peers = exports.hostname(elected_node, 'kube');
     }
 
     var env_file = _.clone(weave_env_file_template);
