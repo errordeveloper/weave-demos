@@ -42,6 +42,32 @@ var process_cloud_config_template = function (input_file, output_file, processor
   return write_cloud_config_from_object(processor(_.clone(cloud_config)), output_file);
 };
 
+var generate_environment_file_entry_from_object = function (hostname, environ) {
+  var data = {
+    hostname: hostname,
+    environ_array: _.map(environ, function (value, key) {
+      return [key.toUpperCase(), JSON.stringify(value.toString())].join('=');
+    }),
+  };
+
+  return {
+    permissions: '0600',
+    owner: 'root',
+    content: _.template("<%= environ_array.join('\\n') %>\n")(data),
+    path: _.template("/etc/weave.<%= hostname %>.env")(data),
+  };
+};
+
+var ipv4 = function (ocets, prefix) {
+  return {
+    ocets: ocets,
+    prefix: prefix,
+    toString: function () {
+      return [ocets.join('.'), prefix].join('/');
+    }
+  }
+}
+
 var write_basic_weave_cluster_cloud_config = function (env_files) {
   return process_cloud_config_template('./basic-weave-cluster-template.yml',
       './basic-weave-cluster-generated.yml', function(cloud_config) {
@@ -51,38 +77,14 @@ var write_basic_weave_cluster_cloud_config = function (env_files) {
 };
 
 exports.create_basic_weave_cluster_cloud_config = function (node_count) {
-  var weave_env_file_template = {
-    permissions: '0644',
-    owner: 'root',
-    content: _.template([
-      'WEAVE_PEERS="<%= peers %>"',
-      'WEAVEDNS_ADDR="<%= dns_addr_base %>.<%= dns_addr_node %>/<%= dns_addr_cidr %>"',
-      'WEAVE_PASSWORD="<%= salt %>"',
-    ].join("\n")),
-    path: _.template("/etc/weave.<%= name %>.env"),
-  };
+  var elected_node = 0;
 
   var make_node_config = function (n) {
-    var weave_env = {
-      name: exports.hostname(n),
-      dns_addr_cidr: 24,
-      dns_addr_node: 10+n,
-      dns_addr_base: '10.10.1',
-      salt: weave_salt,
-    };
-
-    var elected_node = 0;
-    if (n === elected_node) {
-      weave_env.peers = "";
-    } else {
-      weave_env.peers = exports.hostname(elected_node);
-    }
-
-    var env_file = _.clone(weave_env_file_template);
-    env_file.path = env_file.path(weave_env);
-    env_file.content = env_file.content(weave_env);
-
-    return env_file;
+    return generate_environment_file_entry_from_object(exports.hostname(n), {
+      weavedns_addr: ipv4([10, 10, 1, 10+n], 24),
+      weave_password: weave_salt,
+      weave_peers: n === elected_node ? "" : exports.hostname(elected_node),
+    });
   };
 
   return write_basic_weave_cluster_cloud_config(_(node_count).times(make_node_config));
