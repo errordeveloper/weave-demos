@@ -6,12 +6,23 @@ var cp = require('child_process');
 
 var yaml = require('js-yaml');
 
-var weave_salt = function make_weave_salt () {
-  var crypto = require('crypto');
+var crypto = require('crypto');
+
+var weave_salt = function () {
   var shasum = crypto.createHash('sha256');
   shasum.update(crypto.randomBytes(256));
   return shasum.digest('hex');
 }();
+
+exports.generate_azure_resource_strings = function (prefix) {
+  var shasum = crypto.createHash('sha256');
+  shasum.update(crypto.randomBytes(256));
+  var rand_suffix = shasum.digest('hex').substring(50);
+  return {
+    vnet: [prefix, 'internal-vnet', rand_suffix].join('-'),
+    service: [prefix, 'service-cluster', rand_suffix].join('-'),
+  }
+};
 
 exports.hostname = function hostname (n, prefix) {
   return _.template("<%= pre %>-<%= seq %>")({
