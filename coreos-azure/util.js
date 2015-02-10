@@ -108,41 +108,15 @@ exports.create_kube_etcd_cloud_config = function (node_count) {
 };
 
 exports.create_kube_node_cloud_config = function (node_count) {
-  var weave_env_file_template = {
-    permissions: '0644',
-    owner: 'root',
-    content: _.template([
-      'WEAVE_PEERS="<%= peers %>"',
-      'BRIDGE_ADDRESS_CIDR="<%= cluster_addr_base %>.<%= docker_addr_node %>/<%= docker_addr_cidr %>"',
-      'WEAVE_PASSWORD="<%= salt %>"',
-      'BREAKOUT_ROUTE="<%= cluster_addr_base %>.<%= cluster_addr_pad %>/<%= cluster_addr_cidr %>"',
-    ].join("\n")),
-    path: _.template("/etc/weave.<%= name %>.env"),
-  };
+  var elected_node = 0;
 
   var make_node_config = function (n) {
-    var weave_env = {
-      name: exports.hostname(n, 'kube'),
-      cluster_addr_base: [10, 2].join('.'),
-      cluster_addr_pad: [0, 0].join('.'),
-      cluster_addr_cidr: 16,
-      docker_addr_node: [n, 1].join('.'),
-      docker_addr_cidr: 24,
-      salt: weave_salt,
-    };
-
-    var elected_node = 0;
-    if (n === elected_node) {
-      weave_env.peers = "";
-    } else {
-      weave_env.peers = exports.hostname(elected_node, 'kube');
-    }
-
-    var env_file = _.clone(weave_env_file_template);
-    env_file.path = env_file.path(weave_env);
-    env_file.content = env_file.content(weave_env);
-
-    return env_file;
+    return generate_environment_file_entry_from_object(exports.hostname(n, 'kube'), {
+      weave_password: weave_salt,
+      weave_peers: n === elected_node ? "" : exports.hostname(elected_node, 'kube'),
+      breakout_route: ipv4([10, 2, 0, 0], 16),
+      bridge_address_cidr: ipv4([10, 2, n, 1], 24),
+    });
   };
 
   return process_cloud_config_template('./kubernetes-cluster-main-nodes-template.yml',
