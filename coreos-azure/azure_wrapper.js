@@ -182,7 +182,7 @@ exports.run_task_queue = function (dummy) {
             what: task.current.join(' '),
             remaining: task.remaining,
           });
-          if (code !== 0) {
+          if (code !== 0 && conf.destroying === undefined) {
             console.log("Exiting due to an error.");
             save_state();
             console.log("You probably want to destroy and re-run.");
