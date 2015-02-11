@@ -13,13 +13,22 @@ var coreos_image_ids = {
   'alpha': '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-584.0.0',
 };
 
+var conf = {};
+
+var hosts = {
+  collection: [],
+  ssh_port_counter: 2200,
+};
+
+var task_queue = [];
+
 var weave_salt = function () {
   var shasum = crypto.createHash('sha256');
   shasum.update(crypto.randomBytes(256));
   return shasum.digest('hex');
 }();
 
-exports.generate_azure_resource_strings = function (prefix) {
+var generate_azure_resource_strings = function (prefix) {
   var shasum = crypto.createHash('sha256');
   shasum.update(crypto.randomBytes(256));
   var rand_suffix = shasum.digest('hex').substring(50);
@@ -142,9 +151,7 @@ exports.create_kube_node_cloud_config = function (node_count) {
   });
 };
 
-var task_queue = [];
-
-exports.run_task_queue = function () {
+exports.run_task_queue = function (dummy) {
   var tasks = {
     todo: task_queue,
     done: [],
@@ -160,6 +167,8 @@ exports.run_task_queue = function () {
 
   (function iter (task) {
     if (task.current === undefined) {
+      create_ssh_conf();
+      save_state();
       return;
     } else {
       //console.log('node_modules/azure-cli/bin/azure', task.current);
@@ -177,10 +186,11 @@ exports.run_task_queue = function () {
   })(pop_task());
 };
 
-exports.save_state = function (file_name, config_object) {
+var save_state = function () {
+  var file_name = conf.name + '_deployment.yml';
   try {
-    config_object.hosts = hosts.collection;
-    fs.writeFileSync(file_name, yaml.safeDump(config_object));
+    conf.hosts = hosts.collection;
+    fs.writeFileSync(file_name, yaml.safeDump(conf));
     console.log('Saved state into `%s`', file_name);
   } catch (e) {
     console.log(e);
@@ -189,23 +199,19 @@ exports.save_state = function (file_name, config_object) {
 
 exports.load_state = function (file_name) {
   try {
-    var ret = yaml.safeLoad(fs.readFileSync(file_name, 'utf8'));
+    conf = yaml.safeLoad(fs.readFileSync(file_name, 'utf8'));
     console.log('Loaded state from `%s`', file_name);
-    return ret;
+    return conf;
   } catch (e) {
     console.log(e);
   }
 };
 
-var hosts = {
-  collection: [],
-  ssh_port_counter: 2200,
-};
-
-exports.create_ssh_conf = function (file_name, resources) {
+var create_ssh_conf = function () {
+  var file_name = conf.name + '_deployment.yml';
   var ssh_conf_head = [
     "Host *",
-    "\tHostname " + resources['service'] + ".cloudapp.net",
+    "\tHostname " + conf.resources['service'] + ".cloudapp.net",
     "\tUser core",
     "\tCompression yes",
     "\tLogLevel FATAL",
@@ -222,24 +228,29 @@ exports.create_ssh_conf = function (file_name, resources) {
   console.log('The hosts in this deployment are:\n', _.map(hosts.collection, function (host) { return host.name; }));
 };
 
-exports.queue_default_network = function (resources) {
+exports.queue_default_network = function () {
   task_queue.push([
     'network', 'vnet', 'create',
+    '--verbose',
     '--location=West Europe',
     '--address-space=172.16.0.0',
-    resources['vnet'],
+    conf.resources['vnet'],
   ]);
 };
 
-exports.queue_x_machines = function (name_prefix, x, resources, coreos_update_channel, cloud_config) {
+exports.queue_machines = function (name_prefix, coreos_update_channel, cloud_config_creator) {
+  var x = conf.nodes[name_prefix];
   var vm_create_base_args = [
     'vm', 'create',
+    '--verbose',
     '--location=West Europe',
-    '--connect=' + resources['service'],
-    '--virtual-network-name=' + resources['vnet'],
+    '--connect=' + conf.resources['service'],
+    '--virtual-network-name=' + conf.resources['vnet'],
     '--no-ssh-password',
     '--ssh-cert=../azure-linux/coreos/cluster/ssh-cert.pem',
   ];
+
+  var cloud_config = cloud_config_creator(x);
 
   var next_host = function (n) {
     hosts.ssh_port_counter += 1;
@@ -262,4 +273,12 @@ exports.queue_x_machines = function (name_prefix, x, resources, coreos_update_ch
       coreos_image_ids[coreos_update_channel], 'core',
     ]);
   }));
+};
+
+exports.create_config = function (name, nodes) {
+  conf = {
+    name: name,
+    nodes: nodes,
+    resources: generate_azure_resource_strings(name),
+  };
 };
