@@ -95,7 +95,6 @@ coreos:
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave-helper
         ExecStart=/bin/echo Weave Installed
-
         [Install]
         WantedBy=weave-network.target
         WantedBy=weave.service
@@ -207,7 +206,6 @@ coreos:
             --logtostderr=true --v=3
         Restart=always
         RestartSec=10
-
         [Install]
         WantedBy=kubernetes-master.target
 
@@ -245,7 +243,6 @@ coreos:
         ConditionHost=kube-00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-controller-manager \
-            --machines=kube-00,kube-01,kube-02 \
             --cloud_provider=vagrant \
             --master=127.0.0.1:8080 \
             --logtostderr=true
