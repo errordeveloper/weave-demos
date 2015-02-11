@@ -168,3 +168,22 @@ exports.run_task_queue = function (given_tasks) {
     }
   })(pop_task());
 };
+
+exports.save_config = function (file_name, config_object) {
+  try {
+    fs.writeFileSync(file_name, yaml.safeDump(config_object));
+    console.log('Saved config into `%s`', file_name);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+exports.load_config = function (file_name) {
+  try {
+    var ret = yaml.safeLoad(fs.readFileSync(file_name, 'utf8'));
+    console.log('Loaded config from `%s`', file_name);
+    return ret;
+  } catch (e) {
+    console.log(e);
+  }
+};

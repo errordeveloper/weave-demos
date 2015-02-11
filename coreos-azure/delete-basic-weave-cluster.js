@@ -4,14 +4,19 @@ var _ = require('underscore');
 
 var util = require('./util.js');
 
-var node_count = 3;
+var conf = util.load_config('weave-cluster-deployment.yml');
 
-var delete_vms = _(node_count).times(function (n) {
+if (conf === undefined) {
+  console.log('Nothing to delete.');
+  process.abort();
+}
+
+var delete_vms = _(conf.node_count).times(function (n) {
   return ['vm', 'delete', '--quiet', '--blob-delete', util.hostname(n)];
 });
 
 var delete_vnet = [
-  ['network', 'vnet', 'delete', '--quiet', 'weave-cluster-internal-vnet-1'],
+  ['network', 'vnet', 'delete', '--quiet', conf.resources['vnet']],
 ];
 
 util.run_task_queue(delete_vms.concat(delete_vnet));
