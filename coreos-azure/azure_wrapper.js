@@ -8,6 +8,8 @@ var yaml = require('js-yaml');
 
 var crypto = require('crypto');
 
+var openssl = require('openssl-wrapper');
+
 var coreos_image_ids = {
   'stable': '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-522.6.0',
   'alpha': '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-584.0.0',
@@ -22,16 +24,16 @@ var hosts = {
 
 var task_queue = [];
 
-var weave_salt = function () {
+var rand_string = function () {
   var shasum = crypto.createHash('sha256');
   shasum.update(crypto.randomBytes(256));
   return shasum.digest('hex');
-}();
+};
+
+var weave_salt = rand_string();
 
 var generate_azure_resource_strings = function (prefix) {
-  var shasum = crypto.createHash('sha256');
-  shasum.update(crypto.randomBytes(256));
-  var rand_suffix = shasum.digest('hex').substring(50);
+  var rand_suffix = rand_string().substring(50);
   return {
     vnet: [prefix, 'internal-vnet', rand_suffix].join('-'),
     service: [prefix, 'service-cluster', rand_suffix].join('-'),
@@ -94,8 +96,10 @@ var ipv4 = function (ocets, prefix) {
 }
 
 var write_basic_weave_cluster_cloud_config = function (env_files) {
-  return process_cloud_config_template('./basic-weave-cluster-template.yml',
-      './basic-weave-cluster-generated.yml', function(cloud_config) {
+  var input_file = './cloud_config_templates/basic-weave-cluster-template.yml';
+  var output_file = './output/basic-weave-cluster-generated.yml';
+
+  return process_cloud_config_template(input_file, output_file, function(cloud_config) {
     cloud_config.write_files = env_files;
     return cloud_config;
   });
@@ -118,10 +122,12 @@ exports.create_basic_weave_cluster_cloud_config = function (node_count) {
 exports.create_kube_etcd_cloud_config = function (node_count) {
   var elected_node = 0;
 
+  var input_file = './cloud_config_templates/kubernetes-cluster-etcd-node-template.yml';
+
   return _(node_count).times(function (n) {
-    var output_file = './kubernetes-cluster-etcd-node-' + n + '-generated.yml';
-    return process_cloud_config_template('./kubernetes-cluster-etcd-node-template.yml',
-        output_file, function(cloud_config) {
+    var output_file = './output/kubernetes-cluster-etcd-node-' + n + '-generated.yml';
+
+    return process_cloud_config_template(input_file, output_file, function(cloud_config) {
       if (n !== elected_node) {
         cloud_config.coreos.etcd.peers = [
           hostname(elected_node, 'etcd'), 7001
@@ -135,6 +141,9 @@ exports.create_kube_etcd_cloud_config = function (node_count) {
 exports.create_kube_node_cloud_config = function (node_count) {
   var elected_node = 0;
 
+  var input_file = './cloud_config_templates/kubernetes-cluster-main-nodes-template.yml';
+  var output_file = './output/kubernetes-cluster-main-nodes-generated.yml';
+
   var make_node_config = function (n) {
     return generate_environment_file_entry_from_object(hostname(n, 'kube'), {
       weave_password: weave_salt,
@@ -143,9 +152,7 @@ exports.create_kube_node_cloud_config = function (node_count) {
       bridge_address_cidr: ipv4([10, 2, n, 1], 24),
     });
   };
-
-  return process_cloud_config_template('./kubernetes-cluster-main-nodes-template.yml',
-      './kubernetes-cluster-main-nodes-generated.yml', function(cloud_config) {
+  return process_cloud_config_template(input_file, output_file, function(cloud_config) {
     cloud_config.write_files = cloud_config.write_files.concat(_(node_count).times(make_node_config));
     return cloud_config;
   });
@@ -196,7 +203,7 @@ exports.run_task_queue = function (dummy) {
 };
 
 var save_state = function () {
-  var file_name = conf.name + '_deployment.yml';
+  var file_name = './output/' + conf.name + '_deployment.yml';
   try {
     conf.hosts = hosts.collection;
     fs.writeFileSync(file_name, yaml.safeDump(conf));
@@ -216,8 +223,25 @@ var load_state = function (file_name) {
   }
 };
 
+var create_ssh_key = function (prefix) {
+  var opts = {
+    x509: true,
+    nodes: true,
+    newkey: 'rsa:2048',
+    subj: '/O=Weaveworks, Inc./L=London/C=GB/CN=weave.works',
+    keyout: './output/' + prefix + '.key',
+    out: './output/' + prefix + '.pem',
+  };
+  openssl.qExec('req', opts);
+  console.log('Created new SSH key.');
+  return {
+    key: opts.keyout,
+    pem: opts.out,
+  }
+}
+
 var create_ssh_conf = function () {
-  var file_name = conf.name + '_ssh_conf';
+  var file_name = './output/' + conf.name + '_ssh_conf';
   var ssh_conf_head = [
     "Host *",
     "\tHostname " + conf.resources['service'] + ".cloudapp.net",
@@ -226,7 +250,8 @@ var create_ssh_conf = function () {
     "\tLogLevel FATAL",
     "\tStrictHostKeyChecking no",
     "\tUserKnownHostsFile /dev/null",
-    "\tIdentitiesOnly=yes",
+    "\tIdentitiesOnly yes",
+    "\tIdentityFile " + conf.resources['ssh_key']['key'],
     "\n",
   ];
 
@@ -256,7 +281,7 @@ exports.queue_machines = function (name_prefix, coreos_update_channel, cloud_con
     '--connect=' + conf.resources['service'],
     '--virtual-network-name=' + conf.resources['vnet'],
     '--no-ssh-password',
-    '--ssh-cert=../azure-linux/coreos/cluster/ssh-cert.pem',
+    '--ssh-cert=' + conf.resources['ssh_key']['pem'],
   ];
 
   var cloud_config = cloud_config_creator(x);
@@ -290,7 +315,10 @@ exports.create_config = function (name, nodes) {
     nodes: nodes,
     resources: generate_azure_resource_strings(name),
   };
+  conf.resources.ssh_key = create_ssh_key(name);
+
 };
+
 
 exports.destroy_cluster = function (state_file) {
   load_state(state_file);
