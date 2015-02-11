@@ -167,8 +167,10 @@ exports.run_task_queue = function (dummy) {
 
   (function iter (task) {
     if (task.current === undefined) {
-      create_ssh_conf();
-      save_state();
+      if (conf.destroying === undefined) {
+        create_ssh_conf();
+        save_state();
+      }
       return;
     } else {
       //console.log('node_modules/azure-cli/bin/azure', task.current);
@@ -289,6 +291,8 @@ exports.destroy_cluster = function (state_file) {
     console.log('Nothing to delete.');
     process.abort();
   }
+
+  conf.destroying = true;
   task_queue = _.map(conf.hosts, function (host) {
     return ['vm', 'delete', '--quiet', '--blob-delete', host.name];
   });
