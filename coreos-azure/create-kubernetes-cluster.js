@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-var cloudAxe = require('./util.js');
+var azure = require('./azure_wrapper.js');
 
-cloudAxe.create_config('kubernetes', { 'etcd': 3, 'kube': 4 });
+azure.create_config('kubernetes', { 'etcd': 3, 'kube': 4 });
 
-cloudAxe.run_task_queue([
-  cloudAxe.queue_default_network(),
-  cloudAxe.queue_machines('etcd', 'stable',
-    cloudAxe.create_kube_etcd_cloud_config),
-  cloudAxe.queue_machines('kube', 'stable',
-    cloudAxe.create_kube_node_cloud_config),
+azure.run_task_queue([
+  azure.queue_default_network(),
+  azure.queue_machines('etcd', 'stable',
+    azure.create_kube_etcd_cloud_config),
+  azure.queue_machines('kube', 'stable',
+    azure.create_kube_node_cloud_config),
 ]);
 

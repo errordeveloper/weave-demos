@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-var cloudAxe = require('./util.js');
+var azure = require('./azure_wrapper.js');
 
-cloudAxe.create_config('kubernetes', { 'core': 3 });
+azure.create_config('kubernetes', { 'core': 3 });
 
-cloudAxe.run_task_queue([
-  cloudAxe.queue_default_network(),
-  cloudAxe.queue_machines('core', 'stable',
-    cloudAxe.create_basic_weave_cluster_cloud_config),
+azure.run_task_queue([
+  azure.queue_default_network(),
+  azure.queue_machines('core', 'stable',
+    azure.create_basic_weave_cluster_cloud_config),
 });
