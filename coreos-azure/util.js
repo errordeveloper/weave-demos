@@ -8,6 +8,11 @@ var yaml = require('js-yaml');
 
 var crypto = require('crypto');
 
+var coreos_image_ids = {
+  'stable': '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-522.6.0',
+  'alpha': '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-584.0.0',
+};
+
 var weave_salt = function () {
   var shasum = crypto.createHash('sha256');
   shasum.update(crypto.randomBytes(256));
@@ -24,7 +29,7 @@ exports.generate_azure_resource_strings = function (prefix) {
   }
 };
 
-exports.hostname = function hostname (n, prefix) {
+var hostname = function hostname (n, prefix) {
   return _.template("<%= pre %>-<%= seq %>")({
     pre: prefix || 'core',
     seq: _.pad(n, 2, '0'),
@@ -91,10 +96,10 @@ exports.create_basic_weave_cluster_cloud_config = function (node_count) {
   var elected_node = 0;
 
   var make_node_config = function (n) {
-    return generate_environment_file_entry_from_object(exports.hostname(n), {
+    return generate_environment_file_entry_from_object(hostname(n), {
       weavedns_addr: ipv4([10, 10, 1, 10+n], 24),
       weave_password: weave_salt,
-      weave_peers: n === elected_node ? "" : exports.hostname(elected_node),
+      weave_peers: n === elected_node ? "" : hostname(elected_node),
     });
   };
 
@@ -110,7 +115,7 @@ exports.create_kube_etcd_cloud_config = function (node_count) {
         output_file, function(cloud_config) {
       if (n !== elected_node) {
         cloud_config.coreos.etcd.peers = [
-          exports.hostname(elected_node, 'etcd'), 7001
+          hostname(elected_node, 'etcd'), 7001
         ].join(':');
       }
       return cloud_config;
@@ -122,9 +127,9 @@ exports.create_kube_node_cloud_config = function (node_count) {
   var elected_node = 0;
 
   var make_node_config = function (n) {
-    return generate_environment_file_entry_from_object(exports.hostname(n, 'kube'), {
+    return generate_environment_file_entry_from_object(hostname(n, 'kube'), {
       weave_password: weave_salt,
-      weave_peers: n === elected_node ? "" : exports.hostname(elected_node, 'kube'),
+      weave_peers: n === elected_node ? "" : hostname(elected_node, 'kube'),
       breakout_route: ipv4([10, 2, 0, 0], 16),
       bridge_address_cidr: ipv4([10, 2, n, 1], 24),
     });
@@ -137,9 +142,11 @@ exports.create_kube_node_cloud_config = function (node_count) {
   });
 };
 
-exports.run_task_queue = function (given_tasks) {
+var task_queue = [];
+
+exports.run_task_queue = function () {
   var tasks = {
-    todo: given_tasks,
+    todo: task_queue,
     done: [],
   };
 
@@ -155,6 +162,7 @@ exports.run_task_queue = function (given_tasks) {
     if (task.current === undefined) {
       return;
     } else {
+      //console.log('node_modules/azure-cli/bin/azure', task.current);
       cp.fork('node_modules/azure-cli/bin/azure', task.current)
         .on('exit', function (code, signal) {
           tasks.done.push({
@@ -163,7 +171,7 @@ exports.run_task_queue = function (given_tasks) {
             what: task.current.join(' '),
             remaining: task.remaining,
           });
-          iter(pop_task());
+        iter(pop_task());
       });
     }
   })(pop_task());
@@ -194,18 +202,10 @@ var hosts = {
   ssh_port_counter: 2200,
 };
 
-exports.next_host = function (n, name) {
-  hosts.ssh_port_counter += 1;
-  var host = { name: exports.hostname(n, name), port: hosts.ssh_port_counter };
-  var args = _.template("--vm-name=<%= name %> --ssh=<%= port %>")
-  hosts.collection.push(host);
-  return args(host);
-};
-
-exports.create_ssh_conf = function (file_name, service) {
+exports.create_ssh_conf = function (file_name, resources) {
   var ssh_conf_head = [
     "Host *",
-    "\tHostname " + service + ".cloudapp.net",
+    "\tHostname " + resources['service'] + ".cloudapp.net",
     "\tUser core",
     "\tCompression yes",
     "\tLogLevel FATAL",
@@ -218,6 +218,48 @@ exports.create_ssh_conf = function (file_name, service) {
   fs.writeFileSync(file_name, ssh_conf_head.concat(_.map(hosts.collection, function (host) {
     return _.template("Host <%= name %>\n\tPort <%= port %>\n")(host);
   })).join('\n'));
-  console.log('Saved SSH config, you can use it like so: `ssh -F ', file_name, hosts.collection[0].name, '`');
-  console.log('The hosts in these deployment are:\n', _.map(hosts.collection, function (host) { return host.name; }));
-}
+  console.log('Saved SSH config, you can use it like so: `ssh -F ', file_name, '<hostname>`');
+  console.log('The hosts in this deployment are:\n', _.map(hosts.collection, function (host) { return host.name; }));
+};
+
+exports.queue_default_network = function (resources) {
+  task_queue.push([
+    'network', 'vnet', 'create',
+    '--location=West Europe',
+    '--address-space=172.16.0.0',
+    resources['vnet'],
+  ]);
+};
+
+exports.queue_x_machines = function (name_prefix, x, resources, coreos_update_channel, cloud_config) {
+  var vm_create_base_args = [
+    'vm', 'create',
+    '--location=West Europe',
+    '--connect=' + resources['service'],
+    '--virtual-network-name=' + resources['vnet'],
+    '--no-ssh-password',
+    '--ssh-cert=../azure-linux/coreos/cluster/ssh-cert.pem',
+  ];
+
+  var next_host = function (n) {
+    hosts.ssh_port_counter += 1;
+    var host = { name: hostname(n, name_prefix), port: hosts.ssh_port_counter };
+    if (cloud_config instanceof Array) {
+      host.cloud_config_file = cloud_config[n];
+    } else {
+      host.cloud_config_file = cloud_config;
+    }
+    hosts.collection.push(host);
+    return _.map([
+        "--vm-name=<%= name %>",
+        "--ssh=<%= port %>",
+        "--custom-data=<%= cloud_config_file %>",
+    ], function (arg) { return _.template(arg)(host); });
+  };
+
+  task_queue = task_queue.concat(_(x).times(function (n) {
+    return vm_create_base_args.concat(next_host(n), [
+      coreos_image_ids[coreos_update_channel], 'core',
+    ]);
+  }));
+};
