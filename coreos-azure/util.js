@@ -171,6 +171,7 @@ exports.run_task_queue = function (given_tasks) {
 
 exports.save_state = function (file_name, config_object) {
   try {
+    config_object.hosts = hosts.collection;
     fs.writeFileSync(file_name, yaml.safeDump(config_object));
     console.log('Saved state into `%s`', file_name);
   } catch (e) {

@@ -1,4 +1,7 @@
 node_modules/
 *-generated.yml
 *~
-weave-cluster-deployment.yml
+*-deployment.yml
+*_ssh_conf
+
+

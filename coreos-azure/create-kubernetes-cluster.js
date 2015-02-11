@@ -17,8 +17,6 @@ var conf = {
   resources: util.generate_azure_resource_strings('kubernetes'),
 };
 
-util.save_state('kubernetes-deployment.yml', conf);
-
 var initial_tasks = [
   ['network', 'vnet', 'create',
     '--location=West Europe',
@@ -58,5 +56,6 @@ var create_kube_cluster = _(conf.nodes.main).times(function (n) {
   ]);
 });
 
-//util.run_task_queue(initial_tasks.concat(create_etcd_cluster, create_kube_cluster, list_vms));
+util.run_task_queue(initial_tasks.concat(create_etcd_cluster, create_kube_cluster, list_vms));
 util.create_ssh_conf('kubernetes_deployment_ssh_conf', conf.resources['service'], hosts);
+util.save_state('kubernetes-deployment.yml', conf);

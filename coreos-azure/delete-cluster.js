@@ -4,15 +4,15 @@ var _ = require('underscore');
 
 var util = require('./util.js');
 
-var conf = util.load_state('weave-cluster-deployment.yml');
+var conf = util.load_state(process.argv[2]);
 
 if (conf === undefined) {
   console.log('Nothing to delete.');
   process.abort();
 }
 
-var delete_vms = _(conf.node_count).times(function (n) {
-  return ['vm', 'delete', '--quiet', '--blob-delete', util.hostname(n)];
+var delete_vms = _.map(conf.hosts, function (host) {
+  return ['vm', 'delete', '--quiet', '--blob-delete', host.name];
 });
 
 var delete_vnet = [
