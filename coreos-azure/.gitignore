@@ -1,7 +1,5 @@
 node_modules/
 *-generated.yml
 *~
-*-deployment.yml
+*_deployment.yml
 *_ssh_conf
-
-
