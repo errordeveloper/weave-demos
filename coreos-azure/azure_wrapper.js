@@ -208,7 +208,7 @@ exports.load_state = function (file_name) {
 };
 
 var create_ssh_conf = function () {
-  var file_name = conf.name + '_deployment.yml';
+  var file_name = conf.name + '_ssh_conf';
   var ssh_conf_head = [
     "Host *",
     "\tHostname " + conf.resources['service'] + ".cloudapp.net",
