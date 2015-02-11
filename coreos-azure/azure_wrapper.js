@@ -197,7 +197,7 @@ var save_state = function () {
   }
 };
 
-exports.load_state = function (file_name) {
+var load_state = function (file_name) {
   try {
     conf = yaml.safeLoad(fs.readFileSync(file_name, 'utf8'));
     console.log('Loaded state from `%s`', file_name);
@@ -281,4 +281,19 @@ exports.create_config = function (name, nodes) {
     nodes: nodes,
     resources: generate_azure_resource_strings(name),
   };
+};
+
+exports.destroy_cluster = function (state_file) {
+  load_state(state_file);
+  if (conf.hosts === undefined) {
+    console.log('Nothing to delete.');
+    process.abort();
+  }
+  task_queue = _.map(conf.hosts, function (host) {
+    return ['vm', 'delete', '--quiet', '--blob-delete', host.name];
+  });
+
+  task_queue.push(['network', 'vnet', 'delete', '--quiet', conf.resources['vnet']]);
+
+  exports.run_task_queue();
 };
