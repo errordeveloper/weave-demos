@@ -169,21 +169,54 @@ exports.run_task_queue = function (given_tasks) {
   })(pop_task());
 };
 
-exports.save_config = function (file_name, config_object) {
+exports.save_state = function (file_name, config_object) {
   try {
     fs.writeFileSync(file_name, yaml.safeDump(config_object));
-    console.log('Saved config into `%s`', file_name);
+    console.log('Saved state into `%s`', file_name);
   } catch (e) {
     console.log(e);
   }
 };
 
-exports.load_config = function (file_name) {
+exports.load_state = function (file_name) {
   try {
     var ret = yaml.safeLoad(fs.readFileSync(file_name, 'utf8'));
-    console.log('Loaded config from `%s`', file_name);
+    console.log('Loaded state from `%s`', file_name);
     return ret;
   } catch (e) {
     console.log(e);
   }
 };
+
+var hosts = {
+  collection: [],
+  ssh_port_counter: 2200,
+};
+
+exports.next_host = function (n, name) {
+  hosts.ssh_port_counter += 1;
+  var host = { name: exports.hostname(n, name), port: hosts.ssh_port_counter };
+  var args = _.template("--vm-name=<%= name %> --ssh=<%= port %>")
+  hosts.collection.push(host);
+  return args(host);
+};
+
+exports.create_ssh_conf = function (file_name, service) {
+  var ssh_conf_head = [
+    "Host *",
+    "\tHostname " + service + ".cloudapp.net",
+    "\tUser core",
+    "\tCompression yes",
+    "\tLogLevel FATAL",
+    "\tStrictHostKeyChecking no",
+    "\tUserKnownHostsFile /dev/null",
+    "\tIdentitiesOnly=yes",
+    "\n",
+  ];
+
+  fs.writeFileSync(file_name, ssh_conf_head.concat(_.map(hosts.collection, function (host) {
+    return _.template("Host <%= name %>\n\tPort <%= port %>\n")(host);
+  })).join('\n'));
+  console.log('Saved SSH config, you can use it like so: `ssh -F ', file_name, hosts.collection[0].name, '`');
+  console.log('The hosts in these deployment are:\n', _.map(hosts.collection, function (host) { return host.name; }));
+}

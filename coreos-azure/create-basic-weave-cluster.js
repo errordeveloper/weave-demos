@@ -14,7 +14,7 @@ var conf = {
   resources: util.generate_azure_resource_strings('basic-weave-example'),
 };
 
-util.save_config('weave-cluster-deployment.yml', conf);
+util.save_state('weave-cluster-deployment.yml', conf);
 
 var cloud_config_file = util.create_basic_weave_cluster_cloud_config(conf.node_count);
 

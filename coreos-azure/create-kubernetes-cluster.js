@@ -17,10 +17,7 @@ var conf = {
   resources: util.generate_azure_resource_strings('kubernetes'),
 };
 
-util.save_config('kubernetes-deployment.yml', conf);
-
-var vm_name_arg = _.template("--vm-name=<%= name %>")
-var vm_ssh_port = _.template("--ssh=<%= port %>")
+util.save_state('kubernetes-deployment.yml', conf);
 
 var initial_tasks = [
   ['network', 'vnet', 'create',
@@ -39,14 +36,15 @@ var vm_create_base_args = [
   '--ssh-cert=../azure-linux/coreos/cluster/ssh-cert.pem',
 ];
 
+var hosts = [];
+
 var etcd_cloud_config_files = util.create_kube_etcd_cloud_config(conf.nodes.etcd);
 
 var create_etcd_cluster = _(conf.nodes.etcd).times(function (n) {
   return vm_create_base_args.concat([
     '--custom-data=' + etcd_cloud_config_files[n],
     coreos_image_ids['stable'], 'core',
-    vm_name_arg({ name: util.hostname(n, 'etcd') }),
-    vm_ssh_port({ port: 2200 + n }),
+    util.next_host(n, 'etcd'),
   ]);
 });
 
@@ -56,9 +54,9 @@ var create_kube_cluster = _(conf.nodes.main).times(function (n) {
   return vm_create_base_args.concat([
     '--custom-data=' + kube_cloud_config_file,
     coreos_image_ids['stable'], 'core',
-    vm_name_arg({ name: util.hostname(n, 'kube') }),
-    vm_ssh_port({ port: 2210 + n }),
+    util.next_host(n, 'kube'),
   ]);
 });
 
-util.run_task_queue(initial_tasks.concat(create_etcd_cluster, create_kube_cluster));
+//util.run_task_queue(initial_tasks.concat(create_etcd_cluster, create_kube_cluster, list_vms));
+util.create_ssh_conf('kubernetes_deployment_ssh_conf', conf.resources['service'], hosts);

@@ -4,7 +4,7 @@ var _ = require('underscore');
 
 var util = require('./util.js');
 
-var conf = util.load_config('weave-cluster-deployment.yml');
+var conf = util.load_state('weave-cluster-deployment.yml');
 
 if (conf === undefined) {
   console.log('Nothing to delete.');
