@@ -11,4 +11,3 @@ azure.run_task_queue([
   azure.queue_machines('kube', 'stable',
     azure.create_kube_node_cloud_config),
 ]);
-
