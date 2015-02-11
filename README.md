@@ -11,4 +11,4 @@ This repository contains various bits of code which go along with [blog posts I 
 
 ## Copyright
 
-Unless explicitly stated, all code included in this repository is under Apache licence (see [LICENSE.md][]).
+Unless explicitly stated, all code included in this repository is under Apache licence (see [LICENSE.md](LICENSE.md)).
