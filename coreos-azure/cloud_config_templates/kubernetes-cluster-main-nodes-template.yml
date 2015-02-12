@@ -54,6 +54,7 @@ coreos:
         RefuseManualStart=no
         After=weave-network.target
         Requires=weave-network.target
+        ConditionHost=!kube-00
         Wants=proxy.service
         Wants=kubelet.service
         [Install]
@@ -259,6 +260,7 @@ coreos:
         Description=Kubernetes Kubelet
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=download-kubernetes.service
+        ConditionHost=!kube-00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kubelet \
             --address=0.0.0.0 \
@@ -279,6 +281,7 @@ coreos:
         Description=Kubernetes Proxy
         Documentation=https://github.com/GoogleCloudPlatform/kubernetes
         Wants=download-kubernetes.service
+        ConditionHost=!kube-00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-proxy \
              --etcd_servers=http://etcd-00:4001,http://etcd-01:4001,http://etcd-02:4001 \
@@ -287,3 +290,5 @@ coreos:
         RestartSec=10
         [Install]
         WantedBy=kubernetes-minion.target
+
+    ## echo '{ "id": "%H", "kind": "Minion", "apiVersion": "v1beta1", "labels": { "environment": "production" }  }' | kubectl create -s http://kube-00:8080 -f -
