@@ -3,9 +3,8 @@ var _ = require('underscore');
 var util = require('../util.js');
 var cloud_config = require('../cloud_config.js');
 
-var weave_salt = util.rand_string();
 
-exports.create_etcd_cloud_config = function (node_count) {
+exports.create_etcd_cloud_config = function (node_count, conf) {
   var elected_node = 0;
 
   var input_file = './cloud_config_templates/kubernetes-cluster-etcd-node-template.yml';
@@ -24,7 +23,7 @@ exports.create_etcd_cloud_config = function (node_count) {
   });
 };
 
-exports.create_node_cloud_config = function (node_count) {
+exports.create_node_cloud_config = function (node_count, conf) {
   var elected_node = 0;
 
   var input_file = './cloud_config_templates/kubernetes-cluster-main-nodes-template.yml';
@@ -32,7 +31,7 @@ exports.create_node_cloud_config = function (node_count) {
 
   var make_node_config = function (n) {
     return cloud_config.generate_environment_file_entry_from_object(util.hostname(n, 'kube'), {
-      weave_password: weave_salt,
+      weave_password: conf.weave_salt,
       weave_peers: n === elected_node ? "" : util.hostname(elected_node, 'kube'),
       breakout_route: util.ipv4([10, 2, 0, 0], 16),
       bridge_address_cidr: util.ipv4([10, 2, n, 1], 24),

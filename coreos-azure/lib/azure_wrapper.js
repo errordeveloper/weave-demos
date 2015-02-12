@@ -157,7 +157,7 @@ exports.queue_machines = function (name_prefix, coreos_update_channel, cloud_con
     '--ssh-cert=' + conf.resources['ssh_key']['pem'],
   ];
 
-  var cloud_config = cloud_config_creator(x);
+  var cloud_config = cloud_config_creator(x, conf);
 
   var next_host = function (n) {
     hosts.ssh_port_counter += 1;
@@ -191,6 +191,7 @@ exports.create_config = function (name, nodes) {
   conf = {
     name: name,
     nodes: nodes,
+    weave_salt: util.rand_string(),
     resources: {
       vnet: [name, 'internal-vnet', util.rand_suffix].join('-'),
       service: [name, 'service-cluster', util.rand_suffix].join('-'),
