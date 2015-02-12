@@ -230,9 +230,12 @@ var create_ssh_key = function (prefix) {
     keyout: join_output_file_path(prefix, 'ssh.key'),
     out: join_output_file_path(prefix, 'ssh.pem'),
   };
-  openssl.qExec('req', opts);
-  fs.chmodSync(opts.keyout, '0600');
-  console.log('Created new SSH key.');
+  openssl.exec('req', opts, function (err, buffer) {
+    if (err) console.log(err);
+    fs.chmod(opts.keyout, '0600', function (err) {
+      if (err) console.log(err);
+    });
+  });
   return {
     key: opts.keyout,
     pem: opts.out,
@@ -315,7 +318,7 @@ exports.create_config = function (name, nodes) {
     resources: {
       vnet: [name, 'internal-vnet', rand_suffix].join('-'),
       service: [name, 'service-cluster', rand_suffix].join('-'),
-      ssh_key: create_ssh_key(name + rand_suffix),
+      ssh_key: create_ssh_key(name),
     }
   };
 
