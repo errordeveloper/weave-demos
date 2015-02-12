@@ -12,14 +12,14 @@ write_files:
     permissions: '0755'
     owner: root
     content: |
-      #!/bin/sh -x -e
+      #!/bin/sh -xe
       minion_id="${1}"
       master_url="${2}"
       healthcheck=$(wget --retry-connrefused --tries=15 "${master_url}/healthz" -O -)
       test -n "${healthcheck}"
       test "${healthcheck}" = "ok"
       printf '{ "id": "%s", "kind": "Minion", "apiVersion": "v1beta1", "labels": { "environment": "production" }  }' "${minion_id}" \
-        | kubectl create -s "${master_url}" -f -
+        | /opt/bin/kubectl create -s "${master_url}" -f -
 
 coreos:
   update:
