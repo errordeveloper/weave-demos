@@ -45,24 +45,28 @@ exports.run_task_queue = function (dummy) {
       }
       return;
     } else {
-      //console.log('node_modules/azure-cli/bin/azure', task.current);
-      cp.fork('node_modules/azure-cli/bin/azure', task.current)
-        .on('exit', function (code, signal) {
-          tasks.done.push({
-            code: code,
-            signal: signal,
-            what: task.current.join(' '),
-            remaining: task.remaining,
-          });
-          if (code !== 0 && conf.destroying === undefined) {
-            console.log("Exiting due to an error.");
-            save_state();
-            console.log("You probably want to destroy and re-run.");
-            process.abort();
-          } else {
-            iter(pop_task());
-          }
-      });
+      if (task.current.length !== 0) {
+        console.log('node_modules/azure-cli/bin/azure', task.current);
+        cp.fork('node_modules/azure-cli/bin/azure', task.current)
+          .on('exit', function (code, signal) {
+            tasks.done.push({
+              code: code,
+              signal: signal,
+              what: task.current.join(' '),
+              remaining: task.remaining,
+            });
+            if (code !== 0 && conf.destroying === undefined) {
+              console.log("Exiting due to an error.");
+              save_state();
+              console.log("You probably want to destroy and re-run.");
+              process.abort();
+            } else {
+              iter(pop_task());
+            }
+        });
+      } else {
+        iter(pop_task());
+      }
     }
   })(pop_task());
 };
@@ -172,9 +176,14 @@ exports.queue_machines = function (name_prefix, coreos_update_channel, cloud_con
   };
 
   task_queue = task_queue.concat(_(x).times(function (n) {
-    return vm_create_base_args.concat(next_host(n), [
-      coreos_image_ids[coreos_update_channel], 'core',
-    ]);
+    console.log(conf.old_size, n);
+    if (conf.resizing && n < conf.old_size) {
+      return [];
+    } else {
+      return vm_create_base_args.concat(next_host(n), [
+        coreos_image_ids[coreos_update_channel], 'core',
+      ]);
+    }
   }));
 };
 
@@ -207,3 +216,17 @@ exports.destroy_cluster = function (state_file) {
 
   exports.run_task_queue();
 };
+
+exports.load_state_for_resizing = function (state_file, node_type, new_nodes) {
+  load_state(state_file);
+  if (conf.hosts === undefined) {
+    console.log('Nothing to look at.');
+    process.abort();
+  }
+  conf.resizing = true;
+  conf.old_size = conf.nodes[node_type];
+  conf.old_state_file = state_file;
+  conf.nodes[node_type] += new_nodes;
+  hosts.collection = conf.hosts;
+  hosts.ssh_port_counter += conf.hosts.length;
+}
