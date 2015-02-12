@@ -4,15 +4,26 @@
 
 write_files:
   - path: /run/docker_opts.env
-    permissions: 0644
+    permissions: '0644'
     owner: root
     content: |
       DOCKER_OPTS='--insecure-registry="0.0.0.0/0" --bridge="weave" -r="false"'
+  - path: /opt/bin/register_minion.sh
+    permissions: '0755'
+    owner: root
+    content: |
+      #!/bin/sh -x -e
+      minion_id="${1}"
+      master_url="${2}"
+      healthcheck=$(wget --retry-connrefused --tries=15 "${master_url}/healthz" -O -)
+      test -n "${healthcheck}"
+      test "${healthcheck}" = "ok"
+      printf '{ "id": "%s", "kind": "Minion", "apiVersion": "v1beta1", "labels": { "environment": "production" }  }' "${minion_id}" \
+        | kubectl create -s "${master_url}" -f -
 
 coreos:
   update:
     group: stable
-    reboot-strategy: 'off'
   units:
     - name: weave-network.target
       enable: true
@@ -253,6 +264,7 @@ coreos:
         WantedBy=kubernetes-master.target
 
     - name: kubelet.service
+      enable: true
       content: |
         [Unit]
         After=download-kubernetes.service
@@ -274,6 +286,7 @@ coreos:
         WantedBy=kubernetes-minion.target
 
     - name: proxy.service
+      enable: true
       content: |
         [Unit]
         After=download-kubernetes.service
@@ -291,4 +304,19 @@ coreos:
         [Install]
         WantedBy=kubernetes-minion.target
 
-    ## echo '{ "id": "%H", "kind": "Minion", "apiVersion": "v1beta1", "labels": { "environment": "production" }  }' | kubectl create -s http://kube-00:8080 -f -
+    - name: kubectl-create-minion.service
+      enable: true
+      content: |
+        [Unit]
+        After=download-kubernetes.service
+        ConditionFileIsExecutable=/opt/kubernetes/server/bin/kubectl
+        ConditionFileIsExecutable=/opt/bin/register_minion.sh
+        Description=Kubernetes Create Minion
+        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Wants=download-kubernetes.service
+        ConditionHost=!kube-00
+        [Service]
+        ExecStart=/opt/bin/register_minion.sh %H http://kube-00:8080
+        Type=oneshot
+        [Install]
+        WantedBy=kubernetes-minion.target
