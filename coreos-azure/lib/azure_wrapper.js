@@ -135,10 +135,25 @@ var create_ssh_conf = function () {
   console.log('The hosts in this deployment are:\n', _.map(hosts.collection, function (host) { return host.name; }));
 };
 
+var get_location = function () {
+  if (process.env['AZ_LOCATION']) {
+    return '--location=' + process.env['AZ_LOCATION'];
+  } else {
+    return '--location=West Europe';
+  }
+}
+var get_vm_size = function () {
+  if (process.env['AZ_VM_SIZE']) {
+    return '--vm-size=' + process.env['AZ_VM_SIZE'];
+  } else {
+    return '--vm-size=Small';
+  }
+}
+
 exports.queue_default_network = function () {
   task_queue.push([
     'network', 'vnet', 'create',
-    '--location=West Europe',
+    get_location(),
     '--address-space=172.16.0.0',
     conf.resources['vnet'],
   ]);
@@ -148,7 +163,8 @@ exports.queue_machines = function (name_prefix, coreos_update_channel, cloud_con
   var x = conf.nodes[name_prefix];
   var vm_create_base_args = [
     'vm', 'create',
-    '--location=West Europe',
+    get_location(),
+    get_vm_size(),
     '--connect=' + conf.resources['service'],
     '--virtual-network-name=' + conf.resources['vnet'],
     '--no-ssh-password',
