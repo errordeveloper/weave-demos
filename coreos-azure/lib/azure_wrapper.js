@@ -7,6 +7,9 @@ var yaml = require('js-yaml');
 
 var openssl = require('openssl-wrapper');
 
+var clr = require('colors');
+var inspect = require('util').inspect;
+
 var util = require('./util.js');
 
 var coreos_image_ids = {
@@ -31,7 +34,7 @@ exports.run_task_queue = function (dummy) {
   };
 
   var pop_task = function() {
-    console.log(tasks);
+    console.log(clr.yellow('azure_wrapper/task:'), clr.grey(inspect(tasks)));
     var ret = {};
     ret.current = tasks.todo.shift();
     ret.remaining = tasks.todo.length;
@@ -47,7 +50,7 @@ exports.run_task_queue = function (dummy) {
       return;
     } else {
       if (task.current.length !== 0) {
-        console.log('node_modules/azure-cli/bin/azure', task.current);
+        console.log(clr.yellow('azure_wrapper/exec:'), clr.blue(inspect(task.current)));
         cp.fork('node_modules/azure-cli/bin/azure', task.current)
           .on('exit', function (code, signal) {
             tasks.done.push({
@@ -57,9 +60,9 @@ exports.run_task_queue = function (dummy) {
               remaining: task.remaining,
             });
             if (code !== 0 && conf.destroying === undefined) {
-              console.log("Exiting due to an error.");
+              console.log(clr.red('azure_wrapper/fail: Exiting due to an error.'));
               save_state();
-              console.log("You probably want to destroy and re-run.");
+              console.log(clr.cyan('azure_wrapper/info: You probably want to destroy and re-run.'));
               process.abort();
             } else {
               iter(pop_task());
@@ -77,19 +80,19 @@ var save_state = function () {
   try {
     conf.hosts = hosts.collection;
     fs.writeFileSync(file_name, yaml.safeDump(conf));
-    console.log('Saved state into `%s`', file_name);
+    console.log(clr.yellow('azure_wrapper/info: Saved state into `%s`'), file_name);
   } catch (e) {
-    console.log(e);
+    console.log(clr.red(e));
   }
 };
 
 var load_state = function (file_name) {
   try {
     conf = yaml.safeLoad(fs.readFileSync(file_name, 'utf8'));
-    console.log('Loaded state from `%s`', file_name);
+    console.log(clr.yellow('azure_wrapper/info: Loaded state from `%s`'), file_name);
     return conf;
   } catch (e) {
-    console.log(e);
+    console.log(clr.red(e));
   }
 };
 
@@ -103,9 +106,9 @@ var create_ssh_key = function (prefix) {
     out: util.join_output_file_path(prefix, 'ssh.pem'),
   };
   openssl.exec('req', opts, function (err, buffer) {
-    if (err) console.log(err);
+    if (err) console.log(clr.red(err));
     fs.chmod(opts.keyout, '0600', function (err) {
-      if (err) console.log(err);
+      if (err) console.log(clr.red(err));
     });
   });
   return {
@@ -132,8 +135,8 @@ var create_ssh_conf = function () {
   fs.writeFileSync(file_name, ssh_conf_head.concat(_.map(hosts.collection, function (host) {
     return _.template("Host <%= name %>\n\tPort <%= port %>\n")(host);
   })).join('\n'));
-  console.log('Saved SSH config, you can use it like so: `ssh -F ', file_name, '<hostname>`');
-  console.log('The hosts in this deployment are:\n', _.map(hosts.collection, function (host) { return host.name; }));
+  console.log(clr.yellow('azure_wrapper/info:'), crl.green('Saved SSH config, you can use it like so: `ssh -F '), file_name, '<hostname>`');
+  console.log(clr.yellow('azure_wrapper/info:'), clr.green('The hosts in this deployment are:\n'), _.map(hosts.collection, function (host) { return host.name; }));
 };
 
 var get_location = function () {
@@ -218,7 +221,7 @@ exports.create_config = function (name, nodes) {
 exports.destroy_cluster = function (state_file) {
   load_state(state_file);
   if (conf.hosts === undefined) {
-    console.log('Nothing to delete.');
+    console.log(clr.red('azure_wrapper/fail: Nothing to delete.'));
     process.abort();
   }
 
@@ -235,7 +238,7 @@ exports.destroy_cluster = function (state_file) {
 exports.load_state_for_resizing = function (state_file, node_type, new_nodes) {
   load_state(state_file);
   if (conf.hosts === undefined) {
-    console.log('Nothing to look at.');
+    console.log(clr.red('azure_wrapper/fail: Nothing to look at.'));
     process.abort();
   }
   conf.resizing = true;

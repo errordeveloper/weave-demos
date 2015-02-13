@@ -10,6 +10,7 @@
   "license": "Apache 2.0",
   "dependencies": {
     "azure-cli": "^0.8.14",
+    "colors": "^1.0.3",
     "js-yaml": "^3.2.5",
     "openssl-wrapper": "^0.2.1",
     "underscore": "^1.7.0",

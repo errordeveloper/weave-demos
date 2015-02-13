@@ -1,6 +1,8 @@
 var _ = require('underscore');
 var fs = require('fs');
 var yaml = require('js-yaml');
+var colors = require('colors/safe');
+
 
 var write_cloud_config_from_object = function (data, output_file) {
   try {
@@ -10,7 +12,7 @@ var write_cloud_config_from_object = function (data, output_file) {
     ].join("\n"));
     return output_file;
   } catch (e) {
-    console.log(e);
+    console.log(colors.red(e));
   }
 };
 
@@ -35,7 +37,7 @@ exports.process_template = function (input_file, output_file, processor) {
   try {
     data = yaml.safeLoad(fs.readFileSync(input_file, 'utf8'));
   } catch (e) {
-    console.log(e);
+    console.log(colors.red(e));
   }
   return write_cloud_config_from_object(processor(_.clone(data)), output_file);
 };
