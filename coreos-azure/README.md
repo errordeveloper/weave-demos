@@ -132,3 +132,29 @@ redis-master                           10.2.2.4            master              d
 3c67c923-b3a0-11e4-9d5d-000d3a2028a3   10.2.2.6            php-redis           kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
 3c6976c7-b3a0-11e4-9d5d-000d3a2028a3                       php-redis           kubernetes/example-guestbook-php-redis   kube-03/            name=frontend,uses=redisslave,redis-master   Unknown
 ```
+
+
+ooops:
+```
+0 %> ssh -F ./output/kubernetes_b36527b1c0d8eb_ssh_conf kube-04
+CoreOS stable (557.2.0)
+Failed Units: 4
+  docker.service
+  install-weave.service
+  sshd.service
+  docker.socket
+core@kube-04 ~ $ systemctl status install-weave.service
+● install-weave.service - Install Weave
+   Loaded: loaded (/etc/systemd/system/install-weave.service; enabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Fri 2015-02-13 17:53:12 UTC; 9min ago
+     Docs: http://zettio.github.io/weave/
+  Process: 752 ExecStartPre=/usr/bin/curl --silent --location --retry 99 --retry-delay 2 https://github.com/zettio/weave/releases/download/latest_release/weave --output /opt/bin/weave (code=exited, status=6)
+  Process: 749 ExecStartPre=/bin/mkdir -p /opt/bin/ (code=exited, status=0/SUCCESS)
+
+Feb 13 17:53:12 kube-04 systemd[1]: install-weave.service: control process exited, code=exited status=6
+Feb 13 17:53:12 kube-04 systemd[1]: Failed to start Install Weave.
+Feb 13 17:53:12 kube-04 systemd[1]: Unit install-weave.service entered failed state.
+Feb 13 17:53:12 kube-04 systemd[1]: install-weave.service failed.
+core@kube-04 ~ $ logout
+```
+
