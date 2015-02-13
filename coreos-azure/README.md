@@ -158,3 +158,10 @@ Feb 13 17:53:12 kube-04 systemd[1]: install-weave.service failed.
 core@kube-04 ~ $ logout
 ```
 
+To delete the cluster run this:
+```
+./destroy-cluster.js ./output/kubernetes_b36527b1c0d8eb_deployment.yml 
+```
+
+Make sure to use the latest state file, as after resizing there is a new one. By the way, with the scripts shown, you can deploy multiple clusters, if you like :)
+
