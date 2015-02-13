@@ -4,6 +4,10 @@
 
 coreos:
   units:
+  - name: dhcpcd.service
+    enable: true
+    command: start
+
   - name: 10-weave.network
     runtime: false
     content: |

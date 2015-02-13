@@ -25,6 +25,10 @@ coreos:
   update:
     group: stable
   units:
+    - name: dhcpcd.service
+      enable: true
+      command: start
+
     - name: weave-network.target
       enable: true
       content: |
