@@ -74,10 +74,10 @@ Eventually you should see:
 POD                                    IP                  CONTAINER(S)        IMAGE(S)                                 HOST                LABELS                                       STATUS
 3c66b758-b3a0-11e4-9d5d-000d3a2028a3   10.2.1.3            php-redis           kubernetes/example-guestbook-php-redis   kube-01/            name=frontend,uses=redisslave,redis-master   Running
 3c67c923-b3a0-11e4-9d5d-000d3a2028a3   10.2.2.6            php-redis           kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
-3c6976c7-b3a0-11e4-9d5d-000d3a2028a3                       php-redis           kubernetes/example-guestbook-php-redis   <unassigned>        name=frontend,uses=redisslave,redis-master   Pending
 redis-master                           10.2.2.4            master              dockerfile/redis                         kube-02/            name=redis-master                            Running
 3b2baab4-b3a0-11e4-9d5d-000d3a2028a3   10.2.2.5            slave               brendanburns/redis-slave                 kube-02/            name=redisslave,uses=redis-master            Running
 3b2c9221-b3a0-11e4-9d5d-000d3a2028a3   10.2.1.2            slave               brendanburns/redis-slave                 kube-01/            name=redisslave,uses=redis-master            Running
+3c6976c7-b3a0-11e4-9d5d-000d3a2028a3                       php-redis           kubernetes/example-guestbook-php-redis   <unassigned>        name=frontend,uses=redisslave,redis-master   Pending
 ```
 When all are running, let's resize the cluster, adding a couple of bigger nodes.
 
