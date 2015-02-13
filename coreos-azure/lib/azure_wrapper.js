@@ -138,7 +138,6 @@ var create_ssh_conf = function () {
 exports.queue_default_network = function () {
   task_queue.push([
     'network', 'vnet', 'create',
-    '--verbose',
     '--location=West Europe',
     '--address-space=172.16.0.0',
     conf.resources['vnet'],
@@ -149,7 +148,6 @@ exports.queue_machines = function (name_prefix, coreos_update_channel, cloud_con
   var x = conf.nodes[name_prefix];
   var vm_create_base_args = [
     'vm', 'create',
-    '--verbose',
     '--location=West Europe',
     '--connect=' + conf.resources['service'],
     '--virtual-network-name=' + conf.resources['vnet'],
