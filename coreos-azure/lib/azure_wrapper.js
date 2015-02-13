@@ -135,7 +135,7 @@ var create_ssh_conf = function () {
   fs.writeFileSync(file_name, ssh_conf_head.concat(_.map(hosts.collection, function (host) {
     return _.template("Host <%= name %>\n\tPort <%= port %>\n")(host);
   })).join('\n'));
-  console.log(clr.yellow('azure_wrapper/info:'), crl.green('Saved SSH config, you can use it like so: `ssh -F '), file_name, '<hostname>`');
+  console.log(clr.yellow('azure_wrapper/info:'), clr.green('Saved SSH config, you can use it like so: `ssh -F ', file_name, '<hostname>`'));
   console.log(clr.yellow('azure_wrapper/info:'), clr.green('The hosts in this deployment are:\n'), _.map(hosts.collection, function (host) { return host.name; }));
 };
 
