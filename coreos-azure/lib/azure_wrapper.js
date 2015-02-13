@@ -191,7 +191,6 @@ exports.queue_machines = function (name_prefix, coreos_update_channel, cloud_con
   };
 
   task_queue = task_queue.concat(_(x).times(function (n) {
-    console.log(conf.old_size, n);
     if (conf.resizing && n < conf.old_size) {
       return [];
     } else {
