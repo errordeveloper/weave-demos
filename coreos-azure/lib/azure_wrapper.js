@@ -10,7 +10,8 @@ var openssl = require('openssl-wrapper');
 var util = require('./util.js');
 
 var coreos_image_ids = {
-  'stable': '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-522.6.0',
+  'stable': '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-557.2.0',
+  'beta': '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-557.2.0',
   'alpha': '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-584.0.0',
 };
 
