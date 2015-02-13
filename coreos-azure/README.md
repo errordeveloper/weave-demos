@@ -79,12 +79,13 @@ redis-master                           10.2.2.4            master              d
 3b2c9221-b3a0-11e4-9d5d-000d3a2028a3   10.2.1.2            slave               brendanburns/redis-slave                 kube-01/            name=redisslave,uses=redis-master            Running
 3c6976c7-b3a0-11e4-9d5d-000d3a2028a3                       php-redis           kubernetes/example-guestbook-php-redis   <unassigned>        name=frontend,uses=redisslave,redis-master   Pending
 ```
-When all are running, let's resize the cluster, adding a couple of bigger nodes.
+
+Two single-core minions is certainly not enough for a production system of today, and, as you can see we have one _unassigned_ pod. Let's resize the cluster, adding a couple of bigger nodes.
 
 From an another shell on your machine, you want to run:
 ```
 #TODO: make sure there is enough cores in the trial plan
-env AZ_VM_SIZE=ExtraLarge ./resize-kubernetes-cluster.js ./output/kubernetes_f5eaa9f06b2fdb_deployment.yml
+env AZ_VM_SIZE=Large ./resize-kubernetes-cluster.js ./output/kubernetes_f5eaa9f06b2fdb_deployment.yml
 ```
 > Note: this will create new files in `./output`.
 
@@ -92,12 +93,42 @@ Back on `kube-00`:
 ```
 core@kube-00 ~ $ kubectl get minions
 NAME                LABELS                   STATUS
+kube-01             environment=production   Ready
 kube-02             environment=production   Ready
 kube-03             environment=production   Ready
 kube-04             environment=production   Ready
-kube-05             environment=production   Ready
-kube-01             environment=production   Ready
 ```
 
-As you can see we have two more nodes, let's resize the number of guestbook instances we have:
+We can see that two more minions joined happily. Let's resize the number of guestbook instances we have:
 
+```
+core@kube-00 ~ $ kubectl get rc
+CONTROLLER             CONTAINER(S)        IMAGE(S)                                 SELECTOR            REPLICAS
+redisSlaveController   slave               brendanburns/redis-slave                 name=redisslave     2
+frontendController     php-redis           kubernetes/example-guestbook-php-redis   name=frontend       3
+core@kube-00 ~ $ kubectl resize --replicas=4 rc redisSlaveController
+resized
+kubectl get rc
+CONTROLLER             CONTAINER(S)        IMAGE(S)                                 SELECTOR            REPLICAS
+redisSlaveController   slave               brendanburns/redis-slave                 name=redisslave     4
+frontendController     php-redis           kubernetes/example-guestbook-php-redis   name=frontend       4
+
+```
+
+You now will have more front-end server and Redis slave.
+
+```
+##TODO: make-up the running pods, I cannot wait to do it all over on monday!!!
+
+core@kube-00 ~ $ kubectl get pods
+POD                                    IP                  CONTAINER(S)        IMAGE(S)                                 HOST                LABELS                                       STATUS
+3c66b758-b3a0-11e4-9d5d-000d3a2028a3   10.2.1.3            php-redis           kubernetes/example-guestbook-php-redis   kube-01/            name=frontend,uses=redisslave,redis-master   Running
+d79a7e44-b3a9-11e4-9d5d-000d3a2028a3                       slave               brendanburns/redis-slave                 kube-04/            name=redisslave,uses=redis-master            Unknown
+d79d5849-b3a9-11e4-9d5d-000d3a2028a3                       slave               brendanburns/redis-slave                 kube-03/            name=redisslave,uses=redis-master            Unknown
+2522f63a-b3aa-11e4-9d5d-000d3a2028a3                       php-redis           kubernetes/example-guestbook-php-redis   kube-04/            name=frontend,uses=redisslave,redis-master   Unknown
+redis-master                           10.2.2.4            master              dockerfile/redis                         kube-02/            name=redis-master                            Running
+3b2baab4-b3a0-11e4-9d5d-000d3a2028a3   10.2.2.5            slave               brendanburns/redis-slave                 kube-02/            name=redisslave,uses=redis-master            Running
+3b2c9221-b3a0-11e4-9d5d-000d3a2028a3   10.2.1.2            slave               brendanburns/redis-slave                 kube-01/            name=redisslave,uses=redis-master            Running
+3c67c923-b3a0-11e4-9d5d-000d3a2028a3   10.2.2.6            php-redis           kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
+3c6976c7-b3a0-11e4-9d5d-000d3a2028a3                       php-redis           kubernetes/example-guestbook-php-redis   kube-03/            name=frontend,uses=redisslave,redis-master   Unknown
+```
