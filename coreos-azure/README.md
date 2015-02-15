@@ -8,8 +8,8 @@ In this tutorial we will demonstrate how to deploy a Kubernetes cluster to Azure
 To get started, you need to checkout the code:
 
 ```
-git clone <repo>
-cd <dir>
+git clone https://github.com/errordeveloper/weave-demos
+cd coreos-azure
 ```
 
 You will need to have [Node.js installed](http://nodejs.org/download/) on you machine. If you have previously used Azure CLI, you should have it already.
@@ -27,7 +27,7 @@ Now, all you need to do is:
 
 With a much being output from the creator, after a while you will have a cluster suitable for production use, where there are 3 dedicated etcd nodes and 3 Kubernetes nodes. The `kube-00` node only acts as a master, and doesn't run any other work loads.
 
-![enter image description here](https://www.dropbox.com/s/v12rr2hzinjwr1a/Screenshot%202015-02-13%2008.00.10.png?dl=1)
+![VMs in Azure](https://www.dropbox.com/s/logk4mot2gnlxgn/Screenshot%202015-02-15%2015.54.45.png?dl=1)
 
 Once the creation of Azure VMs has finished, you should see the following:
 
@@ -72,12 +72,12 @@ kubectl get pods --watch
 Eventually you should see:
 ```
 POD                                    IP                  CONTAINER(S)        IMAGE(S)                                 HOST                LABELS                                       STATUS
-3c66b758-b3a0-11e4-9d5d-000d3a2028a3   10.2.1.3            php-redis           kubernetes/example-guestbook-php-redis   kube-01/            name=frontend,uses=redisslave,redis-master   Running
-3c67c923-b3a0-11e4-9d5d-000d3a2028a3   10.2.2.6            php-redis           kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
-redis-master                           10.2.2.4            master              dockerfile/redis                         kube-02/            name=redis-master                            Running
-3b2baab4-b3a0-11e4-9d5d-000d3a2028a3   10.2.2.5            slave               brendanburns/redis-slave                 kube-02/            name=redisslave,uses=redis-master            Running
-3b2c9221-b3a0-11e4-9d5d-000d3a2028a3   10.2.1.2            slave               brendanburns/redis-slave                 kube-01/            name=redisslave,uses=redis-master            Running
-3c6976c7-b3a0-11e4-9d5d-000d3a2028a3                       php-redis           kubernetes/example-guestbook-php-redis   <unassigned>        name=frontend,uses=redisslave,redis-master   Pending
+redis-master                           10.2.1.4            master              dockerfile/redis                         kube-01/            name=redis-master                            Running
+40d8cebd-b524-11e4-b1b2-000d3a203bbc   10.2.2.4            slave               brendanburns/redis-slave                 kube-02/            name=redisslave,uses=redis-master            Running
+40dbdcd0-b524-11e4-b1b2-000d3a203bbc   10.2.1.5            slave               brendanburns/redis-slave                 kube-01/            name=redisslave,uses=redis-master            Running
+421473f6-b524-11e4-b1b2-000d3a203bbc   10.2.2.5            php-redis           kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
+4214d4fe-b524-11e4-b1b2-000d3a203bbc   10.2.1.6            php-redis           kubernetes/example-guestbook-php-redis   kube-01/            name=frontend,uses=redisslave,redis-master   Running
+42153c72-b524-11e4-b1b2-000d3a203bbc                       php-redis           kubernetes/example-guestbook-php-redis   <unassigned>        name=frontend,uses=redisslave,redis-master   Pending
 ```
 
 Two single-core minions is certainly not enough for a production system of today, and, as you can see we have one _unassigned_ pod. Let's resize the cluster, adding a couple of bigger nodes.
@@ -85,9 +85,22 @@ Two single-core minions is certainly not enough for a production system of today
 From an another shell on your machine, you want to run:
 ```
 #TODO: make sure there is enough cores in the trial plan
-env AZ_VM_SIZE=Large ./resize-kubernetes-cluster.js ./output/kubernetes_f5eaa9f06b2fdb_deployment.yml
+export AZ_VM_SIZE=Large
+./resize-kubernetes-cluster.js ./output/kubernetes_f5eaa9f06b2fdb_deployment.yml
+...
+azure_wrapper/info: Saved SSH config, you can use it like so: `ssh -F  ./output/kubernetes_8f984af944f572_ssh_conf <hostname>`
+azure_wrapper/info: The hosts in this deployment are:
+ [ 'etcd-00',
+  'etcd-01',
+  'etcd-02',
+  'kube-00',
+  'kube-01',
+  'kube-02',
+  'kube-03',
+  'kube-04' ]
+azure_wrapper/info: Saved state into `./output/kubernetes_8f984af944f572_deployment.yml`
 ```
-> Note: this will create new files in `./output`.
+> Note: this step has created new files in `./output`.
 
 Back on `kube-00`:
 ```
@@ -99,68 +112,44 @@ kube-03             environment=production   Ready
 kube-04             environment=production   Ready
 ```
 
-We can see that two more minions joined happily. Let's resize the number of guestbook instances we have:
+We can see that two more minions joined happily. Let's resize the number of Guestbook instances we have:
 
 ```
-core@kube-00 ~ $ kubectl get rc
+core@kube-00 ~/guestbook-example $ kubectl get rc
 CONTROLLER             CONTAINER(S)        IMAGE(S)                                 SELECTOR            REPLICAS
 redisSlaveController   slave               brendanburns/redis-slave                 name=redisslave     2
 frontendController     php-redis           kubernetes/example-guestbook-php-redis   name=frontend       3
-core@kube-00 ~ $ kubectl resize --replicas=4 rc redisSlaveController
+core@kube-00 ~/guestbook-example $ kubectl resize --replicas=4 rc redisSlaveController
 resized
-kubectl get rc
+core@kube-00 ~/guestbook-example $ kubectl resize --replicas=4 rc frontendController
+resized
+core@kube-00 ~/guestbook-example $ kubectl get rc
 CONTROLLER             CONTAINER(S)        IMAGE(S)                                 SELECTOR            REPLICAS
 redisSlaveController   slave               brendanburns/redis-slave                 name=redisslave     4
 frontendController     php-redis           kubernetes/example-guestbook-php-redis   name=frontend       4
-
 ```
 
-You now will have more front-end server and Redis slave.
+You now will have more instances of front-end Guestbook apps and Redis slaves. For example, if we look up all pods labled `name=frontend`, we should see one running on each node.
 
 ```
-##TODO: make-up the running pods, I cannot wait to do it all over on monday!!!
-
-core@kube-00 ~ $ kubectl get pods
+core@kube-00 ~/guestbook-example $ kubectl get pods -l name=frontend
 POD                                    IP                  CONTAINER(S)        IMAGE(S)                                 HOST                LABELS                                       STATUS
-3c66b758-b3a0-11e4-9d5d-000d3a2028a3   10.2.1.3            php-redis           kubernetes/example-guestbook-php-redis   kube-01/            name=frontend,uses=redisslave,redis-master   Running
-d79a7e44-b3a9-11e4-9d5d-000d3a2028a3                       slave               brendanburns/redis-slave                 kube-04/            name=redisslave,uses=redis-master            Unknown
-d79d5849-b3a9-11e4-9d5d-000d3a2028a3                       slave               brendanburns/redis-slave                 kube-03/            name=redisslave,uses=redis-master            Unknown
-2522f63a-b3aa-11e4-9d5d-000d3a2028a3                       php-redis           kubernetes/example-guestbook-php-redis   kube-04/            name=frontend,uses=redisslave,redis-master   Unknown
-redis-master                           10.2.2.4            master              dockerfile/redis                         kube-02/            name=redis-master                            Running
-3b2baab4-b3a0-11e4-9d5d-000d3a2028a3   10.2.2.5            slave               brendanburns/redis-slave                 kube-02/            name=redisslave,uses=redis-master            Running
-3b2c9221-b3a0-11e4-9d5d-000d3a2028a3   10.2.1.2            slave               brendanburns/redis-slave                 kube-01/            name=redisslave,uses=redis-master            Running
-3c67c923-b3a0-11e4-9d5d-000d3a2028a3   10.2.2.6            php-redis           kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
-3c6976c7-b3a0-11e4-9d5d-000d3a2028a3                       php-redis           kubernetes/example-guestbook-php-redis   kube-03/            name=frontend,uses=redisslave,redis-master   Unknown
+4214d4fe-b524-11e4-b1b2-000d3a203bbc   10.2.1.6            php-redis           kubernetes/example-guestbook-php-redis   kube-01/            name=frontend,uses=redisslave,redis-master   Running
+ae59fa80-b526-11e4-b1b2-000d3a203bbc   10.2.4.5            php-redis           kubernetes/example-guestbook-php-redis   kube-04/            name=frontend,uses=redisslave,redis-master   Running
+421473f6-b524-11e4-b1b2-000d3a203bbc   10.2.2.5            php-redis           kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
+42153c72-b524-11e4-b1b2-000d3a203bbc   10.2.3.4            php-redis           kubernetes/example-guestbook-php-redis   kube-03/            name=frontend,uses=redisslave,redis-master   Running
+
 ```
 
+To makes sure the app is working, we should load it in the browser. For accessing the Guesbook service from the outside world, I had to create an Azure endpoint like shown on the picture below.
 
-ooops:
-```
-0 %> ssh -F ./output/kubernetes_b36527b1c0d8eb_ssh_conf kube-04
-CoreOS stable (557.2.0)
-Failed Units: 4
-  docker.service
-  install-weave.service
-  sshd.service
-  docker.socket
-core@kube-04 ~ $ systemctl status install-weave.service
-● install-weave.service - Install Weave
-   Loaded: loaded (/etc/systemd/system/install-weave.service; enabled; vendor preset: disabled)
-   Active: failed (Result: exit-code) since Fri 2015-02-13 17:53:12 UTC; 9min ago
-     Docs: http://zettio.github.io/weave/
-  Process: 752 ExecStartPre=/usr/bin/curl --silent --location --retry 99 --retry-delay 2 https://github.com/zettio/weave/releases/download/latest_release/weave --output /opt/bin/weave (code=exited, status=6)
-  Process: 749 ExecStartPre=/bin/mkdir -p /opt/bin/ (code=exited, status=0/SUCCESS)
+![VMs in Azure](https://www.dropbox.com/s/a7gglyamb9pltqn/Screenshot%202015-02-15%2016.02.32.png?dl=1)
 
-Feb 13 17:53:12 kube-04 systemd[1]: install-weave.service: control process exited, code=exited status=6
-Feb 13 17:53:12 kube-04 systemd[1]: Failed to start Install Weave.
-Feb 13 17:53:12 kube-04 systemd[1]: Unit install-weave.service entered failed state.
-Feb 13 17:53:12 kube-04 systemd[1]: install-weave.service failed.
-core@kube-04 ~ $ logout
-```
+I was then able to access it from anywhere via the Azure virtual IP for `kube-01`, i.e. `http://104.40.211.194:8000/`.
 
 To delete the cluster run this:
 ```
-./destroy-cluster.js ./output/kubernetes_b36527b1c0d8eb_deployment.yml 
+./destroy-cluster.js ./output/kubernetes_8f984af944f572_deployment.yml 
 ```
 
 Make sure to use the latest state file, as after resizing there is a new one. By the way, with the scripts shown, you can deploy multiple clusters, if you like :)
