@@ -84,7 +84,6 @@ Two single-core minions is certainly not enough for a production system of today
 
 From an another shell on your machine, you want to run:
 ```
-#TODO: make sure there is enough cores in the trial plan
 export AZ_VM_SIZE=Large
 ./resize-kubernetes-cluster.js ./output/kubernetes_f5eaa9f06b2fdb_deployment.yml
 ...
