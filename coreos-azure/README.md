@@ -9,7 +9,7 @@ To get started, you need to checkout the code:
 
 ```
 git clone https://github.com/errordeveloper/weave-demos
-cd coreos-azure
+cd weave-demos/coreos-azure
 ```
 
 You will need to have [Node.js installed](http://nodejs.org/download/) on you machine. If you have previously used Azure CLI, you should have it already.
