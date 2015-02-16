@@ -51,7 +51,7 @@ ssh -F  ./output/kubernetes_1c1496016083b4_ssh_conf kube-00
 ```
 > Note: config file name will be different, make sure to use the one you see.
 
-Check there are 3 minions in the cluster:
+Check there are 2 minions in the cluster:
 ```
 core@kube-00 ~ $ kubectl get minions
 NAME                LABELS                   STATUS
@@ -91,7 +91,7 @@ redis-master                           10.2.1.4            master              d
 
 ## Scaling
 
-Two single-core minions is certainly not enough for a production system of today, and, as you can see we have one _unassigned_ pod. Let's resize the cluster, adding a couple of bigger nodes.
+Two single-core minions are certainly not enough for a production system of today, and, as you can see we have one _unassigned_ pod. Let's resize the cluster by adding a couple of bigger nodes.
 
 You will need to open another terminal window on your machine and go to the same working directory (e.g. `~/Workspace/weave-demos/coreos-azure`).
 
@@ -99,7 +99,7 @@ First, lets set the size of new VMs:
 ```
 export AZ_VM_SIZE=Large
 ```
-Now, run resize script with state file of previous deployment:
+Now, run resize script with state file of the previous deployment:
 ```
 ./resize-kubernetes-cluster.js ./output/kubernetes_f5eaa9f06b2fdb_deployment.yml
 ...
