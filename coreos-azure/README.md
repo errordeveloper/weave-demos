@@ -1,7 +1,7 @@
 ---
 published: false
 title: Weaving Kubernetes on Azure
-tags: [ azure, coreos, kubernetes, usecase, guide, redis, php, cloud, provisioning ]
+tags: azure, coreos, kubernetes, usecase, guide, redis, php, cloud, provisioning
 ---
 
 ## Introduction
