@@ -1,10 +1,14 @@
 ---
 published: false
 title: Weaving Kubernetes on Azure
+tags: [ azure, coreos, kubernetes, usecase, guide, redis, php, cloud, provisioning ]
 ---
 
-In this tutorial we will demonstrate how to deploy a Kubernetes cluster to Azure cloud.
+## Introduction
 
+In this tutorial we will demonstrate how to deploy a Kubernetes cluster to Azure cloud. Weave makes networking of containers simple and secure, in a transparent, yet robust way. The focus of this tutorial is provide an out-of-the-box production-ready implementation with dedicated Kubernetes master and etcd nodes. It will also show how to scale the cluster with ease.
+
+## Let's go!
 To get started, you need to checkout the code:
 
 ```
@@ -13,6 +17,8 @@ cd weave-demos/coreos-azure
 ```
 
 You will need to have [Node.js installed](http://nodejs.org/download/) on you machine. If you have previously used Azure CLI, you should have it already.
+
+You first need to install some of the dependencies with
 
 ```
 npm install
@@ -25,13 +31,14 @@ Now, all you need to do is:
 ./create-kubernetes-cluster.js
 ```
 
-With a much being output from the creator, after a while you will have a cluster suitable for production use, where there are 3 dedicated etcd nodes and 3 Kubernetes nodes. The `kube-00` node only acts as a master, and doesn't run any other work loads.
+This script will provision a cluster suitable for production use, where there is a ring of 3 dedicated etcd nodes and Kubernetes master and 2 minions. The `kube-00` VM will be the master, your work loads are only to be deployed on the minion nodes, `kube-01` and `kube-02`. Initially, all VMs are single-core, to ensure a user of the free tier can reproduce it without paying extra. Later we will show how to add more bigger VMs.
 
 ![VMs in Azure](https://www.dropbox.com/s/logk4mot2gnlxgn/Screenshot%202015-02-15%2015.54.45.png?dl=1)
 
 Once the creation of Azure VMs has finished, you should see the following:
 
 ```
+...
 azure_wrapper/info: Saved SSH config, you can use it like so: `ssh -F  ./output/kubernetes_1c1496016083b4_ssh_conf <hostname>`
 azure_wrapper/info: The hosts in this deployment are:
  [ 'etcd-00', 'etcd-01', 'etcd-02', 'kube-00', 'kube-01', 'kube-02' ]
@@ -52,7 +59,9 @@ kube-01             environment=production   Ready
 kube-02             environment=production   Ready
 ```
 
-Let's follow the guestbook example now:
+## Deploying the workload
+
+Let's follow the Guestbook example now:
 ```
 cd guestbook-example
 kubectl create -f redis-master.json
@@ -63,11 +72,11 @@ kubectl create -f frontend-controller.json
 kubectl create -f frontend-service.json
 ```
 
-Now we need to wait for the pods to get deployed, run the following and wait for `STATUS` to change from `Unknown`, through `Pending` to `Runnig`. 
+You need to wait for the pods to get deployed, run the following and wait for `STATUS` to change from `Unknown`, through `Pending` to `Runnig`. 
 ```
 kubectl get pods --watch
 ```
-> Note: the most time is spent to download Docker container images on each of the hosts.
+> Note: the most time it will spend downloading Docker container images on each of the minions.
 
 Eventually you should see:
 ```
@@ -80,11 +89,18 @@ redis-master                           10.2.1.4            master              d
 42153c72-b524-11e4-b1b2-000d3a203bbc                       php-redis           kubernetes/example-guestbook-php-redis   <unassigned>        name=frontend,uses=redisslave,redis-master   Pending
 ```
 
+## Scaling
+
 Two single-core minions is certainly not enough for a production system of today, and, as you can see we have one _unassigned_ pod. Let's resize the cluster, adding a couple of bigger nodes.
 
-From an another shell on your machine, you want to run:
+You will need to open another terminal window on your machine and go to the same working directory (e.g. `~/Workspace/weave-demos/coreos-azure`).
+
+First, lets set the size of new VMs:
 ```
 export AZ_VM_SIZE=Large
+```
+Now, run resize script with state file of previous deployment:
+```
 ./resize-kubernetes-cluster.js ./output/kubernetes_f5eaa9f06b2fdb_deployment.yml
 ...
 azure_wrapper/info: Saved SSH config, you can use it like so: `ssh -F  ./output/kubernetes_8f984af944f572_ssh_conf <hostname>`
@@ -137,14 +153,17 @@ POD                                    IP                  CONTAINER(S)        I
 ae59fa80-b526-11e4-b1b2-000d3a203bbc   10.2.4.5            php-redis           kubernetes/example-guestbook-php-redis   kube-04/            name=frontend,uses=redisslave,redis-master   Running
 421473f6-b524-11e4-b1b2-000d3a203bbc   10.2.2.5            php-redis           kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
 42153c72-b524-11e4-b1b2-000d3a203bbc   10.2.3.4            php-redis           kubernetes/example-guestbook-php-redis   kube-03/            name=frontend,uses=redisslave,redis-master   Running
-
 ```
+
+## Exposing the app to the outside world
 
 To makes sure the app is working, we should load it in the browser. For accessing the Guesbook service from the outside world, I had to create an Azure endpoint like shown on the picture below.
 
 ![VMs in Azure](https://www.dropbox.com/s/a7gglyamb9pltqn/Screenshot%202015-02-15%2016.02.32.png?dl=1)
 
 I was then able to access it from anywhere via the Azure virtual IP for `kube-01`, i.e. `http://104.40.211.194:8000/`.
+
+## Destructing the VMs
 
 To delete the cluster run this:
 ```
