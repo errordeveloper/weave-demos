@@ -8,6 +8,9 @@ coreos:
     enable: true
     command: start
 
+  - name: systemd-resolved.service
+    command: stop
+
   - name: 10-weave.network
     runtime: false
     content: |

@@ -13,6 +13,8 @@ coreos:
     - name: dhcpcd.service
       enable: true
       command: start
+    - name: systemd-resolved.service
+      command: stop
     - name: etcd.service
       command: start
   update:
