@@ -1,3 +1,7 @@
+variable "weave_launch_password" {
+    description = "Set salt (NaCL) passphrase to encrypt weave network"
+}
+
 variable "aws_access_key" {
     description = "Your AWS API access key"
     default = ""
