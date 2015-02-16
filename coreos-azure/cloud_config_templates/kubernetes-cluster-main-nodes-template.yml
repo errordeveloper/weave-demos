@@ -33,6 +33,12 @@ coreos:
       enable: true
       command: start
 
+    - name: systemd-resolved.service
+      command: stop
+
+    - name: systemd-networkd.service
+      enable: true
+
     - name: wait-for-network-online.service
       enable: true
       command: start
