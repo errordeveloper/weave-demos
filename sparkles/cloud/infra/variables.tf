@@ -25,7 +25,7 @@ variable "aws_key_path" {
 
 variable "aws_coreos_ami" {
     description = "Name of CoreOS AMI in the chosen AWS region for instances to use"
-    default = "ami-c6e858b1"
+    default = "ami-5b911f2c"
 }
 
 variable "aws_instance_type" {
@@ -65,7 +65,7 @@ variable "gce_key_path" {
 
 variable "gce_coreos_disk_image" {
     description = "Name of CoreOS Root disk image for the GCE instances to use"
-    default = "coreos-alpha-509-1-0-v20141124"
+    default = "coreos-stable-557-2-0-v20150210"
 }
 
 variable "gce_machine_type" {
