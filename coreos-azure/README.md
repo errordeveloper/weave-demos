@@ -101,7 +101,7 @@ export AZ_VM_SIZE=Large
 ```
 Now, run resize script with state file of the previous deployment:
 ```
-./resize-kubernetes-cluster.js ./output/kubernetes_f5eaa9f06b2fdb_deployment.yml
+./resize-kubernetes-cluster.js ./output/kubernetes_1c1496016083b4_deployment.yml
 ...
 azure_wrapper/info: Saved SSH config, you can use it like so: `ssh -F  ./output/kubernetes_8f984af944f572_ssh_conf <hostname>`
 azure_wrapper/info: The hosts in this deployment are:
