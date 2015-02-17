@@ -81,7 +81,7 @@ kubectl get pods --watch
 Eventually you should see:
 ```
 POD                                    IP              CONTAINER(S)    IMAGE(S)                                HOST            LABELS                                       STATUS
-redis-master                           10.2.1.4        master          dockerfile/redis                        kube-01/            name=redis-master                            Running
+redis-master                           10.2.1.4        master          dockerfile/redis                        kube-01/          name=redis-master                            Running
 40d8cebd-b679-11e4-b6f6-000d3a20a034   10.2.2.4        slave           brendanburns/redis-slave                kube-02/        name=redisslave,uses=redis-master            Running
 40dbdcd0-b679-11e4-b6f6-000d3a20a034   10.2.1.5        slave           brendanburns/redis-slave                kube-01/        name=redisslave,uses=redis-master            Running
 421473f6-b679-11e4-b6f6-000d3a20a034   10.2.2.5        php-redis       kubernetes/example-guestbook-php-redis  kube-02/        name=frontend,uses=redisslave,redis-master   Running
@@ -133,9 +133,9 @@ First, double-check how many replication controllers there are:
 
 ```
 core@kube-00 ~ $ kubectl get rc
-CONTROLLER               CONTAINER(S)        IMAGE(S)                                 SELECTOR            REPLICAS
-frontendController      php-redis           kubernetes/example-guestbook-php-redis   name=frontend       3
-redisSlaveController   slave               brendanburns/redis-slave                 name=redisslave     2
+CONTROLLER             CONTAINER(S)    IMAGE(S)                                 SELECTOR            REPLICAS
+frontendController     php-redis       kubernetes/example-guestbook-php-redis   name=frontend     3
+redisSlaveController   slave           brendanburns/redis-slave                 name=redisslave   2
 ```
 As we have 4 minions, let's resize proportionally:
 ```
@@ -147,9 +147,9 @@ resized
 Check what we have now:
 ```
 kubectl get rc
-CONTROLLER               CONTAINER(S)        IMAGE(S)                                 SELECTOR            REPLICAS
-frontendController      php-redis           kubernetes/example-guestbook-php-redis   name=frontend       4
-redisSlaveController   slave               brendanburns/redis-slave                 name=redisslave     4
+CONTROLLER             CONTAINER(S)      IMAGE(S)                                 SELECTOR            REPLICAS
+frontendController     php-redis         kubernetes/example-guestbook-php-redis   name=frontend     4
+redisSlaveController   slave             brendanburns/redis-slave                 name=redisslave   4
 ```
 
 You now will have more instances of front-end Guestbook apps and Redis slaves; and, if we look up all pods labled `name=frontend`, we should see one running on each node.
