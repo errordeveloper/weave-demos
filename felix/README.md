@@ -26,7 +26,7 @@ echo '$num_instances=4' > config-override.rb
 
 If your host doesn't have 8G of RAM to spare for the 4 boxes you are wanting:
 ```
-echo '$vb_memory=512` >> config-override.rb
+echo '$vb_memory=512' >> config-override.rb
 ```
 
 All other defaults are define by upstream [`Vagrantfile`](../coreos-vagrant/Vagrantfile#L11-L17).
