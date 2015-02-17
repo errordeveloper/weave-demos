@@ -80,13 +80,13 @@ kubectl get pods --watch
 
 Eventually you should see:
 ```
-POD                               IP                  CONTAINER(S)        IMAGE(S)                                 HOST                LABELS                                       STATUS
-redis-master                      10.2.1.4            master              dockerfile/redis                         kube-01/            name=redis-master                            Running
-40d8cebd-b679-11e4-b6f6-000d3a20a034   10.2.2.4            slave               brendanburns/redis-slave                 kube-02/            name=redisslave,uses=redis-master            Running
-40dbdcd0-b679-11e4-b6f6-000d3a20a034   10.2.1.5            slave               brendanburns/redis-slave                 kube-01/            name=redisslave,uses=redis-master            Running
-421473f6-b679-11e4-b6f6-000d3a20a034      10.2.2.5            php-redis           kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
-4214d4fe-b679-11e4-b6f6-000d3a20a034      10.2.1.6            php-redis           kubernetes/example-guestbook-php-redis   kube-01/            name=frontend,uses=redisslave,redis-master   Running
-42153c72-b679-11e4-b6f6-000d3a20a034                          php-redis           kubernetes/example-guestbook-php-redis   <unassigned>        name=frontend,uses=redisslave,redis-master   Pending
+POD                                    IP              CONTAINER(S)    IMAGE(S)                               HOST            LABELS                                       STATUS
+redis-master                           10.2.1.4        master          dockerfile/redis                          kube-01/            name=redis-master                            Running
+40d8cebd-b679-11e4-b6f6-000d3a20a034   10.2.2.4        slave           brendanburns/redis-slave                kube-02/        name=redisslave,uses=redis-master            Running
+40dbdcd0-b679-11e4-b6f6-000d3a20a034   10.2.1.5        slave               brendanburns/redis-slave                 kube-01/        name=redisslave,uses=redis-master            Running
+421473f6-b679-11e4-b6f6-000d3a20a034   10.2.2.5        php-redis       kubernetes/example-guestbook-php-redis  kube-02/        name=frontend,uses=redisslave,redis-master   Running
+4214d4fe-b679-11e4-b6f6-000d3a20a034   10.2.1.6        php-redis       kubernetes/example-guestbook-php-redis  kube-01/        name=frontend,uses=redisslave,redis-master   Running
+42153c72-b679-11e4-b6f6-000d3a20a034                   php-redis       kubernetes/example-guestbook-php-redis   <unassigned>    name=frontend,uses=redisslave,redis-master   Pending
 ```
 
 ## Scaling
@@ -156,11 +156,11 @@ You now will have more instances of front-end Guestbook apps and Redis slaves; a
 
 ```
 core@kube-00 ~/guestbook-example $ kubectl get pods -l name=frontend
-POD                            IP                  CONTAINER(S)        IMAGE(S)                                 HOST                LABELS                                       STATUS
-4214d4fe-b679-11e4-b6f6-000d3a20a034   10.2.1.6            php-redis           kubernetes/example-guestbook-php-redis   kube-01/            name=frontend,uses=redisslave,redis-master   Running
-ae59fa80-b679-11e4-b6f6-000d3a20a034   10.2.4.5            php-redis           kubernetes/example-guestbook-php-redis   kube-04/            name=frontend,uses=redisslave,redis-master   Running
-421473f6-b679-11e4-b6f6-000d3a20a034   10.2.2.5            php-redis           kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
-42153c72-b679-11e4-b6f6-000d3a20a034   10.2.3.4            php-redis           kubernetes/example-guestbook-php-redis   kube-03/            name=frontend,uses=redisslave,redis-master   Running
+POD                                    IP                CONTAINER(S)  IMAGE(S)                                 HOST            LABELS                                       STATUS
+4214d4fe-b679-11e4-b6f6-000d3a20a034   10.2.1.6          php-redis     kubernetes/example-guestbook-php-redis   kube-01/            name=frontend,uses=redisslave,redis-master   Running
+ae59fa80-b679-11e4-b6f6-000d3a20a034   10.2.4.5          php-redis     kubernetes/example-guestbook-php-redis   kube-04/            name=frontend,uses=redisslave,redis-master   Running
+421473f6-b679-11e4-b6f6-000d3a20a034   10.2.2.5          php-redis     kubernetes/example-guestbook-php-redis   kube-02/            name=frontend,uses=redisslave,redis-master   Running
+42153c72-b679-11e4-b6f6-000d3a20a034   10.2.3.4          php-redis     kubernetes/example-guestbook-php-redis   kube-03/            name=frontend,uses=redisslave,redis-master   Running
 ```
 
 ## Exposing the app to the outside world
