@@ -147,7 +147,7 @@ resized
 Check what we have now:
 ```
 kubectl get rc
-CONTROLLER             CONTAINER(S)   IMAGE(S)                                 SELECTOR         REPLICAS
+CONTROLLER             CONTAINER(S)   IMAGE(S)                                 SELECTOR          REPLICAS
 frontendController     php-redis      kubernetes/example-guestbook-php-redis   name=frontend     4
 redisSlaveController   slave          brendanburns/redis-slave                 name=redisslave   4
 ```
