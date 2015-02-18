@@ -118,7 +118,7 @@ write_files:
         errordeveloper/weave-twitter-river-minimal:latest \
       "
 
-  - path: /opt/bin/spark-shell-scala
+  - path: /opt/bin/spark-shell-gce-scala
     permissions: '0755'
     owner: root
     content: |
@@ -132,7 +132,7 @@ write_files:
       docker attach spark-shell
       docker rm -f spark-shell
 
-  - path: /opt/bin/spark-shell-python
+  - path: /opt/bin/spark-shell-gce-python
     permissions: '0755'
     owner: root
     content: |
@@ -144,5 +144,20 @@ write_files:
         --entrypoint=pyspark \
         errordeveloper/weave-spark-shell-minimal:latest \
         --master spark://spark-master-gce.weave.local:7077
+      docker attach spark-shell
+      docker rm -f spark-shell
+
+  - path: /opt/bin/spark-shell-local-python
+    permissions: '0755'
+    owner: root
+    content: |
+      #!/bin/sh -x
+      sudo weave run --with-dns 10.10.1.88/24 \
+        --tty --interactive \
+        --hostname=spark-shell.weave.local \
+        --name=spark-shell \
+        --entrypoint=pyspark \
+        errordeveloper/weave-spark-shell-minimal:latest \
+        --master spark://spark-master.weave.local:7077
       docker attach spark-shell
       docker rm -f spark-shell
