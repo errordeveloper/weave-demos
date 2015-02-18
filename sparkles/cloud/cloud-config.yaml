@@ -105,7 +105,7 @@ coreos:
 
 write_files:
   - path: /etc/pre-fetch-container-images.env
-    permissions: 0644
+    permissions: '0644'
     owner: root
     content: |
       PRE_FETCH_CONTAINER_IMAGES="\
@@ -119,22 +119,24 @@ write_files:
       "
 
   - path: /opt/bin/pyspark
-    permissions: 0755
+    permissions: '0755'
     owner: root
     content: |
+      #!/bin/sh -x
       sudo weave run --with-dns 10.10.1.88/24 \
         --tty --interactive \
         --hostname=spark-shell.weave.local \
         --name=spark-shell \
         errordeveloper/weave-spark-shell-minimal:latest \
-        --master spark://spark-master.weave.local:7077
+        --master spark://spark-master-gce.weave.local:7077
       docker attach spark-shell
       docker rm -f spark-shell
 
   - path: /opt/bin/spark-shell
-    permissions: 0755
+    permissions: '0755'
     owner: root
     content: |
+      #!/bin/sh -x
       sudo weave run --with-dns 10.10.1.88/24 \
         --tty --interactive \
         --hostname=spark-shell.weave.local \
