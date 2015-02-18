@@ -113,7 +113,34 @@ write_files:
         zettio/weavedns:latest \
         zettio/weavetools:latest \
         errordeveloper/weave-spark-master-minimal:latest \
-        errordeveloper/weave-worker-master-minimal:latest \
-        errordeveloper/weave-shell-master-minimal:latest \
+        errordeveloper/weave-spark-worker-minimal:latest \
+        errordeveloper/weave-spark-shell-minimal:latest \
         errordeveloper/weave-twitter-river-minimal:latest \
       "
+
+  - path: /opt/bin/pyspark
+    permissions: 0755
+    owner: root
+    content: |
+      sudo weave run --with-dns 10.10.1.88/24 \
+        --tty --interactive \
+        --hostname=spark-shell.weave.local \
+        --name=spark-shell \
+        errordeveloper/weave-spark-shell-minimal:latest \
+        --master spark://spark-master.weave.local:7077
+      docker attach spark-shell
+      docker rm -f spark-shell
+
+  - path: /opt/bin/spark-shell
+    permissions: 0755
+    owner: root
+    content: |
+      sudo weave run --with-dns 10.10.1.88/24 \
+        --tty --interactive \
+        --hostname=spark-shell.weave.local \
+        --name=spark-shell \
+        --entrypoint=pyspark \
+        errordeveloper/weave-spark-shell-minimal:latest \
+        --master spark://spark-master-gce.weave.local:7077
+      docker attach spark-shell
+      docker rm -f spark-shell
