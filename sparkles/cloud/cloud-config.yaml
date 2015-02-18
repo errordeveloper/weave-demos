@@ -118,7 +118,7 @@ write_files:
         errordeveloper/weave-twitter-river-minimal:latest \
       "
 
-  - path: /opt/bin/pyspark
+  - path: /opt/bin/spark-shell-scala
     permissions: '0755'
     owner: root
     content: |
@@ -132,7 +132,7 @@ write_files:
       docker attach spark-shell
       docker rm -f spark-shell
 
-  - path: /opt/bin/spark-shell
+  - path: /opt/bin/spark-shell-python
     permissions: '0755'
     owner: root
     content: |
