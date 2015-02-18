@@ -1,9 +1,4 @@
-
----
-title: Pythonic streaming  and sparkling weaving
-tags: spark, vagrant, coreos, docker, guide, usecase
-published: false
----
+# Pythonic streaming  and sparkling weaving
 
 This guide demonstrates an easy way to setup 
 
