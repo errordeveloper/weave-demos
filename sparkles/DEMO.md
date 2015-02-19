@@ -1,8 +1,6 @@
 ---
 title: Networking Spark Cluster on Docker with Weave
-published: false
 tags: docker, spark, vagrant, cloud, coreos, usecase, guide
-categories: guide, usecase
 ---
 
 In this guide, I will show you how easy it is to deploy a Spark cluster using [Docker](https://www.docker.com/) and [Weave](https://weave.works/), running on [CoreOS](https://coreos.com/).
