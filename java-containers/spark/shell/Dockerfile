@@ -30,6 +30,7 @@ RUN curl \
   http://central.maven.org/maven2/org/elasticsearch/elasticsearch-spark_2.10/2.1.0.Beta3/elasticsearch-spark_2.10-2.1.0.Beta3.jar \
   --output /usr/spark/lib/elasticsearch-spark_2.10-2.1.0.Beta3.jar
 
+## Currently we need to tweak nsswitch.conf(5), mainly due to zettio/weave#68
 RUN sed 's/^\(hosts:[\ ]*\)\(files\)\ \(dns\)$/\1\3 \2/' -i /etc/nsswitch.conf
 
 ENV SPARK_HOME /usr/spark-$SPARK_BINARY_RELEASE
