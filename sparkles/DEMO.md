@@ -1,5 +1,6 @@
 ---
 title: Networking Spark Cluster on Docker with Weave
+published: false
 ---
 
 #  Networking Spark Cluster on Docker with Weave
@@ -137,8 +138,6 @@ Time: 2015-02-18 18:10:56
 ('Weave!', 130962)
 ```
 
-## TODO
+## Conclusion
 
-Congrats, we have some bigdataz!
-
-In this guide, we have looked at running Apache Spark
+In this guide, we have looked at deploying Apache Spark with Docker and Weave. The greatest advantage Weave brings to this is that you can move the setup from one infrastructure into another without real changes to the application.
