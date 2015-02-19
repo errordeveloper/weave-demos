@@ -14,12 +14,14 @@ cd weave-demos/sparkles
 vagrant up
 ```
 
+Vargant will boot and provision 3 VMs, after it exited there will a Spark cluster running with master on the head node (`core-01`) and workers on the remaining `core-02` and `core-03`. To keep this guide short, I will not explain how exactly provisioning works, as I have [done so previously](http://weaveblog.com/2014/10/28/running-a-weave-network-on-coreos/).
+
 Now, let's login to `core-01`:
 ```
 vagrant ssh core-01
 ```
 
-A few container images are now downloading in the background. It takes a few minutes, but you can run `watch docker images` and wait for the following to appear:
+A few container images should be downloading in the background. It takes a few minutes, but you can run `watch docker images` and wait for the following to appear:
 ```
 REPOSITORY                                   TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
 errordeveloper/weave-spark-master-minimal    latest              437bd4307e0e        47 hours ago        430.4 MB
@@ -34,13 +36,15 @@ zettio/weave                                 0.9.0               efb52cb2a3b8   
 zettio/weave                                 latest              efb52cb2a3b8        2 weeks ago         11.35 MB
 ```
 
-I have prepared a set of Spark container images for the purpose of this demo, and these are [fairly small](http://weaveblog.com/2014/12/09/running-java-applications-in-docker-containers/).
+I have prepared a set of [lean](http://weaveblog.com/2014/12/09/running-java-applications-in-docker-containers/) Spark container images for the purpose of this demo.
 
-You are not going to use Elasticsearch in this guide, but it's there for you to experiment with, if you'd like.
+> Note: You can use images of your own if you'd like, just make sure to consult my [Dockerfile](https://github.com/errordeveloper/weave-demos/blob/master/java-containers/spark/base/Dockerfile#L33-L34) for the `nsswitch.conf` tweak, you will need to make sure DNS works correctly.
+
+You may have noticed there is Elasticsearch running,  I will not be using it for the purpose of this guide, but it's there for you to experiment with, if you'd like.
 
 Once all of the images are downloaded,  Spark cluster will get bootstrapped shortly.
 
-You can tail the logs and see 2 workers joining:
+You can tail the logs and see 2 workers joining the cluster,  these go by DNS names`spark-worker-1.weave.local` and `spark-worker-2.weave.local`:
 
 ```
 core@core-01 ~ $ journalctl -f -u spark
@@ -50,7 +54,7 @@ Feb 18 16:10:15 core-01 docker[3658]: 15/02/18 16:10:15 INFO Master: Registering
 Feb 18 16:10:17 core-01 docker[3658]: 15/02/18 16:10:17 INFO Master: Registering worker spark-worker-2.weave.local:33557 with 1 cores, 982.0 MB RAM
 ```
 
-> Note: these not very big compute nodes, if your machine has more resource, you can deploy bigger VMs by setting `$vb_memory` and `$vb_cpus` in `config-override.rb`. 
+> Note: these are not very big compute nodes, if your machine has more resource, you can deploy bigger VMs by setting `$vb_memory` and `$vb_cpus` in `config-override.rb`. 
 
 ## Ready to work!
 
@@ -58,26 +62,32 @@ Now everything is ready to deploy a workload on the cluster. I will submit a sim
 
 Let's start pyspark container:
 ```
-sudo weave run --with-dns 10.10.1.88/24 \
-  --tty --interactive \
+sudo weave run \
+  --with-dns \
+  10.10.1.88/24 \
   --hostname=spark-shell.weave.local \
+  \
+  --tty --interactive \
   --name=spark-shell \
   --entrypoint=pyspark \
   errordeveloper/weave-spark-shell-minimal:latest \
+  \
   --master spark://spark-master.weave.local:7077
 ```
 
-As you can see, with WeaveDNS you can address Spark master node by it's name. The node running pyspark also gets a hostname - `spark-shell.weave.local`. The `10.10.1.88` will be the Weave IP address of the shell container, it's part of the `10.10.1.0/24` subnet, which had been allocated for the cluster.
+As you can see, with WeaveDNS you can address Spark master node by it's name. The node running pyspark also gets a hostname - `spark-shell.weave.local`, that's simply taken care of by passing `--with-dns`  and `--hostname=...`.  The IP address I have picked for this container is `10.10.1.88`, it's part of the `10.10.1.0/24` subnet, which had been allocated for the cluster, you can. All remain arguments are not specific to Weave, these are just usual `docker run` arguments, followed by `pyspark` arguments.
 
-We will also need a data source of some sort, here is a very simple one:
+For the demo to work, you will also need a data source of some sort. Naturally, it will run in a container as well, which in turns joins Weave network also.
 
+Here is a very simple one for you:
 ```
 sudo weave run --with-dns 10.10.1.99/24 \
   --hostname=spark-data-source.weave.local \
   busybox sh -c 'nc -ll -p 9999 -e yes Hello, Weave!'
 ```
+So we will have a netcat server on 9999, with DNS name `spark-data-source.weave.local` and IP address `10.10.1.99`. Weave will make this server reachable from any node in the cluster.
 
-Please note, this prototypical data source is using Weave DNS as well, making things a lot simpler as you will see below.
+Next, you want to attach to the Spark shell:
 
 ```
 core@core-01 ~ $ docker attach spark-shell
@@ -97,10 +107,7 @@ SparkContext available as sc.
 15/02/18 17:10:38 INFO BlockManagerMasterActor: Registering block manager spark-worker-1.weave.local:36614 with 267.3 MB RAM, BlockManagerId(1, spark-worker-1.weave.local, 36614)
 ```
 
-In this output,  worker nodes are referred to by DNS names as well, which should come for free with Weave.
-
-
-The code we are going to run is based on the [`streaming/network_wordcount.py`](https://github.com/apache/spark/blob/a8eb92dcb9ab1e6d8a34eed9a8fddeda645b5094/examples/src/main/python/streaming/network_wordcount.py) example, which counts words in UTF-8 encoded, '\n' delimited text received from our data source server every second.
+The code we are going to run is based on the [`streaming/network_wordcount.py`](https://github.com/apache/spark/blob/a8eb92dcb9ab1e6d8a34eed9a8fddeda645b5094/examples/src/main/python/streaming/network_wordcount.py) example, which counts words in a text stream received from the data source server for every second.
 ```
 >>> 
 >>> from pyspark.streaming import StreamingContext
