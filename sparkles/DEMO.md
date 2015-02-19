@@ -1,8 +1,10 @@
 # Pythonic streaming  and sparkling weaving
 
-In this guide, I will show you have easy it is to deploy a Spark cluster using Docker and Weave, running on CoreOS.
+In this guide, I will show you how easy it is to deploy a Spark cluster using [Docker](https://www.docker.com/) and [Weave](https://weave.works/), running on [CoreOS](https://coreos.com/).
 
-To keep things simple for you, I will show how to setup a Spark cluster using Vagrant. If you would like to run really big workload in the cloud, please refer to [my other blog post](http://weaveblog.com/2014/12/18/automated-provisioning-of-multi-cloud-weave-network-terraform/), but you probably want to try this first and make sure you understand all the relevant steps. For this guide, I made sure it's supper easy to get up and running and you don't have to pay for a cloud services account.
+[Apache Spark](http://spark.apache.org/) is a fast and general-purpose cluster computing system. It provides high-level APIs in Java, Scala and Python, and an optimized engine that supports general execution graphs. It also supports a rich set of higher-level tools, including [stream processing](http://spark.apache.org/docs/1.2.0/streaming-programming-guide.html). For this guide, I am going to demonstrate a basic stream processing example in Python. I will use Weave to connect 3 Spark nodes on a fully isolated and portable network with DNS, no reconfiguration would be required if you wish to run this elsewhere.
+
+To keep things simple for you, I will show how to setup the Spark cluster using Vagrant. If you would like to run a really big workload in the cloud, please refer to [my other blog post](http://weaveblog.com/2014/12/18/automated-provisioning-of-multi-cloud-weave-network-terraform/), but you probably want to try this first and make sure you understand all the relevant steps. For this guide, I made sure it's supper easy to get up and running and you don't have to pay for a cloud services account.
 
 ## Let's go!
 
@@ -13,7 +15,7 @@ cd weave-demos/sparkles
 vagrant up
 ```
 
-Vargant will boot and provision 3 VMs, shortly after there will be a Spark cluster running with master on the head node (`core-01`) and workers on the remaining `core-02` and `core-03`. To keep this guide short, I will not explain how exactly provisioning works, as I have [done so previously](http://weaveblog.com/2014/10/28/running-a-weave-network-on-coreos/).
+Vagrant will boot and provision 3 VMs, shortly after there will be a Spark cluster running with master on the head node (`core-01`) and workers on the remaining `core-02` and `core-03`. To keep this guide short, I will not explain how exactly provisioning works, as I have [done so previously](http://weaveblog.com/2014/10/28/running-a-weave-network-on-coreos/).
 
 Now, let's login to `core-01`:
 ```
@@ -84,7 +86,7 @@ sudo weave run --with-dns 10.10.1.99/24 \
   --hostname=spark-data-source.weave.local \
   busybox sh -c 'nc -ll -p 9999 -e yes Hello, Weave!'
 ```
-So we will have a netcat server on 9999, with DNS name `spark-data-source.weave.local` and IP address `10.10.1.99`. Weave will make this server reachable from any node in the cluster.
+So we will have a netcat server on 9999, with DNS name `spark-data-source.weave.local` and IP address `10.10.1.99`. Weave will make this server reachable from any node in the cluster, and it can be moved between hosts without need to change any of your code or config.
 
 Next, you want to attach to the Spark shell container:
 
@@ -135,3 +137,4 @@ Time: 2015-02-18 18:10:56
 
 Congrats, we have some bigdataz!
 
+In this guide, we have looked at running Apache Spark
