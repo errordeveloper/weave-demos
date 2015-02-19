@@ -1,9 +1,8 @@
 # Pythonic streaming  and sparkling weaving
 
-This guide demonstrates an easy way to setup 
+In this guide, I will show you have easy it is to deploy a Spark cluster using Docker and Weave, running on CoreOS.
 
-To keep things simple for you, I will show how to setup a cluster using Vagrant. If you would like to run it in the cloud, please refer to the [Terraform-based](http://weaveblog.com/2014/12/18/automated-provisioning-of-multi-cloud-weave-network-terraform/) setup instructions.
-
+To keep things simple for you, I will show how to setup a Spark cluster using Vagrant. If you would like to run really big workload in the cloud, please refer to [my other blog post](http://weaveblog.com/2014/12/18/automated-provisioning-of-multi-cloud-weave-network-terraform/), but you probably want to try this first and make sure you understand all the relevant steps. For this guide, I made sure it's supper easy to get up and running and you don't have to pay for a cloud services account.
 
 ## Let's go!
 
@@ -14,7 +13,7 @@ cd weave-demos/sparkles
 vagrant up
 ```
 
-Vargant will boot and provision 3 VMs, after it exited there will a Spark cluster running with master on the head node (`core-01`) and workers on the remaining `core-02` and `core-03`. To keep this guide short, I will not explain how exactly provisioning works, as I have [done so previously](http://weaveblog.com/2014/10/28/running-a-weave-network-on-coreos/).
+Vargant will boot and provision 3 VMs, shortly after there will be a Spark cluster running with master on the head node (`core-01`) and workers on the remaining `core-02` and `core-03`. To keep this guide short, I will not explain how exactly provisioning works, as I have [done so previously](http://weaveblog.com/2014/10/28/running-a-weave-network-on-coreos/).
 
 Now, let's login to `core-01`:
 ```
@@ -38,7 +37,7 @@ zettio/weave                                 latest              efb52cb2a3b8   
 
 I have prepared a set of [lean](http://weaveblog.com/2014/12/09/running-java-applications-in-docker-containers/) Spark container images for the purpose of this demo.
 
-> Note: You can use images of your own if you'd like, just make sure to consult my [Dockerfile](https://github.com/errordeveloper/weave-demos/blob/master/java-containers/spark/base/Dockerfile#L33-L34) for the `nsswitch.conf` tweak, you will need to make sure DNS works correctly.
+> Note: You can use images of your own if you'd like, just make sure to consult my [Dockerfile](https://github.com/errordeveloper/weave-demos/blob/master/java-containers/spark/base/Dockerfile#L33-L34) for the `nsswitch.conf` tweak, you will need it to make sure DNS works correctly.
 
 You may have noticed there is Elasticsearch running,  I will not be using it for the purpose of this guide, but it's there for you to experiment with, if you'd like.
 
@@ -75,9 +74,9 @@ sudo weave run \
   --master spark://spark-master.weave.local:7077
 ```
 
-As you can see, with WeaveDNS you can address Spark master node by it's name. The node running pyspark also gets a hostname - `spark-shell.weave.local`, that's simply taken care of by passing `--with-dns`  and `--hostname=...`.  The IP address I have picked for this container is `10.10.1.88`, it's part of the `10.10.1.0/24` subnet, which had been allocated for the cluster, you can. All remain arguments are not specific to Weave, these are just usual `docker run` arguments, followed by `pyspark` arguments.
+The IP address I have picked for this container is `10.10.1.88`, it's part of the `10.10.1.0/24` subnet, which had been allocated for the cluster, you can use any other IP in that range. This container will get a DNS name `spark-shell.weave.local`, that's simply taken care of by passing `--with-dns`  and `--hostname=...`. Most of remaining arguments are not specific to Weave, these are just usual `docker run` arguments, followed by `pyspark` arguments, where master node is addressed by it's DNS name.
 
-For the demo to work, you will also need a data source of some sort. Naturally, it will run in a container as well, which in turns joins Weave network also.
+For the demo to work, you will also need a data source of some sort. Naturally, it will run in a container as well, which in turns joins Weave network.
 
 Here is a very simple one for you:
 ```
@@ -87,7 +86,7 @@ sudo weave run --with-dns 10.10.1.99/24 \
 ```
 So we will have a netcat server on 9999, with DNS name `spark-data-source.weave.local` and IP address `10.10.1.99`. Weave will make this server reachable from any node in the cluster.
 
-Next, you want to attach to the Spark shell:
+Next, you want to attach to the Spark shell container:
 
 ```
 core@core-01 ~ $ docker attach spark-shell
@@ -107,7 +106,7 @@ SparkContext available as sc.
 15/02/18 17:10:38 INFO BlockManagerMasterActor: Registering block manager spark-worker-1.weave.local:36614 with 267.3 MB RAM, BlockManagerId(1, spark-worker-1.weave.local, 36614)
 ```
 
-The code we are going to run is based on the [`streaming/network_wordcount.py`](https://github.com/apache/spark/blob/a8eb92dcb9ab1e6d8a34eed9a8fddeda645b5094/examples/src/main/python/streaming/network_wordcount.py) example, which counts words in a text stream received from the data source server for every second.
+The code we are going to run is based on the [`streaming/network_wordcount.py`](https://github.com/apache/spark/blob/a8eb92dcb9ab1e6d8a34eed9a8fddeda645b5094/examples/src/main/python/streaming/network_wordcount.py) example, which counts words in a text stream received from the data source server every second.
 ```
 >>> 
 >>> from pyspark.streaming import StreamingContext
@@ -132,5 +131,7 @@ Time: 2015-02-18 18:10:56
 ('Weave!', 130962)
 ```
 
+## TODO
 
+Congrats, we have some bigdataz!
 
