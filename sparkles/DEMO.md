@@ -148,7 +148,7 @@ There are several advantage that Weave brings to a containerised Spark cluster:
  1. Secure and simple to setup virtual network with DNS out-of-the box
  2. No need to care about what container ports are published to host's interface
  3. Worker (and master) containers can be moved between hosts
- 4. Scaling Spark cluster and introducing ad-hoc services a very easy
+ 4. Scaling Spark cluster and introducing ad-hoc services is very easy
  5. Moving the entire setup to new infrastructure required no code changes
 
 Hope you find information in this guide useful, and do make sure to follow [@weaveworks](https://twitter.com) on Twitter to read more guides like this. You can also contact us via [help@weave.works](mailto:help@weave.works?subject=[sparkles]), and let us know of anything interesting you built using Weave.
