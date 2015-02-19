@@ -80,7 +80,7 @@ if File.exists?('cloud/cloud-config.yaml') && ARGV[0].eql?('up')
   lines = YAML.dump(data).split("\n")
   lines[0] = '#cloud-config'
 
-  open('user-data', 'w') do |f|
+  open(File.join(File.dirname(__FILE__), "user-data"), 'w') do |f|
     f.puts(lines.join("\n"))
   end
 end
