@@ -30,10 +30,10 @@ coreos:
     - name: elasticsearch.service
       content: |
         [Unit]
-        After=weave.service
+        After=weave.service pull-elasticsearch-image.service
         Description=ElasticSearch on Weave
         Documentation=https://registry.hub.docker.com/u/errordeveloper/weave-elasticsearch-minimal/
-        Requires=weave.service
+        Requires=weave.service pull-elasticsearch-image.service
         [Service]
         EnvironmentFile=/etc/weave.env
         ExecStartPre=/opt/bin/weave \
@@ -48,10 +48,10 @@ coreos:
     - name: spark.service
       content: |
         [Unit]
-        After=weave.service
+        After=weave.service pull-spark-image.service
         Description=Apache Spark Cluster
         Documentation=https://spark.apache.org/docs/latest/
-        Requires=weave.service
+        Requires=weave.service pull-spark-image.service
         [Service]
         EnvironmentFile=/etc/weave.env
         ExecStartPre=/opt/bin/weave \
@@ -64,6 +64,28 @@ coreos:
         SuccessExitStatus=255
         Restart=always
         ExecStop=/usr/bin/docker kill spark ; /usr/bin/docker rm spark
+
+    - name: pull-spark-image.service
+      content: |
+        [Unit]
+        After=docker.service network-online.target
+        Requires=docker.service
+        [Service]
+        EnvironmentFile=/etc/weave.env
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/docker pull $SPARK_CONTAINER
+
+    - name: pull-elasticsearch-image.service
+      content: |
+        [Unit]
+        After=docker.service network-online.target
+        Requires=docker.service
+        [Service]
+        EnvironmentFile=/etc/weave.env
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/docker pull $ELASTICSEARCH_CONTAINER
 
     - name: install-weave.service
       command: start
@@ -112,10 +134,6 @@ write_files:
         zettio/weave:latest \
         zettio/weavedns:latest \
         zettio/weavetools:latest \
-        errordeveloper/weave-spark-master-minimal:latest \
-        errordeveloper/weave-spark-worker-minimal:latest \
-        errordeveloper/weave-spark-shell-minimal:latest \
-        errordeveloper/weave-twitter-river-minimal:latest \
       "
 
   - path: /opt/bin/spark-shell-gce-scala
