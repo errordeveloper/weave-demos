@@ -141,4 +141,14 @@ Time: 2015-02-18 18:10:56
 
 ## Conclusion
 
-In this guide, we have looked at deploying Apache Spark with Docker and Weave. The greatest advantage Weave brings to this is that you can move the setup from one infrastructure into another without real changes to the application.
+In this guide, we have looked at deploying Apache Spark with Docker and Weave.
+
+There are several advantage that Weave brings to a containerised Spark cluster:
+
+ 1. Simple to setup and secure virtual network with DNS out-of-the box
+ 2. No need to care about what container ports are published to host's interface
+ 3. Worker (and master) containers can be moved between hosts
+ 4. Scaling Spark cluster and introducing ad-hoc services a very easy
+ 5. Moving the entire setup to new infrastructure required no code changes
+
+Hope you find information in this guide useful, and do make sure to follow [@weaveworks](https://twitter.com) on Twitter to read more guides like this. You can also contact us via [help@weave.works](mailto:help@weave.works?subject=[sparkles]), and let us know of anything interesting you built using Weave.
