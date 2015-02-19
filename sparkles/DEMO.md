@@ -5,8 +5,6 @@ tags: docker, spark, vagrant, cloud, coreos, usecase, guide
 categories: guide, usecase
 ---
 
-#  Networking Spark Cluster on Docker with Weave
-
 In this guide, I will show you how easy it is to deploy a Spark cluster using [Docker](https://www.docker.com/) and [Weave](https://weave.works/), running on [CoreOS](https://coreos.com/).
 
 [Apache Spark](http://spark.apache.org/) is a fast and general-purpose cluster computing system. It provides high-level APIs in Java, Scala and Python, and an optimized engine that supports general execution graphs. It also supports a rich set of higher-level tools, including [stream processing](http://spark.apache.org/docs/1.2.0/streaming-programming-guide.html). For this guide, I am going to demonstrate a basic stream processing example in Python. I will use Weave to connect 3 Spark nodes on a fully isolated and portable network with DNS, no reconfiguration would be required if you wish to run this elsewhere.
