@@ -2,6 +2,7 @@
 title: Networking Spark Cluster on Docker with Weave
 published: false
 tags: docker, spark, vagrant, cloud, coreos, usecase, guide
+categories: guide, usecase
 ---
 
 #  Networking Spark Cluster on Docker with Weave
