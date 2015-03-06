@@ -1,5 +1,6 @@
 $num_instances=3
 $vb_memory=2048
+$update_channel = 'stable'
 
 begin
   require File.join(File.dirname(__FILE__), 'config-override.rb')
