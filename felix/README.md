@@ -37,3 +37,42 @@ All other defaults are define by upstream [`Vagrantfile`](../coreos-vagrant/Vagr
 ## Next Steps
 
 Once VMs are up, you can proceed to deploy Docker container on Weave.
+
+Here is something simple you can try.
+
+Firstly, launch a web server on one machine:
+```
+$ vagrant ssh core-01 -c 'sudo weave run --with-dns 10.0.0.1/24 --hostname=hola.weave.local errordeveloper/hello-weave'
+Unable to find image 'errordeveloper/hello-weave:latest' locally
+Pulling repository errordeveloper/hello-weave
+...
+Status: Downloaded newer image for errordeveloper/hello-weave:latest
+007f00c857bb2559ed29cb713ba8cb88ff7ce2d23ec7f16231052bc0d6e92acc
+Connection to 127.0.0.1 closed.
+```
+Then, attach a client container on the other and test it like so:
+```
+0 %> vagrant ssh core-02 
+CoreOS stable (557.2.0)
+Update Strategy: No Reboots
+core@core-02 ~ $ docker attach `sudo weave run --with-dns 10.0.0.2/24 -ti errordeveloper/curl`
+Unable to find image 'errordeveloper/curl:latest' locally
+Pulling repository errordeveloper/curl
+...
+Status: Downloaded newer image for errordeveloper/curl:latest
+
+/ # ping -c 3 hola.weave.local
+PING hola.weave.local (10.0.0.1): 56 data bytes
+64 bytes from 10.0.0.1: seq=0 ttl=64 time=2.635 ms
+64 bytes from 10.0.0.1: seq=1 ttl=64 time=2.522 ms
+64 bytes from 10.0.0.1: seq=2 ttl=64 time=3.134 ms
+
+--- hola.weave.local ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 2.522/2.763/3.134 ms
+/ #
+/ # curl hola.weave.local:5000
+Hello, Weave!
+```
+
+— Happy weaving with Felix!
