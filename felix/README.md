@@ -4,6 +4,8 @@
 
 ## About this cat
 
+This is just a friendly and helpfull cat, you can use him to prototype project with Weave on Vagrant running CoreOS.
+
 It's based on [coreos/coreos-vagrant](https://github.com/coreos/coreos-vagrant/), which is included within this repositroy. All Felix does is add `config.rb`.
 
 With some basic logic in `config.rb`, he can append any number of `/etc/weave.#{HOSTNAME}.env` files to his own `cloud-config.yaml` and write out `user-data`, which he passed to Vagrant. He also generates some random strings that are used as weave network crypto salt for the lifetime of Vargant VMs. It's all kindda simple.
