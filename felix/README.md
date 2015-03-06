@@ -10,12 +10,15 @@ With some basic logic in `config.rb`, he can append any number of `/etc/weave.#{
 
 ## How to use it
 
-Basic usage:
+### Basic usage
+
 ```
 git clone https://github.com/errordeveloper/weave-demos
 cd weave-demos/felix
 vagrant up
 ```
+
+### Configuration
 
 Felix will bring 3 box up by default. Each will have 1 CPU and 2G of RAM.
 
@@ -30,3 +33,7 @@ echo '$vb_memory=512' >> config-override.rb
 ```
 
 All other defaults are define by upstream [`Vagrantfile`](../coreos-vagrant/Vagrantfile#L11-L17).
+
+## Next Steps
+
+Once VMs are up, you can proceed to deploy Docker container on Weave.
