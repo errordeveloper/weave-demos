@@ -73,20 +73,6 @@ Vagrant.configure(2) do |config|
     destination: "/tmp/docker_1.4.1.001_amd64.snap"
   config.vm.provision 'shell', privileged: true,
     inline: 'snappy install /tmp/docker_1.4.1.001_amd64.snap'
-  config.vm.provision "file",
-    source: "docker.profile",
-    destination: "/tmp/docker.profile"
-
-  profile_docker_path = '/var/lib/apparmor/profiles/profile_docker_docker_1.4.1.001'
-  config.vm.provision "shell", privileged: true,
-    inline: "mv /tmp/docker.profile #{profile_docker_path} && apparmor_parser -v -r #{profile_docker_path}"
-
-  config.vm.provision "file",
-    source: "weave.profile",
-    destination: "/tmp/weave.profile"
-
-  config.vm.provision "shell", privileged: true,
-    inline: "apparmor_parser -v -r /tmp/weave.profile"
 
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
     docker pull errordeveloper/curl:latest
