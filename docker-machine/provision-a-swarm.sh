@@ -3,12 +3,6 @@
 DOCKER_MACHINE=${DOCKER_MACHINE:-"./docker-machine-v0.1.0"}
 DOCKER_MACHINE_CREATE="${DOCKER_MACHINE} create --driver virtualbox"
 
-WEAVE_SCRIPT_URL="https://github.com/zettio/weave/releases/download/latest_release/weave"
-WEAVE_SCRIPT_DST="/usr/local/sbin/weave"
-
-DOCKERHUB_USER="squaremo"
-export DOCKERHUB_USER
-
 machine_env() {
   m=$1
   shift 1
