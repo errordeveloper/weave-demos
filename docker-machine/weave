@@ -2,7 +2,7 @@
 set -e
 
 SCRIPT_VERSION="(unreleased version)"
-DOCKERHUB_USER=${DOCKERHUB_USER:-zettio}
+DOCKERHUB_USER="squaremo"
 
 if [ "$SCRIPT_VERSION" = "(unreleased version)" ] ; then
     IMAGE_VERSION=latest
