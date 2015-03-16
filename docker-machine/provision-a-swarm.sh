@@ -9,7 +9,7 @@ machine_env() {
   (eval $($DOCKER_MACHINE env $m); $@)
 }
 
-#$DOCKER_MACHINE_CREATE 'dev-0'
+$DOCKER_MACHINE_CREATE 'dev-0'
 
 ## XXX: Looks like a bug in docker, all of this arrives at stdout:
 #swarm:latest: The image you are pulling has been verified. Important: image verification is a tech preview feature and should not be relied on to provide security.
@@ -33,6 +33,6 @@ done
 
 sleep 3
 
-for m in 'dev-1' 'dev-2' 'dev-3'; do
-        machine_env $m ./weave status
+for m in '1' '2' '3'; do
+  machine_env "dev-${m}" ./weave launch-dns "10.9.0.${m}/16"
 done
