@@ -2,7 +2,7 @@
 set -e
 
 SCRIPT_VERSION="(unreleased version)"
-DOCKERHUB_USER="squaremo"
+DOCKERHUB_USER=zettio
 
 if [ "$SCRIPT_VERSION" = "(unreleased version)" ] ; then
     IMAGE_VERSION=latest
@@ -42,6 +42,7 @@ usage() {
 # we introduce them here
 DOCKER_BRIDGE=${DOCKER_BRIDGE:-docker0}
 PROCFS=${PROCFS:-/proc}
+PROXY_PORT=12375
 
 BASE_IMAGE=$DOCKERHUB_USER/weave
 BASE_DNS_IMAGE=$DOCKERHUB_USER/weavedns
@@ -49,6 +50,43 @@ BASE_EXEC_IMAGE=$DOCKERHUB_USER/weaveexec
 IMAGE=$BASE_IMAGE:$IMAGE_VERSION
 DNS_IMAGE=$BASE_DNS_IMAGE:$IMAGE_VERSION
 EXEC_IMAGE=$BASE_EXEC_IMAGE:$IMAGE_VERSION
+
+PROXY_CONTAINER_NAME=weaveproxy
+
+ensure_proxy_running() {
+    case $(docker inspect --format '{{.State.Running}} {{.Config.Image}}' $PROXY_CONTAINER_NAME 2>/dev/null) in
+        "true $EXEC_IMAGE")
+            return 0
+            ;;
+        true*)
+            echo "Proxy already running with unknown image" >&2
+            exit 1
+            ;;
+        false*)
+            docker rm -f $PROXY_CONTAINER_NAME >/dev/null
+            ;;
+    esac
+    docker run --privileged -d --name=$PROXY_CONTAINER_NAME \
+        -p $PROXY_PORT:12375/tcp -v /var/run/docker.sock:/var/run/docker.sock \
+        -v $PROCFS:/hostproc -e PROCFS=/hostproc \
+        --entrypoint=/home/weave/proxy $EXEC_IMAGE
+}
+
+if [ "$1" = "run" ]; then
+    ensure_proxy_running
+    case $DOCKER_HOST in
+        tcp://*)
+            PROXY_HOST=$(echo $DOCKER_HOST | sed -e 's|\(tcp://[0-9.]*\):[0-9]*|\1:'$PROXY_PORT'|')
+            ;;
+        *)
+            PROXY_HOST="tcp://localhost:$PROXY_PORT"
+            ;;
+    esac
+    CIDR=$2
+    shift 2
+    docker -H "$PROXY_HOST" run -e "WEAVE_CIDR=$CIDR" $@
+    exit $?
+fi
 
 exec_remote() {
     docker run -t --rm \
