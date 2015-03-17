@@ -14,7 +14,7 @@ for i in '1' '2' '3' '4'; do
   $DOCKER_MACHINE_CREATE "${m}"
   machine_env "${m}" docker load < weaveexec.tar
   machine_env "${m}" ./weave launch
-  machine_env "${m}" ./weave launch-dns "10.9.1.${i}/24"
+  machine_env "${m}" ./weave launch-dns "10.9.1.${i}/24" -debug
   machine_env "${m}" docker run \
     --privileged -d --name=weaveproxy \
     -p 12375:12375/tcp -v /var/run/docker.sock:/var/run/docker.sock \
