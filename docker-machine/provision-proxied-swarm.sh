@@ -12,7 +12,8 @@ machine_env() {
 for i in '1' '2' '3' '4'; do
   m="dev-${i}"
   $DOCKER_MACHINE_CREATE "${m}"
-  machine_env "${m}" docker load < weaveexec.tar
+  machine_env "${m}" docker pull errordeveloper/weaveexec-with-proxy-preview:latest
+  machine_env "${m}" docker tag errordeveloper/weaveexec-with-proxy-preview:latest zettio/weaveexec:latest
   machine_env "${m}" ./weave launch
   machine_env "${m}" ./weave launch-dns "10.9.1.${i}/24" -debug
   machine_env "${m}" docker run \
