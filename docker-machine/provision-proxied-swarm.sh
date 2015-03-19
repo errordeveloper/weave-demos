@@ -20,7 +20,7 @@ for i in '1' '2' '3' '4'; do
     --privileged -d --name=weaveproxy \
     -p 12375:12375/tcp -v /var/run/docker.sock:/var/run/docker.sock \
     -v /proc:/hostproc -e PROCFS=/hostproc \
-    --entrypoint=/home/weave/proxy zettio/weaveexec
+    --entrypoint=/home/weave/proxy zettio/weaveexec -debug
 done
 
 for m in 'dev-2' 'dev-3' 'dev-4'; do
