@@ -16,8 +16,8 @@ done
 swarm_dicovery_token=$(with_machine_env ${head_node} docker run swarm create | tail -1)
 
 for i in '1' '2' '3' '4'; do
-  weave_proxy_endoint="$($DOCKER_MACHINE ip \"${MACHINE_NAME_PREFIX}-${i}\"):12375"
-  with_machine_env "${m}" docker run -d swarm \
+  weave_proxy_endoint="$($DOCKER_MACHINE ip ${MACHINE_NAME_PREFIX}-${i}):12375"
+  with_machine_env "${MACHINE_NAME_PREFIX}-${i}" docker run -d swarm \
     join --addr "${weave_proxy_endoint}" "token://${swarm_dicovery_token}"
 done
 

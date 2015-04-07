@@ -10,12 +10,13 @@ with_machine_env() {
 }
 
 create_machine_with_proxy_setup() {
-  eval $($DOCKER_MACHINE env "${1}-${2}")
+  $DOCKER_MACHINE_CREATE "${1}-${2}"
+  eval `$DOCKER_MACHINE env "${1}-${2}"`
   docker pull errordeveloper/weaveexec-with-proxy-preview:latest
   docker tag errordeveloper/weaveexec-with-proxy-preview:latest zettio/weaveexec:latest
   docker load < weavedns.tar
   ./weave launch
-  ./weave launch-dns "10.9.1.${1}/24" -debug
+  ./weave launch-dns "10.9.1.${2}/24" -debug
   docker run \
     --privileged -d --name=weaveproxy \
     -p 12375:12375/tcp -v /var/run/docker.sock:/var/run/docker.sock \
