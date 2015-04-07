@@ -1,11 +1,17 @@
 web:
   build: .
-  command: python app.py
+  command: python hello.py
   ports:
-   - "5000:5000"
+     - "5000:5000"
   volumes:
-   - .:/code
-  links:
-   - redis
+     - .:/code
+  hostname: test.weave.local
+  dns: 172.17.42.1
+  environment:
+     WEAVE_CIDR: 10.9.2.1/24
 redis:
   image: redis
+  hostname: redis.weave.local
+  dns: 172.17.42.1
+  environment:
+     WEAVE_CIDR: 10.9.2.2/24
