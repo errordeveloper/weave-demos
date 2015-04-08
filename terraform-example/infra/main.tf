@@ -51,7 +51,7 @@ resource "google_compute_instance" "weave" {
     }
 
     provisioner "local-exec" {
-        command = "sh gensshconf.sh gce '${count.index}' '${var.gce_key_path}' '${self.network.0.external_address}'"
+        command = "sh gensshwrapper.sh gce '${count.index}' '${var.gce_key_path}' '${self.network.0.external_address}'"
     }
 }
 
@@ -133,7 +133,7 @@ resource "aws_instance" "weave" {
     }
 
     provisioner "local-exec" {
-        command = "sh gensshconf.sh aws '${count.index}' '${var.aws_key_path}' '${self.public_ip}'"
+        command = "sh gensshwrapper.sh aws '${count.index}' '${var.aws_key_path}' '${self.public_ip}'"
     }
 }
 
