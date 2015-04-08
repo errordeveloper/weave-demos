@@ -187,13 +187,13 @@ resource "aws_security_group" "weave" {
         from_port = 6783
         to_port = 6783
         protocol = "tcp"
-        cidr_blocks = ["10.220.1.0/24"]
+        self = true
     }
 
     ingress {
         from_port = 6783
         to_port = 6783
         protocol = "udp"
-        cidr_blocks = ["10.220.1.0/24"]
+        self = true
     }
 }
