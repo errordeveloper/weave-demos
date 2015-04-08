@@ -182,4 +182,18 @@ resource "aws_security_group" "weave" {
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
+
+    ingress {
+        from_port = 6783
+        to_port = 6783
+        protocol = "tcp"
+        cidr_blocks = ["10.220.1.0/24"]
+    }
+
+    ingress {
+        from_port = 6783
+        to_port = 6783
+        protocol = "udp"
+        cidr_blocks = ["10.220.1.0/24"]
+    }
 }
