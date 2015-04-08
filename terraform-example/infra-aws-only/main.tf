@@ -1,3 +1,5 @@
+## TODO: Refactor into a module
+
 resource "aws_instance" "weave_head_node" {
     count = 1
     instance_type = "${var.aws_instance_type}"
