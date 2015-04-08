@@ -76,3 +76,8 @@ variable "gce_machine_type" {
     description = "Type of instance ot use in GCE"
     default = "n1-standard-1"
 }
+
+variable "ssh_command_hint" {
+    description = "SSH command with arguments for helpful output"
+    default = "ssh -o Compression=yes -o LogLevel=FATAL -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes"
+}
