@@ -37,6 +37,11 @@ variable "aws_instance_type" {
     default = "m3.large"
 }
 
+variable "aws_instance_count" {
+    description = "Number of instances in AWS"
+    default = 3
+}
+
 variable "gce_account_file" {
     description = "Path to your GCE account credentials file"
     default = "account.json"
@@ -77,7 +82,7 @@ variable "gce_machine_type" {
     default = "n1-standard-1"
 }
 
-variable "ssh_command_hint" {
-    description = "SSH command with arguments for helpful output"
-    default = "ssh -o Compression=yes -o LogLevel=FATAL -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes"
+variable "gce_instance_count" {
+    description = "Number of instances in GCE"
+    default = 3
 }

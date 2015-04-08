@@ -1,6 +1,6 @@
 // Declare and provision 3 GCE instances
 resource "google_compute_instance" "weave" {
-    count = 3
+    count = "${var.gce_instance_count}"
     // By default (see variables.tf), these are going to be of type 'n1-standard-1' in zone 'us-central1-a'.
     machine_type = "${var.gce_machine_type}"
     zone = "${var.gce_zone}"
@@ -49,6 +49,10 @@ resource "google_compute_instance" "weave" {
             key_file = "${var.gce_key_path}"
         }
     }
+
+    provisioner "local-exec" {
+        command = "sh gensshconf.sh gce '${count.index}' '${var.gce_key_path}' '${self.network.0.external_address}'"
+    }
 }
 
 // Custom GCE network declaration, so we can set firewall rules below
@@ -82,13 +86,13 @@ resource "google_compute_firewall" "weave" {
 // Allocate static IPs for each of the instances, so if reboots occur
 // the AWS nodes can rejoin the weave network
 resource "google_compute_address" "weave" {
-    count = 3
+    count = "${var.gce_instance_count}"
     name = "weave-gce-${count.index}-addr"
 }
 
 // Declare and provision 3 AWS instances
 resource "aws_instance" "weave" {
-    count = 3
+    count = "${var.aws_instance_count}"
     // By default (see variables.tf), these are going to be of type 'm3.large' in region 'eu-west-1'.
     instance_type = "${var.aws_instance_type}"
 
@@ -126,6 +130,10 @@ resource "aws_instance" "weave" {
             user = "core"
             key_file = "${var.aws_key_path}"
         }
+    }
+
+    provisioner "local-exec" {
+        command = "sh gensshconf.sh aws '${count.index}' '${var.aws_key_path}' '${self.public_ip}'"
     }
 }
 
