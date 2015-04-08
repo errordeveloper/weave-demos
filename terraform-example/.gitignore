@@ -5,4 +5,4 @@ terraform-bin*
 terraform.tfstate
 terraform.tfstate.backup
 tfvars
-ssh_node-*
+ssh_*
