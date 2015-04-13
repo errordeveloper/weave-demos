@@ -1,6 +1,6 @@
 #!/bin/sh -ex
 
-source defaults.sh
+source $(git rev-parse --show-toplevel)/quartet/scripts/defaults.sh
 
 for i in '1' '2' '3' '4'; do
   create_machine_with_proxy_setup "${MACHINE_NAME_PREFIX}" "${i}"
@@ -10,7 +10,7 @@ head_node="${MACHINE_NAME_PREFIX}-1"
 
 for i in '2' '3' '4'; do
   connect_to=$($DOCKER_MACHINE ip "${MACHINE_NAME_PREFIX}-${i}")
-  with_machine_env ${head_node} ./weave connect ${connect_to}
+  with_machine_env ${head_node} $WEAVE connect ${connect_to}
 done
 
 swarm_dicovery_token=$(with_machine_env ${head_node} docker run swarm create | tail -1)
