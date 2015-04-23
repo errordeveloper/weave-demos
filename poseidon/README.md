@@ -46,7 +46,7 @@ In Kubernetes terms, this consists of:
   - A single Redis master _Replication Controller_ and _Service_
 
 ```
-core@core-01 ~/guestbook-example $ kubectl create -f redis-master.json
+core@core-01 ~/guestbook-example $ kubectl create -f redis-master-controller.json
 I1105 17:08:24.679092 06680 restclient.go:133] Waiting for completion of operation 1
 redis-master-2
 core@core-01 ~/guestbook-example $ kubectl create -f redis-master-service.json
