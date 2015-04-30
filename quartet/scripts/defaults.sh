@@ -16,7 +16,6 @@ create_machine_with_proxy_setup() {
   eval `$DOCKER_MACHINE env "${1}-${2}"`
   $DOCKER pull errordeveloper/weaveexec-with-proxy-preview:latest
   $DOCKER tag errordeveloper/weaveexec-with-proxy-preview:latest zettio/weaveexec:latest
-  $DOCKER load < weavedns.tar
   $WEAVE launch
   $WEAVE launch-dns "10.9.1.${2}/24" -debug
   $DOCKER run \
