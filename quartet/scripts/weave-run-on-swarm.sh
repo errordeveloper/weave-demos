@@ -1,5 +1,8 @@
 #!/bin/sh -xe
 
+## NB: This is a very simple working prototype of how Weave can be used directly with Swarm,
+## it is very basic and will be depricated once native Docker extensions land.
+
 source $(git rev-parse --show-toplevel)/quartet/scripts/defaults.sh
 
 weave_cidr=$1
