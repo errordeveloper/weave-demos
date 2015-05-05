@@ -24,3 +24,10 @@ create_machine_with_proxy_setup() {
     -v /proc:/hostproc -e PROCFS=/hostproc \
     --entrypoint=/home/weave/proxy zettio/weaveexec -debug
 }
+
+create_machine_with_simple_weave_setup() {
+  $DOCKER_MACHINE_CREATE ${3} "${1}-${2}"
+  eval `$DOCKER_MACHINE env "${1}-${2}"`
+  $WEAVE launch
+  $WEAVE launch-dns "10.9.1.${2}/24" -debug
+}
