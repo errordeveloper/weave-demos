@@ -53,6 +53,7 @@ exec_remote() {
         -e WEAVE_CONTAINER_NAME \
         -e DOCKER_BRIDGE \
         -e PROCFS=/hostproc --privileged --net=host \
+        $DOCKER_CLIENT_ARGS \
         $EXEC_IMAGE --local "$@"
 }
 
