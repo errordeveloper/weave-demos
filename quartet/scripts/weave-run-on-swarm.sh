@@ -3,7 +3,7 @@
 weave_cidr=$1
 shift 1
 
-c=$(docker run --dns=172.17.42.1 $@)
+c=$(docker run -d --dns=172.17.42.1 $@)
 ## We need log ID or name, Swarm doesn't like short IDs whent it tries to match affinity expression
 c=$(docker inspect --format='{{.Id}}' ${c})
 
