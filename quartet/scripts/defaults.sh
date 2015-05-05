@@ -1,7 +1,8 @@
 WEAVE=${WEAVE:-"$(git rev-parse --show-toplevel)/quartet/scripts/weave"}
 DOCKER=${DOCKER:-"docker"}
 DOCKER_MACHINE=${DOCKER_MACHINE:-"docker-machine"}
-DOCKER_MACHINE_CREATE="${DOCKER_MACHINE} create --driver virtualbox"
+DOCKER_MACHINE_DRIVER=${DOCKER_MACHINE_DRIVER:-"--driver virtualbox"}
+DOCKER_MACHINE_CREATE="${DOCKER_MACHINE} create ${DOCKER_MACHINE_DRIVER}"
 
 MACHINE_NAME_PREFIX=${MACHINE_NAME_PREFIX:-"dev"}
 
