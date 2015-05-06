@@ -2,16 +2,11 @@
 
 source $(git rev-parse --show-toplevel)/quartet/scripts/defaults.sh
 
-init_node="${MACHINE_NAME_PREFIX}-0"
 head_node="${MACHINE_NAME_PREFIX}-1"
 
-$DOCKER_MACHINE_CREATE ${init_node}
-
-swarm_dicovery_token=$(with_machine_env ${init_node} docker run swarm create | tail -1)
+swarm_dicovery_token=$(docker-swarm create)
 
 swarm_flags="--swarm --swarm-discovery=token://${swarm_dicovery_token}"
-
-$DOCKER_MACHINE rm -f ${init_node}
 
 for i in '1' '2' '3'; do
   if [ ${i} = '1' ]; then
