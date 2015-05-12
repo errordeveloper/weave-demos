@@ -42,7 +42,7 @@ usage() {
 }
 
 exec_remote() {
-    docker run --rm \
+    docker $DOCKER_CLIENT_ARGS run --rm \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v "$PROCFS":/hostproc \
         -e VERSION \
@@ -53,8 +53,7 @@ exec_remote() {
         -e WEAVE_CONTAINER_NAME \
         -e DOCKER_BRIDGE \
         -e PROCFS=/hostproc --privileged --net=host \
-        $DOCKER_CLIENT_ARGS \
-        $EXEC_IMAGE --local "$@"
+        $WEAVEEXEC_DOCKER_ARGS $EXEC_IMAGE --local "$@"
 }
 
 check_docker_version() {
