@@ -236,10 +236,10 @@ coreos:
         ExecStartPre=/bin/mkdir -p /opt/
         ExecStart=/bin/bash -c "curl --silent --location $KUBE_RELEASE_TARBALL | tar xzv -C /tmp/"
         ExecStart=/bin/tar xzvf /tmp/kubernetes/server/kubernetes-server-linux-amd64.tar.gz -C /opt
-        #ExecStartPost=/bin/chmod o+rx -R /opt/kubernetes
+        ExecStartPost=/bin/chmod o+rx -R /opt/kubernetes
         ExecStartPost=/bin/ln -s /opt/kubernetes/server/bin/kubectl /opt/bin/
         ExecStartPost=/bin/mv /tmp/kubernetes/examples/guestbook /home/core/guestbook-example
-        #ExecStartPost=/bin/chown core. -R /home/core/guestbook-example
+        ExecStartPost=/bin/chown core. -R /home/core/guestbook-example
         ExecStartPost=/bin/rm -rf /tmp/kubernetes
         ExecStartPost=/bin/sed 's/\("createExternalLoadBalancer":\) true/\1 false/' -i /home/core/guestbook-example/frontend-service.json
         RemainAfterExit=yes
