@@ -13,7 +13,7 @@ for i in '2' '3' '4'; do
   with_machine_env ${head_node} $WEAVE connect ${connect_to}
 done
 
-swarm_dicovery_token=$(with_machine_env ${head_node} docker run swarm create | tail -1)
+swarm_dicovery_token=$(docker-swarm create)
 
 for i in '1' '2' '3' '4'; do
   weave_proxy_endoint="$($DOCKER_MACHINE ip ${MACHINE_NAME_PREFIX}-${i}):12375"
