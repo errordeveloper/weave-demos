@@ -138,7 +138,7 @@ coreos:
         Before=weave-helper.service
         Before=docker.service
         Description=Install Weave
-        Documentation=http://weaveworks.github.io/weave/
+        Documentation=http://docs.weave.works/
         Requires=network-online.target
         [Service]
         Type=oneshot
@@ -168,7 +168,7 @@ coreos:
         After=install-weave.service
         After=docker.service
         Description=Weave Network Router
-        Documentation=http://weaveworks.github.io/weave/
+        Documentation=http://docs.weave.works/
         Requires=docker.service
         Requires=install-weave.service
         [Service]
@@ -183,7 +183,7 @@ coreos:
         After=install-weave.service
         After=docker.service
         Description=Weave Network Router
-        Documentation=http://weaveworks.github.io/weave/
+        Documentation=http://docs.weave.works/
         Requires=docker.service
         Requires=install-weave.service
         [Service]
@@ -205,8 +205,6 @@ coreos:
         After=install-weave.service
         Before=weave.service
         Before=docker.service
-        Description=Docker Application Container Engine
-        Documentation=http://docs.docker.io
         Requires=network.target
         Requires=install-weave.service
         [Service]
@@ -231,7 +229,7 @@ coreos:
         Before=kubelet.service
         Before=proxy.service
         Description=Download Kubernetes Binaries
-        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Documentation=http://kubernetes.io/
         Requires=network-online.target
         [Service]
         Environment=KUBE_RELEASE_TARBALL=https://github.com/GoogleCloudPlatform/kubernetes/releases/download/v0.15.0/kubernetes.tar.gz
@@ -260,7 +258,7 @@ coreos:
         Before=scheduler.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-apiserver
         Description=Kubernetes API Server
-        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Documentation=http://kubernetes.io/
         Wants=etcd2.service
         Wants=download-kubernetes.service
         ConditionHost=core-01
@@ -285,7 +283,7 @@ coreos:
         After=download-kubernetes.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-scheduler
         Description=Kubernetes Scheduler
-        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Documentation=http://kubernetes.io/
         Wants=apiserver.service
         ConditionHost=core-01
         [Service]
@@ -306,7 +304,7 @@ coreos:
         After=apiserver.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-controller-manager
         Description=Kubernetes Controller Manager
-        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Documentation=http://kubernetes.io/
         Wants=apiserver.service
         Wants=etcd2.service
         Wants=download-kubernetes.service
@@ -329,7 +327,7 @@ coreos:
         After=download-kubernetes.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kubelet
         Description=Kubernetes Kubelet
-        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Documentation=http://kubernetes.io/
         Wants=etcd2.service
         Wants=download-kubernetes.service
         ConditionHost=!core-01
@@ -357,7 +355,7 @@ coreos:
         After=download-kubernetes.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-proxy
         Description=Kubernetes Proxy
-        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Documentation=http://kubernetes.io/
         Wants=etcd2.service
         Wants=download-kubernetes.service
         ConditionHost=!core-01
@@ -380,7 +378,7 @@ coreos:
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kubectl
         ConditionFileIsExecutable=/opt/bin/register_minion.sh
         Description=Kubernetes Create Minion
-        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Documentation=http://kubernetes.io/
         Wants=download-kubernetes.service
         ConditionHost=!core-01
         [Service]
