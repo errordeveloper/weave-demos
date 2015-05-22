@@ -1,6 +1,6 @@
 FROM errordeveloper/oracle-jre
 
-ENV ELASTICSEARCH_BINARY_RELEASE 1.4.3
+ENV ELASTICSEARCH_BINARY_RELEASE 1.5.2
 
 RUN curl \
   --silent \
