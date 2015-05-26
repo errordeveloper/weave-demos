@@ -17,11 +17,11 @@ coreos:
       [Unit]
       After=install-weave.service
       Description=Weave Network
-      Documentation=http://zettio.github.io/weave/
+      Documentation=http://docs.weave.works/weave/
       Requires=install-weave.service
       [Service]
       EnvironmentFile=/etc/weave.%H.env
-      ExecStartPre=/opt/bin/weave launch $WEAVE_PEERS
+      ExecStartPre=/opt/bin/weave launch -iprange 10.2.3.0/24 $WEAVE_PEERS
       ExecStartPre=/opt/bin/weave launch-dns $WEAVEDNS_ADDR
       ExecStart=/usr/bin/docker logs -f weave
       SuccessExitStatus=2
@@ -36,22 +36,20 @@ coreos:
       After=network-online.target
       After=docker.service
       Description=Install Weave
-      Documentation=http://zettio.github.io/weave/
+      Documentation=http://docs.weave.works/weave/
       Requires=network-online.target
       Requires=docker.service
       [Service]
       Type=oneshot
       RemainAfterExit=yes
-      ExecStartPre=/usr/bin/docker pull zettio/weave:latest
-      ExecStartPre=/usr/bin/docker pull zettio/weavedns:latest
-      ExecStartPre=/usr/bin/docker pull zettio/weavetools:latest
       ExecStartPre=/bin/mkdir -p /opt/bin/
       ExecStartPre=/usr/bin/curl \
         --silent \
         --location \
-        https://github.com/zettio/weave/releases/download/latest_release/weave \
+        https://raw.githubusercontent.com/weaveworks/weave/master/weave \
         --output /opt/bin/weave
       ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
+      ExecStartPre=/opt/bin/weave --local setup
       ExecStart=/bin/echo Weave Installed
 
   - name: weave-network.target
