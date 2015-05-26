@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/sh -e
 
 source $(git rev-parse --show-toplevel)/quartet/scripts/defaults.sh
 
