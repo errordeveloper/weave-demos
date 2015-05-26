@@ -35,5 +35,5 @@ brew install docker-machine docker-compose docker
 ```
 cd app/
 ../scripts/on-each-host.sh docker build -t app_web .
-../scripts/on-swarm.sh docker-compose up
+../scripts/on-swarm.sh docker-compose up -d
 ```
