@@ -1,3 +1,3 @@
-FROM progrium/busybox 
+FROM gliderlabs/alpine
 
-RUN opkg-install curl ca-certificates
+RUN apkg update --add curl jq
