@@ -37,7 +37,7 @@ Starting ElasticSearch on core-03...
 >> weave run --with-dns --name='es-admin' --tty --interactive errordeveloper/curl:latest
 >> docker attach es-admin
 
-/ # curl es-1.weave.local:9200
+/ # curl es-1.weave.local:9200 | jq '.'
 {
   "status" : 200,
   "name" : "Hydro-Man",
@@ -60,7 +60,7 @@ es-1.weave.local 10.2.3.1   4 18 0.09 d m Hydro-Man
   --request POST \
   --data '{"a": 1}' \
   --header 'Content-type: application/json' \
-  http://hello-es-app.weave.local/hello/sample1
+  http://hello-es-app.weave.local/hello/sample1 | jq '.'
 {
   "msg": {
     "_index": "hello",
@@ -72,7 +72,7 @@ es-1.weave.local 10.2.3.1   4 18 0.09 d m Hydro-Man
 }
 / # curl -s \
   --request GET \
-  http://hello-es-app.weave.local/hello/sample1
+  http://hello-es-app.weave.local/hello/sample1 | jq '.'
 {
   "msg": {
     "a": 1
