@@ -1,3 +1,3 @@
 FROM gliderlabs/alpine
 
-RUN apkg update --add curl jq
+RUN apk update --add curl jq
