@@ -46,7 +46,7 @@ coreos:
       ExecStartPre=/usr/bin/curl \
         --silent \
         --location \
-        https://raw.githubusercontent.com/weaveworks/weave/master/weave \
+        https://github.com/zettio/weave/releases/download/latest_release/weave \
         --output /opt/bin/weave
       ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
       ExecStartPre=/opt/bin/weave --local setup
