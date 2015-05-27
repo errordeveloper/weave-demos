@@ -14,7 +14,7 @@ This guide builds on what was learned from two previous posts where I showed how
 
 This guide is design to get you started with Docker toolchain and Weave right out of the box.
 
-1.  Setup a cluster 3 VMs with Swarm and Weave configured by means of [a shell script](https://github.com/errordeveloper/weave-demos/blob/a90d959638948e796ab675e3dd0e1f98390ae3d0/quartet/scripts/setup-cluster.sh)
+1.  Setup a cluster of 3 VMs with Swarm and Weave configured by means of [a shell script](https://github.com/errordeveloper/weave-demos/blob/a90d959638948e796ab675e3dd0e1f98390ae3d0/quartet/scripts/setup-cluster.sh)
 2. Deploy a simple 2-tier web application using Docker Compose
 3. Scale the application from 1 web servers to 3
 
@@ -130,8 +130,8 @@ Now repeat deployment step with
     cd app/
     ../scripts/on-each-host.sh docker build -t app_web .
     ../scripts/on-swarm.sh docker-compose up -d
-    
-
+    ../scripts/on-swarm.sh docker-compose scale web=3
+ 
 You can deploy a different app, if you'd like. You don't have to reuse my scripts for this purpose, you certainly might like to take a look at how Weave proxy is being setup agains a Swarm.
 
 ## Summary
