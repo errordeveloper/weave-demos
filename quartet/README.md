@@ -12,7 +12,7 @@ This guide builds on what was learned from two previous posts where I showed how
 
 Next I will show how to deploy 3 VMs using Docker Machine, with Swarm and Weave proxy setup by means of [a shell script](https://github.com/errordeveloper/weave-demos/blob/a90d959638948e796ab675e3dd0e1f98390ae3d0/quartet/scripts/setup-cluster.sh), allowing you to get going right out of the box. I will then show how to deploy a simple 2-tier web application using Docker Compose.
 
-> I will post later on with details on how exactly this kind of setup works, for though who might like to reproduce it in a different environment, perhaps without using Docker Machine and Vagrant.
+> I will post later on with details on how exactly this kind of setup works, for those who might like to reproduce it in a different environment, perhaps without using Docker Machine and Vagrant.
 
 To follow this guide you will need to obtain the binaries for
 
