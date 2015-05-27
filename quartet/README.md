@@ -1,6 +1,6 @@
 ---
 title: Multi-host Docker deployment with Swarm and Compose using Weave 0.11
-published: false
+published: true
 tags: docker, docker-machine, docker-swarm, docker-compose, guide, automation, command-line
 ---
 
