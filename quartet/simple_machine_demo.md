@@ -16,7 +16,7 @@ If you are using OS X, then you can install these tools with Homebrew like this:
 
     brew install docker docker-machine
 
-You will need download and install VirtualBox manually as well, if you haven't done it yet. Please be sure to install latest version of Machine (_v0.2.0_), as there are some bugs in the previous release. You also want to use latest `boot2docker` VM image; you will get it if you haven't used Docker Machine previously on your computer, otherwise you should delete cached ISO image located in ***`~/.docker/machine/cache/boot2docker.iso`*** before you proceed.
+You will need to download and install VirtualBox manually as well, if you haven't done it yet. Please be sure to install latest version of Machine (_v0.2.0_), as there are some bugs in the previous release. You also want to use latest `boot2docker` VM image; you will get it if you haven't used Docker Machine previously on your computer, otherwise you should delete cached ISO image located in ***`~/.docker/machine/cache/boot2docker.iso`*** before you proceed.
 
 
 ## Let's proceed, it's only a few steps!
