@@ -90,10 +90,20 @@ For example, you can follow part of the [Azure guide](https://azure.microsoft.co
 Clean-up your local VMs, and re-run the cluster setup.
 
     docker-machine rm -f dev-1 dev-2 dev-3
-    ./scripts/setup-swarm-only-cluster.sh
-    eval `docker-machine env --swarm dev-1`
-    ../scripts/weave-run-on-swarm.sh ... # what do you want to run?
+    ./scripts/setup-cluster.sh
 
-Next, I am planning to post a full guide on how to use Weave with Machine, Swarm and Compose altogether.
+
+Now repeat deployment step with
+
+    cd app/
+    ../scripts/on-each-host.sh docker build -t app_web .
+    ../scripts/on-swarm.sh docker-compose up -d
+    
+
+You can deploy a different app, if you'd like. You don't have to reuse my scripts for this purpose, you certainly might like to take a look at how Weave proxy is being setup agains a Swarm.
+
+## Summary
+
+We have just tested out a full setup with Weave integrated into Docker toolchain. We have first setup 3 VMs locally on VirtualBox, then deployed a very simple 2-tier web application. In the upcoming guide, we will take a look into more details on how exactly this works and how you can reproduce an effectively identical setup on a different infrastructure, using only Swarm and Compose agains Docker hosts you would setup yourself.
 
 Follow [@weaveworks](https://twitter.com/weaveworks), so you don't miss any new posts. And you can always drop us a few lines at [team@weave.works](mailto:team@weave.works), to let us know what you think about Weave.
