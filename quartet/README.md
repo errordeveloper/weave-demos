@@ -10,7 +10,13 @@ In this post I'd like to show how easily one can get up-and-running using [Weave
 
 This guide builds on what was learned from two previous posts where I showed how one can use [Machine with a single VM](http://blog.weave.works/2015/04/22/using-docker-machine-with-weave-0-10/) and [Swarm with 3 VMs](http://blog.weave.works/2015/05/06/using-docker-machine-and-swarm-with-weave-0-10/). In those two posts I used Weave CLI agains remote Docker host(s), leveraging features introduced in _v0.10_. With [proxy](http://docs.weave.works/weave/latest_release/proxy.html) being introduced in _v0.11_, one can use Docker CLI or API (via Compose) directly. Additionally, automatic IP allocation will be also used behind the scenes, lifting the burden of manual IP address assignment, which had been [a long awaited feature](https://github.com/weaveworks/weave/issues/22).
 
-Next I will show how to deploy 3 VMs using Docker Machine, with Swarm and Weave proxy setup by means of [a shell script](https://github.com/errordeveloper/weave-demos/blob/a90d959638948e796ab675e3dd0e1f98390ae3d0/quartet/scripts/setup-cluster.sh), allowing you to get going right out of the box. I will then show how to deploy a simple 2-tier web application using Docker Compose.
+### What you will do?
+
+This guide is design to get you started with Docker toolchain and Weave right out of the box.
+
+1.  Setup a cluster 3 VMs with Swarm and Weave configured by means of [a shell script](https://github.com/errordeveloper/weave-demos/blob/a90d959638948e796ab675e3dd0e1f98390ae3d0/quartet/scripts/setup-cluster.sh)
+2. Deploy a simple 2-tier web application using Docker Compose
+3. Scale the application from 1 web servers to 3
 
 > I will post later on with details on how exactly this kind of setup works, for those who might like to reproduce it in a different environment, perhaps without using Docker Machine and Vagrant.
 
@@ -54,26 +60,52 @@ We have just deployed a standard Compose demo, which consists of a Python Flask 
 
 ```
 > ../scripts/on-swarm.sh docker-compose ps
-   Name                  Command               State               Ports             
-------------------------------------------------------------------------------------
-app_redis_1   /home/weavewait/weavewait  ...   Up      6379/tcp                      
-app_web_1     /home/weavewait/weavewait  ...   Up      192.168.99.102:5000->5000/tcp 
+   Name                  Command               State               Ports              
+-------------------------------------------------------------------------------------
+app_redis_1   /home/weavewait/weavewait  ...   Up      6379/tcp                       
+app_web_1     /home/weavewait/weavewait  ...   Up      192.168.99.102:32773->5000/tcp 
 ```
 
 From the above, you can see that the app can be accessed on `192.168.99.102:5000`, let's test this now.
 
 ```
-> curl 192.168.99.102:5000
+> curl 192.168.99.102:32773
 Hello World! I have been seen 1 times.
-> curl 192.168.99.102:5000
+> curl 192.168.99.102:32773
 Hello World! I have been seen 2 times.
-> curl 192.168.99.102:5000
+> curl 192.168.99.102:32773
 Hello World! I have been seen 3 times.
 ```
 
 Amazing, it worked!
 
+Of course, one server is not enough, if we have 3 VMs to our disposal. Let's scale this up!
 
+```
+> ../scripts/on-swarm.sh docker-compose scale web=3
+Creating app_web_2...
+Creating app_web_3...
+Starting app_web_2...
+Starting app_web_3...
+
+> ../scripts/on-swarm.sh docker-compose ps
+   Name                  Command               State               Ports              
+-------------------------------------------------------------------------------------
+app_redis_1   /home/weavewait/weavewait  ...   Up      6379/tcp                       
+app_web_1     /home/weavewait/weavewait  ...   Up      192.168.99.102:32773->5000/tcp 
+app_web_2     /home/weavewait/weavewait  ...   Up      192.168.99.100:32771->5000/tcp 
+app_web_3     /home/weavewait/weavewait  ...   Up      192.168.99.101:32771->5000/tcp 
+```
+
+And test again
+```
+> curl 192.168.99.100:32771
+Hello World! I have been seen 4 times.
+> curl 192.168.99.101:32771
+Hello World! I have been seen 5 times.
+```
+
+All working well, 3 web server instance running on different host, connected with Weave and no manual IP assignment required, neither [Docker links limitations](https://github.com/docker/compose/issues/608) get in our way.
 
 ## What's next?
 
