@@ -15,9 +15,6 @@ with_machine_env() {
 create_machine_with_proxy_setup() {
   $DOCKER_MACHINE_CREATE "${1}-${2}"
   eval `$DOCKER_MACHINE env "${1}-${2}"`
-  for i in weave.tar weaveexec.tar weavedns.tar
-  do $DOCKER load -i ~/Code/weave/$i
-  done
   $WEAVE launch -iprange 10.2.3.0/24
   $WEAVE launch-dns "10.9.1.${2}/24" -debug
   $WEAVE launch-proxy --with-dns --with-ipam
