@@ -18,7 +18,7 @@ This guide is design to get you started with Docker toolchain and Weave right ou
 2. Deploy a simple 2-tier web application using Docker Compose
 3. Scale the application from 1 web servers to 3
 
-> I will post later on with details on how exactly this kind of setup works, for those who might like to reproduce it in a different environment, perhaps without using Docker Machine and VirtualBox.
+> I will post later on with details on how exactly this kind of setup works, for those who might like to reproduce it in a different environment, perhaps without using Docker Machine and VirtualBox, so you would see how it can work in an existing infrastructure.
 
 To follow this guide you will need to obtain the binaries for
 
@@ -32,7 +32,7 @@ If you are using OS X, then you can install these tools with Homebrew, via
 
     brew install docker docker-machine docker-swarm docker-compose
 
-You will need download and install VirtualBox manually as well, if you haven't done it yet. Please be sure to install latest version of Machine (_v0.2.0_), as there are some bugs in the previous release. You also want to use latest `boot2docker` VM image; you will get it if you haven't used Docker Machine previously on your computer, otherwise you should delete the cached ISO image located in ***`~/.docker/machine/cache/boot2docker.iso`*** before you proceed.
+You will need to download and install VirtualBox manually as well, if you haven't done it yet. Please be sure to install latest version of Machine (_v0.2.0_), as there are some bugs in the previous release. You also want to use latest `boot2docker` VM image; you will get it if you haven't used Docker Machine previously on your computer, otherwise you should delete the cached ISO image located in ***`~/.docker/machine/cache/boot2docker.iso`*** before you proceed.
 
 ## Let's go!
 
