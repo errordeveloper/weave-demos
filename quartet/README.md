@@ -21,14 +21,12 @@ brew install docker-machine docker-compose docker
 ```
 ./scripts/on-swarm.sh \
   docker run -d \
-    -e WEAVE_CIDR=10.20.20.1/24 \
+    -e WEAVE_CIDR= \
     --hostname=hola.weave.local \
-    --dns=172.17.42.1 \
     errordeveloper/hello-weave;
 ./scripts/on-swarm.sh \
   docker run -ti \
-    -e WEAVE_CIDR=10.20.20.2/24 \
-    --dns=172.17.42.1 \
+    -e WEAVE_CIDR= \
     errordeveloper/curl;
 ```
 ## Compose Test
