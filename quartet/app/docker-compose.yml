@@ -1,6 +1,6 @@
 web:
   build: .
-  command: python hello.py
+  command: python app.py
   ports:
      - "5000:5000"
   volumes:
