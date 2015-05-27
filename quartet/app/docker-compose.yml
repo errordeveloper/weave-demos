@@ -2,12 +2,13 @@ web:
   build: .
   command: python app.py
   ports:
-     - "5000:5000"
+     - "5000"
   volumes:
      - .:/code
   hostname: hello.weave.local
   environment:
-     WEAVE_CIDR: ""
+     - "WEAVE_CIDR="
+     - "affinity:container!=app_web_*"
 redis:
   image: redis
   hostname: redis.weave.local
