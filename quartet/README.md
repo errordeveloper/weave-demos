@@ -97,7 +97,7 @@ app_web_2     /home/weavewait/weavewait  ...   Up      192.168.99.100:32771->500
 app_web_3     /home/weavewait/weavewait  ...   Up      192.168.99.101:32771->5000/tcp 
 ```
 
-And test again
+To verify it is working, we must test each of the new instances now.
 ```
 > curl 192.168.99.100:32771
 Hello World! I have been seen 4 times.
