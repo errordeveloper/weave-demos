@@ -125,14 +125,14 @@ Clean-up your local VMs, and re-run the cluster setup.
     ./scripts/setup-cluster.sh
 
 
-Now repeat deployment step with
+Now repeat deployment step as show earlier, i.e.
 
     cd app/
     ../scripts/on-each-host.sh docker build -t app_web .
     ../scripts/on-swarm.sh docker-compose up -d
     ../scripts/on-swarm.sh docker-compose scale web=3
  
-You can deploy a different app, if you'd like. You don't have to reuse my scripts for this purpose, you certainly might like to take a look at how Weave proxy is being setup agains a Swarm.
+You can deploy a different app, if you'd like. You don't have to reuse my scripts for this purpose, although you certainly might like to take a look at how [Weave proxy is launched](https://github.com/errordeveloper/weave-demos/blob/db95b500bb2ed43dab3b880f74e9d47898d7e711/quartet/scripts/defaults.sh#L15-L21) and [Swarm agents setup agains it](https://github.com/errordeveloper/weave-demos/blob/db95b500bb2ed43dab3b880f74e9d47898d7e711/quartet/scripts/setup-cluster.sh#L19-L21).
 
 ## Summary
 
