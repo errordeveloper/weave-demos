@@ -5,7 +5,11 @@ web:
      - "5000:5000"
   volumes:
      - .:/code
-  links:
-   - redis
+  hostname: hello.weave.local
+  environment:
+     WEAVE_CIDR: ""
 redis:
   image: redis
+  hostname: redis.weave.local
+  environment:
+     WEAVE_CIDR: ""
