@@ -12,13 +12,13 @@ This guide builds on what was learned from two previous posts where I showed how
 
 ### What you will do?
 
-This guide is design to get you started with Docker toolchain and Weave right out of the box.
+This guide is design to get you started with Docker toolchain and Weave right out of the box, deploy and scale your application across multiple hosts in a very simple and absolutely transparent manner.
 
 1.  Setup a cluster of 3 VMs with Swarm and Weave configured by means of [a shell script](https://github.com/errordeveloper/weave-demos/blob/a90d959638948e796ab675e3dd0e1f98390ae3d0/quartet/scripts/setup-cluster.sh)
 2. Deploy a simple 2-tier web application using Docker Compose
 3. Scale the application from 1 web servers to 3
 
-> I will post later on with details on how exactly this kind of setup works, for those who might like to reproduce it in a different environment, perhaps without using Docker Machine and Vagrant.
+> I will post later on with details on how exactly this kind of setup works, for those who might like to reproduce it in a different environment, perhaps without using Docker Machine and VirtualBox.
 
 To follow this guide you will need to obtain the binaries for
 
