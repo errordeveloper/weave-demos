@@ -54,21 +54,22 @@ First, the server:
    
  Now, let's test it out:
 
-    > docker attach test-client
+```
+> docker attach test-client
     
-    / # ping -c 3 hola
-    PING hola (10.5.2.1): 56 data bytes
-    64 bytes from 10.5.2.1: seq=0 ttl=64 time=0.239 ms
-    64 bytes from 10.5.2.1: seq=1 ttl=64 time=0.124 ms
-    64 bytes from 10.5.2.1: seq=2 ttl=64 time=0.099 ms
-    
-    --- hola ping statistics ---
-    3 packets transmitted, 3 packets received, 0% packet loss
-    round-trip min/avg/max = 0.099/0.154/0.239 ms
-    / # curl hola:5000
-    Hello, Weave!
-    / # 
+test:/# ping -c 3 hola.weave.local
+PING hola.weave.local (10.5.2.1): 56 data bytes
+64 bytes from 10.5.2.1: seq=0 ttl=64 time=0.130 ms
+64 bytes from 10.5.2.1: seq=1 ttl=64 time=0.204 ms
+64 bytes from 10.5.2.1: seq=2 ttl=64 time=0.155 ms
 
+--- hola.weave.local ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+
+test:/# curl hola.weave.local:5000
+Hello, Weave!
+test:/# 
+```
 
 ## What's next?
 
