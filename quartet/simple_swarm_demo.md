@@ -52,20 +52,22 @@ And our client container can be launched in a very similar way:
 
 Now, let's test it out:
 
-    > docker attach test-client
+```
+> docker attach test-client
     
-    / # ping -c3 hola
-    PING hola (10.5.2.1): 56 data bytes
-    64 bytes from 10.5.2.1: seq=0 ttl=64 time=1.990 ms
-    64 bytes from 10.5.2.1: seq=1 ttl=64 time=2.129 ms
-    64 bytes from 10.5.2.1: seq=2 ttl=64 time=1.325 ms
+test:/# ping -c 3 hola.weave.local
+PING hola.weave.local (10.5.2.1): 56 data bytes
+64 bytes from 10.5.2.1: seq=0 ttl=64 time=0.187 ms
+64 bytes from 10.5.2.1: seq=1 ttl=64 time=0.119 ms
+64 bytes from 10.5.2.1: seq=2 ttl=64 time=0.057 ms
 
-    --- hola ping statistics ---
-    3 packets transmitted, 3 packets received, 0% packet loss
-    round-trip min/avg/max = 1.325/1.814/2.129 ms
-    / # curl hola:5000
-    Hello, Weave!
-    / # 
+--- hola.weave.local ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 0.057/0.121/0.187 ms
+test:/# curl hola.weave.local:5000
+Hello, Weave!
+test:/# 
+```
 
 ## What's next?
 
