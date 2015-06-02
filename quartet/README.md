@@ -136,7 +136,7 @@ Clean-up your local VMs, and re-run the cluster setup.
 
 _Now repeat steps 1-5 show earlier._
 
-You can deploy a different app, if you'd like. You don't have to reuse all of my scripts for this purpose, although you certainly might like to take a look at how [Weave proxy is launched](https://github.com/errordeveloper/weave-demos/blob/db95b500bb2ed43dab3b880f74e9d47898d7e711/quartet/scripts/defaults.sh#L15-L21) and [Swarm agents setup agains it](https://github.com/errordeveloper/weave-demos/blob/db95b500bb2ed43dab3b880f74e9d47898d7e711/quartet/scripts/setup-cluster.sh#L19-L21).
+You can deploy a different app, if you'd like. You don't have to reuse all of my scripts for this purpose, although you certainly might like to take a look at how [Weave proxy is launched](https://github.com/errordeveloper/weave-demos/blob/597a0d78a7d00fd6652c1df8b8562cd0023310f1/quartet/scripts/setup-cluster.sh#L30-L40) and how [Swarm agents](https://github.com/errordeveloper/weave-demos/blob/597a0d78a7d00fd6652c1df8b8562cd0023310f1/quartet/scripts/setup-cluster.sh#L48-L56) and [master](https://github.com/errordeveloper/weave-demos/blob/597a0d78a7d00fd6652c1df8b8562cd0023310f1/quartet/scripts/setup-cluster.sh#L62-L66) are setup agains it.
 
 ## Summary
 
