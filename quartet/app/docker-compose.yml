@@ -7,10 +7,7 @@ web:
      - .:/code
   hostname: hello.weave.local
   environment:
-     - "WEAVE_CIDR="
      - "affinity:container!=app_web_*"
 redis:
   image: redis
   hostname: redis.weave.local
-  environment:
-     WEAVE_CIDR: ""
