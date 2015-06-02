@@ -10,12 +10,24 @@ swarm_flags="--swarm --swarm-discovery=token://${swarm_dicovery_token}"
 
 for i in '1' '2' '3'; do
   if [ ${i} = '1' ]; then
-    create_machine_with_simple_weave_setup \
-      "${MACHINE_NAME_PREFIX}" "${i}" "--swarm-master ${swarm_flags}" 
+    $DOCKER_MACHINE_CREATE \
+      ${swarm_flags} \
+      --swarm-master \
+      "${MACHINE_NAME_PREFIX}-${i}"
   else
-    create_machine_with_simple_weave_setup \
-      "${MACHINE_NAME_PREFIX}" "${i}" "${swarm_flags}"
-    connect_to=$($DOCKER_MACHINE ip "${MACHINE_NAME_PREFIX}-${i}")
-    with_machine_env ${head_node} $WEAVE connect ${connect_to}
+    $DOCKER_MACHINE_CREATE \
+      ${swarm_flags} \
+      "${MACHINE_NAME_PREFIX}-${i}"
   fi
+
+  export DOCKER_CLIENT_ARGS="$(${DOCKER_MACHINE} config)"
+
+  $WEAVE launch
+  $WEAVE launch-dns "10.9.1.${i}/24" -debug
+
+  if [ ${i} -gt '1' ]; then
+    $WEAVE connect $(DOCKER_MACHINE ip ${head_node})
+  fi
+
+  unset DOCKER_CLIENT_ARGS
 done
