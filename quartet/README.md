@@ -1,6 +1,6 @@
 ---
 title: Multi-host Docker deployment with Swarm and Compose using Weave 0.11
-published: true
+published: false
 tags: docker, docker-machine, docker-swarm, docker-compose, guide, automation, command-line
 ---
 
@@ -34,6 +34,11 @@ If you are using OS X, then you can install these tools with Homebrew, via
 
 You will need to download and install VirtualBox manually as well, if you haven't done it yet. Please be sure to install latest version of Machine (_v0.2.0_), as there are some bugs in the previous release. You also want to use latest `boot2docker` VM image; you will get it if you haven't used Docker Machine previously on your computer, otherwise you should delete the cached ISO image located in ***`~/.docker/machine/cache/boot2docker.iso`*** before you proceed.
 
+> If you don't find a `docker-swarm` binary for your OS, and have Docker daemon available locally, you can set `DOCKER_SWARM_CREATE` like show below before you proceed.
+> ```
+> export DOCKER_SWARM_CREATE="docker run --rm swarm create | tail -1"`
+> ```
+
 ## Let's go!
 
 First, we need a few scripts. To get them, run
@@ -48,18 +53,22 @@ Now, we'll provision a cluster of 3 VMs. The following script will make sure all
     ./scripts/setup-cluster.sh
 
 
-Once the cluster is up 
+Once the cluster is up, you want to do the following
 
-```
-cd app/
-../scripts/on-each-host.sh docker build -t app_web .
-../scripts/on-swarm.sh docker-compose up -d
-```
+#### 1. go into app's directory
+`cd app/`
+#### 2. build images on each host
+`./build.sh` (This makes it quicker to scale)
+#### 3. setup the environment
+`eval $(docker-machine env --swarm dev-1 | grep DOCKER_HOST)`
+#### 4. deploy
+`docker-compose up -d`
+#### 5. test, scale, test
 
 We have just deployed a standard Compose demo, which consists of a Python Flask app that uses Redis as its database. Our `docker-compose.yml` file differs slightly from the original, it simply sets `hostname: redis.weave.local` and `hostname: hello.weave.local` instead of using Docker links ([**see diff**](https://github.com/errordeveloper/weave-demos/commit/94bec138e62e5c23aa02ae000019ce4e851d7fd4?diff=split)). These hostnames are picked up by WeaveDNS and can be resolved from any container on the Weave network. WeaveDNS records also survive container restarts, unlike Docker's built-in links.
 
 ```
-> ../scripts/on-swarm.sh docker-compose ps
+> docker-compose ps
    Name                  Command               State               Ports              
 -------------------------------------------------------------------------------------
 app_redis_1   /home/weavewait/weavewait  ...   Up      6379/tcp                       
@@ -82,13 +91,13 @@ Amazing, it worked!
 Of course, one server is not enough, if we have 3 VMs to our disposal. Let's scale this up!
 
 ```
-> ../scripts/on-swarm.sh docker-compose scale web=3
+> docker-compose scale web=3
 Creating app_web_2...
 Creating app_web_3...
 Starting app_web_2...
 Starting app_web_3...
 
-> ../scripts/on-swarm.sh docker-compose ps
+> docker-compose ps
    Name                  Command               State               Ports              
 -------------------------------------------------------------------------------------
 app_redis_1   /home/weavewait/weavewait  ...   Up      6379/tcp                       
@@ -125,14 +134,9 @@ Clean-up your local VMs, and re-run the cluster setup.
     ./scripts/setup-cluster.sh
 
 
-Now repeat deployment step as show earlier, i.e.
+_Now repeat steps 1-5 show earlier._
 
-    cd app/
-    ../scripts/on-each-host.sh docker build -t app_web .
-    ../scripts/on-swarm.sh docker-compose up -d
-    ../scripts/on-swarm.sh docker-compose scale web=3
- 
-You can deploy a different app, if you'd like. You don't have to reuse my scripts for this purpose, although you certainly might like to take a look at how [Weave proxy is launched](https://github.com/errordeveloper/weave-demos/blob/db95b500bb2ed43dab3b880f74e9d47898d7e711/quartet/scripts/defaults.sh#L15-L21) and [Swarm agents setup agains it](https://github.com/errordeveloper/weave-demos/blob/db95b500bb2ed43dab3b880f74e9d47898d7e711/quartet/scripts/setup-cluster.sh#L19-L21).
+You can deploy a different app, if you'd like. You don't have to reuse all of my scripts for this purpose, although you certainly might like to take a look at how [Weave proxy is launched](https://github.com/errordeveloper/weave-demos/blob/db95b500bb2ed43dab3b880f74e9d47898d7e711/quartet/scripts/defaults.sh#L15-L21) and [Swarm agents setup agains it](https://github.com/errordeveloper/weave-demos/blob/db95b500bb2ed43dab3b880f74e9d47898d7e711/quartet/scripts/setup-cluster.sh#L19-L21).
 
 ## Summary
 
