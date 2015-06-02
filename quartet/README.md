@@ -1,6 +1,6 @@
 ---
 title: Multi-host Docker deployment with Swarm and Compose using Weave 0.11
-published: false
+published: true
 tags: docker, docker-machine, docker-swarm, docker-compose, guide, automation, command-line
 ---
 
@@ -34,7 +34,7 @@ If you are using OS X, then you can install these tools with Homebrew, via
 
 You will need to download and install VirtualBox manually as well, if you haven't done it yet. Please be sure to install latest version of Machine (_v0.2.0_), as there are some bugs in the previous release. You also want to use latest `boot2docker` VM image; you will get it if you haven't used Docker Machine previously on your computer, otherwise you should delete the cached ISO image located in ***`~/.docker/machine/cache/boot2docker.iso`*** before you proceed.
 
-> If you don't find a `docker-swarm` binary for your OS, and have Docker daemon available locally, you can set `DOCKER_SWARM_CREATE` like show below before you proceed.
+> If you don't find a `docker-swarm` binary for your OS, and have Docker daemon available locally, you can set `DOCKER_SWARM_CREATE` like shown below before you proceed.
 > ```
 > export DOCKER_SWARM_CREATE="docker run --rm swarm create | tail -1"`
 > ```
