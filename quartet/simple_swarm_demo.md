@@ -10,7 +10,7 @@ To follow this guide you will need to obtain the binaries for
 
 - [***`docker` (at least the client)***](https://docs.docker.com/installation/#installation)
 - [***`docker-machine`***](http://docs.docker.com/machine/#installation)
-- [***`docker-swarm`***](http://docs.docker.com/swarm/#installation)
+- [***`docker-swarm`***](http://docs.docker.com/swarm/#install-swarm)
 - [**VirtualBox**](https://www.virtualbox.org/wiki/Downloads)
 
 If you are using OS X, then you can install these tools with Homebrew, via
