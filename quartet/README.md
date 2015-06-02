@@ -65,7 +65,7 @@ Once the cluster is up, you want to do the following
 `docker-compose up -d`
 #### 5. test, scale, test
 
-We have just deployed a standard Compose demo, which consists of a Python Flask app that uses Redis as its database. Our `docker-compose.yml` file differs slightly from the original, it simply sets `hostname: redis.weave.local` and `hostname: hello.weave.local` instead of using Docker links ([**see diff**](https://github.com/errordeveloper/weave-demos/commit/94bec138e62e5c23aa02ae000019ce4e851d7fd4?diff=split)). These hostnames are picked up by WeaveDNS and can be resolved from any container on the Weave network. WeaveDNS records also survive container restarts, unlike Docker's built-in links.
+We have just deployed a standard Compose demo, which consists of a Python Flask app that uses Redis as its database. Our `docker-compose.yml` file differs slightly from the original, it simply sets `hostname: redis.weave.local` and `hostname: hello.weave.local` instead of using Docker links ([**see diff**](https://github.com/errordeveloper/weave-demos/commit/4874be9943b41d1ad5352cf580ed95c608577ecf?diff=split)). These hostnames are picked up by WeaveDNS and can be resolved from any container on the Weave network. WeaveDNS records also survive container restarts, unlike Docker's built-in links.
 
 ```
 > docker-compose ps
