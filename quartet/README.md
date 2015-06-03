@@ -22,10 +22,10 @@ This guide is design to get you started with Docker toolchain and Weave right ou
 
 To follow this guide you will need to obtain the binaries for
 
-- [***`docker` (at least the client)***](https://docs.docker.com/installation/#installation)
+- [***`docker`***](https://docs.docker.com/installation/#installation) _(at least the client)_
 - [***`docker-machine`***](http://docs.docker.com/machine/#installation)
-- [***`docker-swarm`***](http://docs.docker.com/swarm/#install-swarm)
 - [***`docker-compose`***](http://docs.docker.com/compose/install/)
+- [***`docker-swarm`***](http://docs.docker.com/swarm/#install-swarm) _(optional, see below)_
 - [**VirtualBox**](https://www.virtualbox.org/wiki/Downloads)
 
 If you are using OS X, then you can install these tools with Homebrew, via
