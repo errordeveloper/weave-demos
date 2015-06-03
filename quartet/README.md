@@ -38,6 +38,10 @@ You will need to download and install VirtualBox manually as well, if you haven'
 > ```
 > export DOCKER_SWARM_CREATE="docker run --rm swarm create | tail -1"`
 > ```
+> Alternatively, it may be easier to just use `curl`:
+> ```
+> export DOCKER_SWARM_CREATE="curl -XPOST https://discovery-stage.hub.docker.com/v1/clusters"
+>```
 
 ## Let's go!
 
