@@ -40,13 +40,6 @@ for i in '1' '2' '3'; do
     docker ${DOCKER_CLIENT_ARGS} load -i ~/Code/weave/${c}.tar
   done
 
-  #tlsargs="\
-  #  --tlsverify \
-  #  --tlscacert=/var/lib/boot2docker/ca.pem \
-  #  --tlskey=/var/lib/boot2docker/server-key.pem \
-  #  --tlscert=/var/lib/boot2docker/server.pem \
-  #"
-
   tlsargs=$(docker-machine ssh "${MACHINE_NAME_PREFIX}-${i}" "${find_tls_args}")
 
   ## We are going to use IPAM, hence we launch it with
