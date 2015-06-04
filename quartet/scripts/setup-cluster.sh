@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 ## This scrip is provides the ability to test different versions of
 ## Machine, Swarm and Docker binaries as well as Weave script

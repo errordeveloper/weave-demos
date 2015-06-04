@@ -1,4 +1,4 @@
-#!/bin/sh -xe
+#!/bin/bash -xe
 
 ## NB: This is a very simple working prototype of how Weave can be used directly with Swarm,
 ## it is very basic and will be depricated once native Docker extensions land.
