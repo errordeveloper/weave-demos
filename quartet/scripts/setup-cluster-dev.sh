@@ -1,7 +1,6 @@
 #!/bin/bash -xe
 
-
-## This scrip is provides the ability to test different versions of
+## This scrip provides the ability to test different versions of
 ## Machine, Swarm and Docker binaries as well as Weave script
 source $(git rev-parse --show-toplevel)/quartet/scripts/defaults.sh
 
