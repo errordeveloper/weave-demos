@@ -78,7 +78,7 @@ done
 ## Next we will also restart the Swarm master with the new token
 export DOCKER_CLIENT_ARGS=$($DOCKER_MACHINE config ${head_node})
 
-swarm_master_args_fmt='-d --name={{.Name}} {{range $k,$v := .Volumes}}-v {{$k}}:{{$v}} {{end}}swarm{{range .Args}} {{.}}{{end}}'
+swarm_master_args_fmt='-d --name={{.Name}} -p 3376:3376 {{range .HostConfig.Binds}}-v {{.}} {{end}}swarm{{range .Args}} {{.}}{{end}}'
 
 swarm_master_args=$($DOCKER ${DOCKER_CLIENT_ARGS} inspect --format="${swarm_master_args_fmt}" swarm-agent-master)
 
