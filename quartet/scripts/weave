@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 [ -n "$WEAVE_DEBUG" ] && set -x
