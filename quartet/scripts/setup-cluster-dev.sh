@@ -80,7 +80,10 @@ export DOCKER_CLIENT_ARGS=$($DOCKER_MACHINE config ${head_node})
 
 swarm_master_args_fmt='-d --name={{.Name}} -p 3376:3376 {{range .HostConfig.Binds}}-v {{.}} {{end}}swarm{{range .Args}} {{.}}{{end}}'
 
-swarm_master_args=$($DOCKER ${DOCKER_CLIENT_ARGS} inspect --format="${swarm_master_args_fmt}" swarm-agent-master)
+swarm_master_args=$($DOCKER ${DOCKER_CLIENT_ARGS} inspect \
+    --format="${swarm_master_args_fmt}" \
+    swarm-agent-master \
+  | sed "s|${temp_swarm_dicovery_token}|${swarm_dicovery_token}|")
 
 $DOCKER ${DOCKER_CLIENT_ARGS} rm -f swarm-agent-master
 $DOCKER ${DOCKER_CLIENT_ARGS} run ${swarm_master_args}
