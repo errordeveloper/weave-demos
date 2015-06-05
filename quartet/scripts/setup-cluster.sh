@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-## This scrip provides the ability to test different versions of
-## Machine, Swarm and Docker binaries as well as Weave script
+## If you want to reuse this script elsewhere, you probably want to
+## copy all variables defined in `defaults.sh` here
 source $(git rev-parse --show-toplevel)/quartet/scripts/defaults.sh
 
 head_node="${MACHINE_NAME_PREFIX}-1"

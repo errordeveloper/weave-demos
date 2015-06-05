@@ -1,3 +1,6 @@
+## This scrip provides the ability to test different versions of
+## Machine, Swarm and Docker binaries as well as Weave script
+
 WEAVE=${WEAVE:-"$(git rev-parse --show-toplevel)/quartet/scripts/weave"}
 DOCKER=${DOCKER:-"docker"}
 DOCKER_MACHINE=${DOCKER_MACHINE:-"docker-machine"}

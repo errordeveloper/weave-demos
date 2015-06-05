@@ -1,7 +1,8 @@
 #!/bin/bash -xe
 
-## This scrip provides the ability to test different versions of
-## Machine, Swarm and Docker binaries as well as Weave script
+## DEVELOPMENT VERSION OF `setup-cluster.sh`, YOU SHOULD PROBABLY
+## USE `setup-cluster.sh`, UNLESS YOU KNOW WHAT YOU ARE DOING.
+
 source $(git rev-parse --show-toplevel)/quartet/scripts/defaults.sh
 
 WEAVE="${WEAVE}-dev"
@@ -64,7 +65,7 @@ for i in '1' '2' '3'; do
   $DOCKER ${DOCKER_CLIENT_ARGS} run -d --name=swarm-agent \
     swarm join \
     --addr ${weave_proxy_endpoint} ${swarm_dicovery_token}
-  
+
 done
 
 ## Next we will also restart the Swarm master with the new token
