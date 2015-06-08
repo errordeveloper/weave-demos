@@ -25,7 +25,8 @@ CIDR_REGEXP="$IP_REGEXP/[0-9]{1,2}"
 usage() {
     echo "Usage:"
     echo "weave setup"
-    echo "weave launch       [-password <password>] [-nickname <nickname>] [-iprange <cidr>] <peer> ..."
+    echo "weave launch       [-password <password>] [-nickname <nickname>] [-nodiscovery]"
+    echo "                       [-iprange <cidr>] <peer> ..."
     echo "weave launch-dns   <cidr>"
     echo "weave launch-proxy [-H <docker_endpoint>] [--with-dns] [--with-ipam]"
     echo "weave connect      [--replace] [<peer> ...]"
@@ -143,7 +144,7 @@ if [ "$1" = "run" ] ; then
     fi
     collect_cidr_args "$@"
     shift $CIDR_COUNT
-    CONTAINER=$(docker run $DNS_ARGS -d "$@")
+    CONTAINER=$(docker $DOCKER_CLIENT_ARGS run $DNS_ARGS -d "$@")
     exec_remote attach $CIDR_ARGS $CONTAINER
     echo $CONTAINER
     exit 0
@@ -753,6 +754,12 @@ get_ipam_cidr() {
 
 # TODO: Handle relative paths for args
 # TODO: Handle args with spaces
+tls_arg() {
+    filename=${3:-$2}
+    PROXY_VOLUMES="$PROXY_VOLUMES -v $1:/home/weave/tls/$filename.pem"
+    PROXY_ARGS="$PROXY_ARGS --tls$2 /home/weave/tls/$filename.pem"
+}
+
 proxy_args() {
     PROXY_VOLUMES=""
     PROXY_ARGS=""
@@ -760,30 +767,24 @@ proxy_args() {
         case "$1" in
           --tlscacert)
             shift
-            PROXY_VOLUMES="$PROXY_VOLUMES -v $1:/home/weave/tls/ca.pem"
-            PROXY_ARGS="$PROXY_ARGS --tlscacert /home/weave/tls/ca.pem"
+            tls_arg "$1" cacert ca
             ;;
           --tlscacert=*)
-            PROXY_VOLUMES="$PROXY_VOLUMES -v ${1#*=}:/home/weave/tls/ca.pem"
-            PROXY_ARGS="$PROXY_ARGS --tlscacert /home/weave/tls/ca.pem"
+            tls_arg "${1#*=}" cacert ca
             ;;
           --tlscert)
             shift
-            PROXY_VOLUMES="$PROXY_VOLUMES -v $1:/home/weave/tls/cert.pem"
-            PROXY_ARGS="$PROXY_ARGS --tlscert /home/weave/tls/cert.pem"
+            tls_arg "$1" cert
             ;;
           --tlscert=*)
-            PROXY_VOLUMES="$PROXY_VOLUMES -v ${1#*=}:/home/weave/tls/cert.pem"
-            PROXY_ARGS="$PROXY_ARGS --tlscert /home/weave/tls/cert.pem"
+            tls_arg "${1#*=}" cert
             ;;
           --tlskey)
             shift
-            PROXY_VOLUMES="$PROXY_VOLUMES -v $1:/home/weave/tls/key.pem"
-            PROXY_ARGS="$PROXY_ARGS --tlskey /home/weave/tls/key.pem"
+            tls_arg "$1" key
             ;;
           --tlskey=*)
-            PROXY_VOLUMES="$PROXY_VOLUMES -v ${1#*=}:/home/weave/tls/key.pem"
-            PROXY_ARGS="$PROXY_ARGS --tlskey /home/weave/tls/key.pem"
+            tls_arg "${1#*=}" key
             ;;
           *)
             PROXY_ARGS="$PROXY_ARGS $1"
@@ -863,7 +864,8 @@ case "$COMMAND" in
             shift 1
         fi
         CONTAINER_PORT=$PORT
-        while true ; do
+        ARGS=""
+        while [ $# -gt 0 ] ; do
             case "$1" in
                 -password)
                     [ $# -gt 1 ] || usage
@@ -883,10 +885,12 @@ case "$COMMAND" in
                     shift 2
                     ;;
                 *)
-                    break
+                    ARGS="$ARGS '$(echo "$1" | sed "s|'|'\"'\"'|g")'"
+                    shift
                     ;;
             esac
         done
+        eval "set -- $ARGS"
         # Set WEAVE_DOCKER_ARGS in the environment in order to supply
         # additional parameters, such as resource limits, to docker
         # when launching the weave container.
@@ -930,12 +934,12 @@ case "$COMMAND" in
         proxy_args "$@"
         PROXY_CONTAINER=$(docker run --privileged -d --name=$PROXY_CONTAINER_NAME --net=host \
             -p $PROXY_PORT:$PROXY_PORT/tcp \
-            -v /var/run/docker.sock:/var/run/docker.sock -v /proc:/hostproc \
-            -e PROCFS=/hostproc \
             $PROXY_VOLUMES \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v /proc:/hostproc \
+            -e PROCFS=/hostproc \
             --entrypoint=/home/weave/weaveproxy \
             $WEAVEPROXY_DOCKER_ARGS $EXEC_IMAGE $PROXY_ARGS)
-
         wait_for_status_ip $PROXY_CONTAINER_NAME 127.0.0.1 $PROXY_PORT
         echo $PROXY_CONTAINER
         ;;
