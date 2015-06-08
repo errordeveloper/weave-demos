@@ -23,7 +23,8 @@ for i in $(seq 3 | sort -r) ; do
     --restart=always \
     --name=swarm-agent \
     swarm join \
-    --addr ${weave_proxy_endpoint} ${swarm_dicovery_token}
+    --addr "${weave_proxy_endpoint}" \
+    "token://${swarm_dicovery_token}"
 
   if [ ${i} = 1 ] ; then
     ## On the head node (weave-1) we will also restart the Swarm master
