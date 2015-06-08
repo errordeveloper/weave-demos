@@ -2,9 +2,8 @@
 
 DOCKER_MACHINE_DRIVER=${DOCKER_MACHINE_DRIVER:-"--driver virtualbox"}
 DOCKER_MACHINE_CREATE="docker-machine create ${DOCKER_MACHINE_DRIVER}"
-DOCKER_SWARM_CREATE=${DOCKER_SWARM_CREATE:-"docker-swarm create"}
+DOCKER_SWARM_CREATE=${DOCKER_SWARM_CREATE:-"curl -XPOST https://discovery-stage.hub.docker.com/v1/clusters"}
 
-## Initial token to keep Machine happy
 swarm_flags="--swarm --swarm-discovery=token://$(${DOCKER_SWARM_CREATE})"
 
 for i in $(seq 3) ; do

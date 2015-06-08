@@ -1,22 +1,23 @@
 #!/bin/bash -e
 
-DOCKER_SWARM_CREATE=${DOCKER_SWARM_CREATE:-"docker-swarm create"}
+DOCKER_SWARM_CREATE=${DOCKER_SWARM_CREATE:-"curl -XPOST https://discovery-stage.hub.docker.com/v1/clusters"}
 
-## Actual token to be used with proxied Docker, it is different from
-## the one we generated intialy as Weave proxy listens on a different
-## port and it's easier to just create a fresh token for this
+## This script will replace Swarm agent, aside from that it will have
+## point them to Weave proxy port 12375 instead of Docker port 2376,
+## it will need a new token as the registration on Docker Hub stores
+## an array of `<host>:<port>` pairs and the clean-up method doesn't
+## seem to be documented
 swarm_dicovery_token="$(${DOCKER_SWARM_CREATE})"
 
 for i in $(seq 3 | sort -r) ; do
   ## We are not really using Weave script anymore, hence
-  ## we don't export this variable here
+  ## this is only a local variable
   DOCKER_CLIENT_ARGS="$(docker-machine config weave-${i})"
 
   ## Default Weave proxy port is 12375
   weave_proxy_endpoint="$(docker-machine ip weave-${i}):12375"
 
-  ## Now we need restart Swarm agents like this, pointing
-  ## them at Weave proxy port and making them use new token
+  ## Next, we restart the slave agents
   docker ${DOCKER_CLIENT_ARGS} rm -f swarm-agent
   docker ${DOCKER_CLIENT_ARGS} run \
     -d \
@@ -27,8 +28,10 @@ for i in $(seq 3 | sort -r) ; do
     "token://${swarm_dicovery_token}"
 
   if [ ${i} = 1 ] ; then
-    ## On the head node (weave-1) we will also restart the Swarm master
-    ## with the new token and all the original args
+    ## On the head node (weave-1) we will also restart the master
+    ## with the new token and all the original args, the reason
+    ## this is a bit complicated is because we need steal all the
+    ## `--tls*` argumetns as well as the `-v` ones
     swarm_master_args_fmt="\
       -d \
       --restart=always \
