@@ -29,9 +29,9 @@ for i in $(seq 3 | sort -r) ; do
 
   if [ ${i} = 1 ] ; then
     ## On the head node (weave-1) we will also restart the master
-    ## with the new token and all the original args, the reason
+    ## with the new token and all the original arguments; the reason
     ## this is a bit complicated is because we need steal all the
-    ## `--tls*` argumetns as well as the `-v` ones
+    ## `--tls*` arguments as well as the `-v` ones
     swarm_master_args_fmt="\
       -d \
       --restart=always \
