@@ -13,7 +13,7 @@ for i in $(seq 3 | sort -r) ; do
   DOCKER_CLIENT_ARGS="$(docker-machine config weave-${i})"
 
   ## Default Weave proxy port is 12375
-  weave_proxy_endpoint="$(docker-machine ip):12375"
+  weave_proxy_endpoint="$(docker-machine ip weave-${i}):12375"
 
   ## Now we need restart Swarm agents like this, pointing
   ## them at Weave proxy port and making them use new token
