@@ -29,7 +29,7 @@ for i in '1' '2' '3'; do
 
   ## This environment variable is respected by Weave,
   ## hence it needs to be exported
-  export DOCKER_CLIENT_ARGS="$(${DOCKER_MACHINE} config)"
+  export DOCKER_CLIENT_ARGS="$($DOCKER_MACHINE config)"
 
   ## We are going to use IPAM, hence we launch it with
   ## the following arguments

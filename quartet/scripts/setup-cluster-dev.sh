@@ -34,13 +34,13 @@ for i in '1' '2' '3'; do
 
   ## This environment variable is respected by Weave,
   ## hence it needs to be exported
-  export DOCKER_CLIENT_ARGS="$(${DOCKER_MACHINE} config)"
+  export DOCKER_CLIENT_ARGS="$($DOCKER_MACHINE config)"
 
   for c in weave weavedns weaveexec; do
     docker ${DOCKER_CLIENT_ARGS} load -i ~/Code/weave/${c}.tar
   done
 
-  tlsargs=$(docker-machine ssh "${MACHINE_NAME_PREFIX}-${i}" "${find_tls_args}")
+  tlsargs=$($DOCKER_MACHINE ssh "${MACHINE_NAME_PREFIX}-${i}" "${find_tls_args}")
 
   ## We are going to use IPAM, hence we launch it with
   ## the following arguments
