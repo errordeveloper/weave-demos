@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 DOCKER_SWARM_CREATE=${DOCKER_SWARM_CREATE:-"docker-swarm create"}
 
@@ -25,7 +25,8 @@ for i in $(seq 3 | sort -r) ; do
     --addr ${weave_proxy_endpoint} ${swarm_dicovery_token}
 
   if [ ${i} = 1 ] ; then
-    ## On the head node (weave-1) we will also restart the Swarm master with the new token
+    ## On the head node (weave-1) we will also restart the Swarm master
+    ## with the new token and all the original args
     swarm_master_args_fmt="\
       -d \
       --restart=always \
@@ -34,7 +35,6 @@ for i in $(seq 3 | sort -r) ; do
       {{range .HostConfig.Binds}}-v {{.}} {{end}} \
       swarm{{range .Args}} {{.}}{{end}} \
     "
-
     swarm_master_args=$(docker ${DOCKER_CLIENT_ARGS} inspect \
         --format="${swarm_master_args_fmt}" \
         swarm-agent-master \
@@ -42,8 +42,5 @@ for i in $(seq 3 | sort -r) ; do
 
     docker ${DOCKER_CLIENT_ARGS} rm -f swarm-agent-master
     docker ${DOCKER_CLIENT_ARGS} run ${swarm_master_args}
-
-    ## And make sure Weave cluster setup is comple
-    ./weave-dev status
   fi
 done
