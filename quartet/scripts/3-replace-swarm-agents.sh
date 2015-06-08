@@ -2,20 +2,21 @@
 
 DOCKER_SWARM_CREATE=${DOCKER_SWARM_CREATE:-"docker-swarm create"}
 
-## Actual token to be used with proxied Docker, different from the
-## one we generated in intialy as Weave proxy listens on a different
+## Actual token to be used with proxied Docker, it is different from
+## the one we generated intialy as Weave proxy listens on a different
 ## port and it's easier to just create a fresh token for this
 swarm_dicovery_token="$(${DOCKER_SWARM_CREATE})"
 
 for i in $(seq 3 | sort -r) ; do
-  ## This environment variable is respected by Weave,
-  ## hence it needs to be exported
-  export DOCKER_CLIENT_ARGS="$(docker-machine config weave-${i})"
-  ## Default Weave proxy port is 12375, we shall point
-  ## Swarm agents at it next
+  ## We are not really using Weave script anymore, hence
+  ## we don't export this variable here
+  DOCKER_CLIENT_ARGS="$(docker-machine config weave-${i})"
+
+  ## Default Weave proxy port is 12375
   weave_proxy_endpoint="$(docker-machine ip):12375"
 
-  ## Now we need restart Swarm agents like this
+  ## Now we need restart Swarm agents like this, pointing
+  ## them at Weave proxy port and making them use new token
   docker ${DOCKER_CLIENT_ARGS} rm -f swarm-agent
   docker ${DOCKER_CLIENT_ARGS} run \
     -d \

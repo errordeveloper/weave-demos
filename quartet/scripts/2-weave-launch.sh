@@ -3,7 +3,7 @@
 find_tls_args="cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '"
 
 for i in $(seq 3) ; do
-  ## This environment variable is respected by Weave,
+  ## This environment variable is respected by Weave script,
   ## hence it needs to be exported
   export DOCKER_CLIENT_ARGS="$(docker-machine config weave-${i})"
 
@@ -22,8 +22,10 @@ for i in $(seq 3) ; do
   ./weave-dev launch-proxy --with-dns --with-ipam ${tlsargs}
 
   ## Let's connect-up the Weave cluster by telling
-  ## each of the node about the head node
+  ## each of the nodes about the head node (weave-1)
   if [ ${i} -gt 1 ] ; then
     ./weave-dev connect $(docker-machine ip 'weave-1')
   fi
 done
+
+unset DOCKER_CLIENT_ARGS
