@@ -1,0 +1,88 @@
+# BEING USED FOR TESTING, REMOVE BEFORE RELEASE
+#
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'base64'
+require 'yaml'
+
+MIRROR = 'https://download.fedoraproject.org'
+FEDORA_RELEASE = 22
+BUILD_VERSION = 20150521
+
+$num_instances = 1
+$instance_name_prefix = 'marathon'
+
+
+cloud_config = {
+  'write_files' => %w(
+      weave weave.target weave.service weavedns.service weaveproxy.service
+      zookeeper.service mesos-master.service mesos-slave.service marathon.service
+  ).map do |fn|
+    {
+      'encoding' => 'b64',
+      'content' => Base64.encode64(File.open(fn).readlines.join),
+      'path' => fn == 'weave' ? "/usr/local/bin/#{fn}" : "/etc/systemd/system/#{fn}",
+      'permissions' => fn == 'weave' ? '0755' : '0644',
+    }
+  end
+}
+
+cloud_init_ds = '/var/lib/cloud/seed/nocloud'
+
+$do_cloud_config = <<-SCRIPT
+mkdir -p #{cloud_init_ds}
+
+echo "instance-id: id-local-${HOSTNAME}" \
+  > #{cloud_init_ds}/meta-data
+
+cat <<- EOF > #{cloud_init_ds}/user-data
+#cloud-config
+#{cloud_config.to_yaml}
+EOF
+
+systemctl -q unmask cloud-init-local.service cloud-config.service cloud-final.service
+systemctl -q start cloud-config.service cloud-final.service
+SCRIPT
+
+Vagrant.configure('2') do |config|
+  config.vm.box = "fedora-atomic-22-#{BUILD_VERSION}"
+  config.vm.box_url = "#{MIRROR}/pub/fedora/linux/releases/22/Cloud/x86_64/Images/Fedora-Cloud-Atomic-Vagrant-#{FEDORA_RELEASE}-#{BUILD_VERSION}.x86_64.vagrant-virtualbox.box"
+
+  config.vm.guest = :atomic
+
+  (1..$num_instances).each do |i|
+    config.vm.define vm_name = "%s-%02d" % [$instance_name_prefix, i] do |config|
+      config.vm.hostname = vm_name
+
+      config.vm.provider :virtualbox do |vb|
+        vb.gui = false
+        vb.check_guest_additions = false
+        vb.functional_vboxsf = false
+
+        vb.memory = 1024*6
+        vb.cpus = 2
+      end
+
+      config.vm.provision :shell, inline: $do_cloud_config
+
+      #config.vm.provision :docker, images: %w(
+      docker_images = %w(
+        weaveworks/weave:1.0.1 weaveworks/weavedns:1.0.1 weaveworks/weaveexec:1.0.1
+        mesoscloud/zookeeper:3.4.6-centos-7 mesoscloud/marathon:0.8.2-centos-7
+        mesoscloud/mesos-master:0.22.1-centos-7 mesoscloud/mesos-slave:0.22.1-centos-7
+      )
+
+      config.vm.provision :shell, inline: "for i in #{docker_images.join(' ')}; do docker pull $i; done"
+
+      config.vm.provision :shell, inline: 'systemctl enable weave.target weave.service weaveproxy.service'
+
+      config.vm.provision :shell, inline: 'systemctl start weave.service weaveproxy.service'
+
+      config.vm.provision :shell, inline: 'sudo systemctl start zookeeper.service'
+      config.vm.provision :shell, inline: 'sleep 5' ## give ZK some time... TODO: still need to figure out what to do in a cluster setup, may be just launch ZK hosts first
+      config.vm.provision :shell, inline: 'sudo systemctl start mesos-master.service mesos-slave.service marathon.service'
+
+    end
+  end
+end

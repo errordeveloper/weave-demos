@@ -1,0 +1,16 @@
+[Unit]
+Description=Zookeeper
+After=weave.target
+Requires=docker.service weave.target
+[Service]
+TimeoutStartSec=0
+Restart=on-failure
+ExecStart=/usr/bin/docker \
+  -H localhost:12375 \
+  run --rm --name=zookeeper-00.mesos \
+  mesoscloud/zookeeper:3.4.6-centos-7 \
+  sh -c ' \
+    sed "s/^\(hosts:[\ ]*\)\(files\)\ \(dns\)$/\1\3 \2/" -i /etc/nsswitch.conf ; \
+    /opt/zookeeper/bin/zkServer.sh start-foreground ; \
+  '
+ExecStop=/usr/bin/docker rm -f zookeeper-00.mesos

@@ -1,0 +1,16 @@
+[Unit]
+Description=Mesos Master
+After=weave.target zookeeper.service
+Requires=docker.service weave.target zookeeper.service
+[Service]
+TimeoutStartSec=0
+Restart=on-failure
+ExecStart=/usr/bin/docker \
+  -H localhost:12375 \
+  run --rm --name=master-00.mesos \
+  mesoscloud/mesos-master:0.22.1-centos-7 \
+  sh -c ' \
+    sed "s/^\(hosts:[\ ]*\)\(files\)\ \(dns\)$/\1\3 \2/" -i /etc/nsswitch.conf ; \
+    mesos-master --registry=in_memory --zk=zk://zookeeper-00.mesos.weave.local:2181/mesos ; \
+  '
+ExecStop=/usr/bin/docker rm -f master-00.mesos
