@@ -4,6 +4,10 @@ published: true
 tags: docker, docker-machine, docker-swarm, docker-compose, guide, automation, command-line
 ---
 
+> ***This is an outdate guide, please find latest version on our website now!***  
+> http://weave.works/guides/weave-and-docker-platform/index.html
+
+
 In this post I'd like to show how easily one can get up-and-running using [Weave](https://github.com/weaveworks/weave) with all the latest and greatest Docker tools - [Machine](https://github.com/docker/machine), [Swarm](https://github.com/docker/swarm) and [Compose](https://github.com/docker/compose). This was made especially simple with two recent release of Weave ([_v0.10_](https://github.com/weaveworks/weave/releases/tag/v0.10.0) & [_v0.11_](https://github.com/weaveworks/weave/releases/tag/v0.11.0)).
 
 > Since my last [blog post](http://blog.weave.works/2015/05/06/using-docker-machine-and-swarm-with-weave-0-10/), the Weaveworks team had been busy working on [new _v0.11_ release](https://github.com/weaveworks/weave/releases/tag/v0.11.0), that includes a number of great new features, one of which is [a proxy](http://docs.weave.works/weave/latest_release/proxy.html) that allows our users to simply call `docker run` (or the remote API) without needing to use `weave run`. This release also introduces [automatic IP address management](http://docs.weave.works/weave/latest_release/ipam.html), which Bryan has [blogged about yesterday](http://blog.weave.works/2015/05/26/let-weave-allocate-ip-addresses-for-you/).
@@ -64,7 +68,7 @@ Once the cluster is up, you want to do the following
 #### 2. build images on each host
 `./build.sh` (This makes it quicker to scale)
 #### 3. setup the environment
-`eval $(docker-machine env --swarm dev-1 | grep DOCKER_HOST)`
+`eval $(docker-machine env --swarm dev-1)`
 #### 4. deploy
 `docker-compose up -d`
 #### 5. test, scale, test
