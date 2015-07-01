@@ -4,6 +4,9 @@ published: true
 tags: docker, docker-machine, guide, automation, command-line
 ---
 
+> ***This is an outdate guide, please find latest version on our website now!***  
+> http://weave.works/guides/weave-and-docker-platform/index.html
+
 In this post I'd like to show how quickly one can get up-and-running using [Weave](https://github.com/weaveworks/weave/) with [Docker Machine](https://github.com/docker/machine/). This was made possible with our latest [_v0.10.0_ release](https://github.com/weaveworks/weave/releases/tag/v0.10.0), which has many improvements including the ability to communicate with [remote Docker host](http://weaveblog.com/2015/04/20/remote-weaving-with-0-10/).
 
 To follow this guide you will need to obtain the binaries for
