@@ -4,7 +4,8 @@ published: true
 tags: docker, docker-machine, docker-swarm, guide, automation, command-line
 ---
 
-> **PLEASE NOTE**, this guide has been deprecated and instead you should read [***Multi-host Docker deployment with Swarm and Compose using Weave***](http://blog.weave.works/2015/05/27/multi-host-docker-deployment-with-swarm-and-compose-using-weave-0-11/).
+> ***This is an outdate guide, please find latest version on our main website now!***  
+> http://weave.works/guides/weave-and-docker-platform/index.html
 
 
 In this post I'd like to show how quickly one can get up-and-running using [Weave](https://github.com/weaveworks/weave/) with [Docker Machine](https://github.com/docker/machine/) and [Docker Swarm](https://github.com/docker/swarm). This was made possible with our latest [_v0.10.0_ release](https://github.com/weaveworks/weave/releases/tag/v0.10.0), which has many improvements, including the ability to communicate with [remote Docker hosts](http://weaveblog.com/2015/04/20/remote-weaving-with-0-10/). This guide builds on what was learned from [a previous post](http://blog.weave.works/2015/04/22/using-docker-machine-with-weave-0-10/), where I demonstrated how to use Weave with Docker Machine on a single host.
