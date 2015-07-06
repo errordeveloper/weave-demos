@@ -45,6 +45,26 @@ systemctl -q unmask cloud-init-local.service cloud-config.service cloud-final.se
 systemctl -q start cloud-config.service cloud-final.service
 SCRIPT
 
+docker_images = %w(
+  weaveworks/weave:1.0.1 weaveworks/weavedns:1.0.1 weaveworks/weaveexec:1.0.1
+  mesoscloud/zookeeper:3.4.6-centos-7 mesoscloud/marathon:0.8.2-centos-7
+  mesoscloud/mesos-master:0.22.1-centos-7 mesoscloud/mesos-slave:0.22.1-centos-7
+)
+
+$do_marathon_setup = <<-SCRIPT
+for i in #{docker_images.join(' ')}
+do docker pull $i
+done
+
+systemctl -q enable weave.target weave.service weaveproxy.service
+systemctl -q start weave.service weaveproxy.service
+
+systemctl -q start zookeeper.service
+## give ZK some time... TODO: still need to figure out what to do in a cluster setup, may be just launch ZK hosts first
+sleep 5
+systemctl -q start mesos-master.service mesos-slave.service marathon.service
+SCRIPT
+
 Vagrant.configure('2') do |config|
   config.vm.box = "fedora-atomic-#{FEDORA_RELEASE}-#{BUILD_VERSION}"
   config.vm.box_url = "#{MIRROR_PREFIX}/Fedora-Cloud-Atomic-Vagrant-#{FEDORA_RELEASE}-#{BUILD_VERSION}.x86_64.vagrant-virtualbox.box"
@@ -65,23 +85,7 @@ Vagrant.configure('2') do |config|
       end
 
       config.vm.provision :shell, inline: $do_cloud_config
-
-      docker_images = %w(
-        weaveworks/weave:1.0.1 weaveworks/weavedns:1.0.1 weaveworks/weaveexec:1.0.1
-        mesoscloud/zookeeper:3.4.6-centos-7 mesoscloud/marathon:0.8.2-centos-7
-        mesoscloud/mesos-master:0.22.1-centos-7 mesoscloud/mesos-slave:0.22.1-centos-7
-      )
-
-      config.vm.provision :shell, inline: "for i in #{docker_images.join(' ')}; do docker pull $i; done"
-
-      config.vm.provision :shell, inline: 'systemctl -q enable weave.target weave.service weaveproxy.service'
-
-      config.vm.provision :shell, inline: 'systemctl -q start weave.service weaveproxy.service'
-
-      config.vm.provision :shell, inline: 'systemctl -q start zookeeper.service'
-      config.vm.provision :shell, inline: 'sleep 5' ## give ZK some time... TODO: still need to figure out what to do in a cluster setup, may be just launch ZK hosts first
-      config.vm.provision :shell, inline: 'systemctl -q start mesos-master.service mesos-slave.service marathon.service'
-
+      config.vm.provision :shell, inline: $do_marathon_setup
     end
   end
 end
