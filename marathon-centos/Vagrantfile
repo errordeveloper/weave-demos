@@ -37,22 +37,14 @@ Vagrant.configure(2) do |config|
       end
 
       config.vm.provision :shell, inline: <<-SHELL
-        rpm -i http://repos.mesosphere.io/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm
-        yum -q -y install mesos-0.22.1 marathon-0.8.2 mesosphere-zookeeper-3.4.6 docker
-
+        /vagrant/install_mesosphere_packages.sh
         systemctl -q start zookeeper.service
         sleep 5
-        cp -a /vagrant/mesos-slave.service.d /etc/systemd/system/
         systemctl -q start mesos-master.service mesos-slave.service marathon.service
       SHELL
 
       config.vm.provision :shell, inline: <<-SHELL
-        cd /vagrant
-        cp weave /usr/local/bin/
-        cp weave.target weave.service weavedns.service weaveproxy.service /etc/systemd/system/
-
-        /usr/local/bin/weave setup
-
+        /vagrant/install_weave.sh
         systemctl -q start weave.service weaveproxy.service
       SHELL
     end
