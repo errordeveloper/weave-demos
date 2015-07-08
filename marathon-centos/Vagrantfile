@@ -1,20 +1,28 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$num_instances = 1
-$instance_name_prefix = 'marathon'
+$mesos_slaves = (ENV['MESOS_SLAVES'] || 1).to_i
+
+$network = [172, 17, 85]
 
 Vagrant.configure(2) do |config|
   config.vm.box = 'chef/centos-7.0'
 
-  (1..$num_instances).each do |i|
-    config.vm.define vm_name = '%s-%02d' % [$instance_name_prefix, i] do |config|
+  vms = (0..$mesos_slaves).map{ |a| "mesos-%02d" % [a] }
 
-      config.vm.network :private_network, ip: '172.16.0.6'
+  ips = {}
+
+  vms.each_with_index{ |i, x| ips[i] = ($network + [x+100]).join('.') }
+
+  vms.each_with_index do |i, x|
+
+    config.vm.define vm_name = i do |config|
+
+      config.vm.network :private_network, ip: ips[vm_name]
 
       config.vm.provision :shell, inline: <<-SHELL
         hostnamectl set-hostname #{vm_name}
-        echo 172.16.0.6 #{vm_name} >> /etc/hosts
+        echo #{ips[vm_name]} #{vm_name} >> /etc/hosts
       SHELL
 
       # Disable automatic box update checking. If you disable this, then
@@ -32,21 +40,30 @@ Vagrant.configure(2) do |config|
         # vb.check_guest_additions = false
         # vb.functional_vboxsf = false
 
-        vb.memory = 1024*6
+        vb.memory = 1024*2
         vb.cpus = 2
       end
 
-      config.vm.provision :shell, inline: <<-SHELL
-        /vagrant/install_mesosphere_packages.sh
-        systemctl -q start zookeeper.service
-        sleep 5
-        systemctl -q start mesos-master.service mesos-slave.service marathon.service
-      SHELL
+      config.vm.provision :shell, inline: 'yum -q -y install docker'
 
+      ## Compile a list of IP addresses module one for this VM
+      weave_peers = ips.select{|host, addr| addr if host != vm_name}.values
       config.vm.provision :shell, inline: <<-SHELL
         /vagrant/install_weave.sh
-        systemctl -q start weave.service weaveproxy.service
+        /vagrant/setup_and_launch_weave.sh #{weave_peers.join(' ')}
       SHELL
+
+      if x == 0
+        config.vm.provision :shell, inline: <<-SHELL
+          /vagrant/install_mesosphere_packages.sh
+          /vagrant/launch_mesos_master_services.sh
+        SHELL
+      elsif x > 0
+         config.vm.provision :shell, inline: <<-SHELL
+           /vagrant/install_mesosphere_packages.sh
+           /vagrant/setup_and_launch_mesos_slave.sh zk://#{ips['mesos-00']}:2181/mesos
+         SHELL
+      end
     end
   end
 end
