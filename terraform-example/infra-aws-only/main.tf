@@ -20,6 +20,7 @@ resource "aws_instance" "weave_head_node" {
         connection {
             user = "core"
             key_file = "${var.aws_key_path}"
+            agent = false
         }
     }
 
@@ -31,6 +32,7 @@ resource "aws_instance" "weave_head_node" {
         connection {
             user = "core"
             key_file = "${var.aws_key_path}"
+            agent = false
         }
     }
 
@@ -59,6 +61,7 @@ resource "aws_instance" "weave" {
         connection {
             user = "core"
             key_file = "${var.aws_key_path}"
+            agent = false
         }
     }
 
@@ -70,6 +73,7 @@ resource "aws_instance" "weave" {
         connection {
             user = "core"
             key_file = "${var.aws_key_path}"
+            agent = false
         }
     }
 
@@ -80,6 +84,8 @@ resource "aws_instance" "weave" {
 
 resource "aws_vpc" "weave" {
     cidr_block = "10.220.0.0/16"
+    enable_dns_support = true
+    enable_dns_hostnames = true
 }
 
 resource "aws_internet_gateway" "weave" {
@@ -129,5 +135,12 @@ resource "aws_security_group" "weave" {
         to_port = 6783
         protocol = "udp"
         self = true
+    }
+
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
     }
 }

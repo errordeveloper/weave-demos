@@ -34,6 +34,7 @@ resource "google_compute_instance" "weave" {
         connection {
             user = "core"
             key_file = "${var.gce_key_path}"
+            agent = false
         }
     }
 
@@ -47,6 +48,7 @@ resource "google_compute_instance" "weave" {
         connection {
             user = "core"
             key_file = "${var.gce_key_path}"
+            agent = false
         }
     }
 
@@ -117,6 +119,7 @@ resource "aws_instance" "weave" {
         connection {
             user = "core"
             key_file = "${var.aws_key_path}"
+            agent = false
         }
     }
 
@@ -129,6 +132,7 @@ resource "aws_instance" "weave" {
         connection {
             user = "core"
             key_file = "${var.aws_key_path}"
+            agent = false
         }
     }
 
@@ -195,5 +199,12 @@ resource "aws_security_group" "weave" {
         to_port = 6783
         protocol = "udp"
         self = true
+    }
+
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
     }
 }
