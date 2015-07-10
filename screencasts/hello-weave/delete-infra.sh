@@ -4,5 +4,7 @@ z="--zone europe-west1-c"
 
 gcloud compute instances delete -q $p $z \
   'weave-01' 'weave-02'
+gcloud compute firewall-rules delete -q $p \
+  'allow-ssh-access'
 gcloud compute networks delete -q $p \
   'test-net-1'
