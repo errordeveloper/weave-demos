@@ -7,6 +7,10 @@ tmux -2 new-session -d -s $s -x 160 -y 90
 
 tmux set -t $s status off
 
+tmux set -t $s pane-border-fg black
+tmux set -t $s pane-active-border-fg black
+tmux set -t $s pane-active-border-bg default
+
 tmux split-window -v
 
 tmux select-pane -t 0
