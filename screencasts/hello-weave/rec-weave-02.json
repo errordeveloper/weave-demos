@@ -199,22 +199,6 @@
       "h"
     ],
     [
-      0.159645,
-      " "
-    ],
-    [
-      0.344017,
-      "d"
-    ],
-    [
-      0.313406,
-      "\u0008\u001b[K"
-    ],
-    [
-      0.135494,
-      "\u0008\u001b[K"
-    ],
-    [
       0.195898,
       "-"
     ],
@@ -267,150 +251,6 @@
       " "
     ],
     [
-      0.201073,
-      "l"
-    ],
-    [
-      0.242870,
-      "u"
-    ],
-    [
-      0.156961,
-      "a"
-    ],
-    [
-      0.191255,
-      "n"
-    ],
-    [
-      0.168040,
-      "c"
-    ],
-    [
-      0.048031,
-      "h"
-    ],
-    [
-      0.399921,
-      "-"
-    ],
-    [
-      0.327941,
-      "p"
-    ],
-    [
-      0.176313,
-      "r"
-    ],
-    [
-      0.111824,
-      "o"
-    ],
-    [
-      0.247666,
-      "x"
-    ],
-    [
-      0.112364,
-      "y"
-    ],
-    [
-      0.619342,
-      "\r\n"
-    ],
-    [
-      0.141817,
-      "Unknown weave command 'luanch-proxy'\r\n"
-    ],
-    [
-      0.001301,
-      "Usage:\r\nweave setup\r\nweave launch       [-password \u003cpassword\u003e] [-nickname \u003cnickname\u003e] [-nodiscovery]\r\n                       [-iprange \u003ccidr\u003e [-ipsubnet \u003ccidr\u003e]] \u003cpeer\u003e ...\r\nweave launch-dns   [\u003caddr\u003e]\r\nweave launch-proxy [-D \u003cendpoint\u003e] [-H \u003cendpoint\u003e]\r\n                       [--with-dns | --without-dns] [--no-default-ipam]\r\n"
-    ],
-    [
-      0.001063,
-      "weave connect      [--replace] [\u003cpeer\u003e ...]\r\nweave forget       \u003cpeer\u003e ...\r\nweave run          [--with-dns | --without-dns] [\u003caddr\u003e ...] \u003cdocker run args\u003e ...\r\nweave start        [\u003caddr\u003e ...] \u003ccontainer_id\u003e\r\n"
-    ],
-    [
-      0.030354,
-      "weave attach       [\u003caddr\u003e ...] \u003ccontainer_id\u003e\r\nweave detach       [\u003caddr\u003e ...] \u003ccontainer_id\u003e\r\nweave dns-add      \u003cip_address\u003e [\u003cip_address\u003e ...] \u003ccontainer_id\u003e [-h \u003cfqdn\u003e]\r\nweave dns-remove   \u003cip_address\u003e [\u003cip_address\u003e ...] \u003ccontainer_id\u003e [-h \u003cfqdn\u003e]\r\nweave expose       [\u003caddr\u003e ...] [-h \u003cfqdn\u003e]\r\nweave hide         [\u003caddr\u003e ...]\r\nweave ps           [\u003ccontainer_id\u003e ...]\r\nweave status\r\nweave proxy-env\r\nweave proxy-config\r\nweave version\r\nweave stop\r\nweave stop-dns\r\nweave stop-proxy\r\nweave reset\r\nweave rmpeer       \u003cpeer_id\u003e\r\n\r\nwhere \u003cpeer\u003e     = \u003cip_address_or_fqdn\u003e[:\u003cport\u003e]\r\n      \u003ccidr\u003e     = \u003cip_address\u003e/\u003crouting_prefix_length\u003e\r\n      \u003caddr\u003e     = [ip:]\u003ccidr\u003e | net:\u003ccidr\u003e | net:default\r\n      \u003cendpoint\u003e = [tcp://][\u003cip_address\u003e]:\u003cport\u003e\r\n      \u003cpeer_id\u003e  = \u003cnickname\u003e or weave internal peer ID\r\n"
-    ],
-    [
-      0.025357,
-      "ilya@weave-02:~$ "
-    ],
-    [
-      1.169325,
-      "weave luanch-proxy"
-    ],
-    [
-      0.484505,
-      "\u0008"
-    ],
-    [
-      0.177324,
-      "\u0008"
-    ],
-    [
-      0.187763,
-      "\u0008"
-    ],
-    [
-      0.202249,
-      "\u0008"
-    ],
-    [
-      0.207696,
-      "\u0008"
-    ],
-    [
-      0.177462,
-      "\u0008"
-    ],
-    [
-      0.166597,
-      "\u0008"
-    ],
-    [
-      0.159592,
-      "\u0008"
-    ],
-    [
-      0.184031,
-      "\u0008"
-    ],
-    [
-      0.311935,
-      "\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C"
-    ],
-    [
-      0.608397,
-      "^C\r\nilya@weave-02:~$ "
-    ],
-    [
-      0.763878,
-      "w"
-    ],
-    [
-      0.195891,
-      "e"
-    ],
-    [
-      0.176260,
-      "a"
-    ],
-    [
-      0.151671,
-      "v"
-    ],
-    [
-      0.077615,
-      "e"
-    ],
-    [
-      0.178905,
-      " "
-    ],
-    [
       0.210218,
       "l"
     ],
@@ -433,14 +273,6 @@
     [
       0.098370,
       "h"
-    ],
-    [
-      0.218911,
-      " "
-    ],
-    [
-      0.421960,
-      "\u0008\u001b[K"
     ],
     [
       0.208094,
@@ -481,22 +313,6 @@
     [
       44.015020,
       "e"
-    ],
-    [
-      0.228039,
-      "c"
-    ],
-    [
-      0.088847,
-      "a"
-    ],
-    [
-      0.679768,
-      "\u0008\u001b[K"
-    ],
-    [
-      0.143527,
-      "\u0008\u001b[K"
     ],
     [
       0.526708,
@@ -543,14 +359,6 @@
       "e"
     ],
     [
-      0.815630,
-      "-"
-    ],
-    [
-      0.725820,
-      "\u0008\u001b[K"
-    ],
-    [
       0.149605,
       " "
     ],
@@ -567,28 +375,12 @@
       "o"
     ],
     [
-      0.314406,
-      "y"
-    ],
-    [
-      0.509191,
-      "\u0008\u001b[K"
-    ],
-    [
       0.089321,
       "x"
     ],
     [
       0.130280,
       "y"
-    ],
-    [
-      0.156241,
-      " "
-    ],
-    [
-      0.384578,
-      "\u0008\u001b[K"
     ],
     [
       0.208751,
@@ -661,22 +453,6 @@
     [
       0.135690,
       " "
-    ],
-    [
-      0.937281,
-      "t"
-    ],
-    [
-      0.110486,
-      "-"
-    ],
-    [
-      0.680256,
-      "\u0008\u001b[K"
-    ],
-    [
-      0.152242,
-      "\u0008\u001b[K"
     ],
     [
       0.167391,
@@ -859,22 +635,6 @@
       " "
     ],
     [
-      0.316404,
-      "!"
-    ],
-    [
-      0.496194,
-      "\u0008 \u0008"
-    ],
-    [
-      0.128200,
-      "w"
-    ],
-    [
-      0.687161,
-      "\u0008 \u0008"
-    ],
-    [
       0.160913,
       "W"
     ],
@@ -989,22 +749,6 @@
     [
       0.002924,
       "\u001b]0;root@399a1565edc8: /\u0007root@399a1565edc8:/# \u001b[K"
-    ],
-    [
-      4.607759,
-      "b"
-    ],
-    [
-      0.274225,
-      "y"
-    ],
-    [
-      0.654347,
-      "e"
-    ],
-    [
-      0.208068,
-      "\r\nbash: bye: command not found\r\n\u001b]0;root@399a1565edc8: /\u0007root@399a1565edc8:/# "
     ],
     [
       3.318215,
