@@ -14,7 +14,7 @@ highlight = {
     '-ti': ['blue'],
     '--name': ['yellow'],
     'hello': ['yellow'],
-    'ubuntu': ['green'],
+    'ubuntu': ['green', 'underscore'],
     'netcat': ['green'],
     '-lk': ['green'],
     '1234': ['green'],
@@ -23,8 +23,6 @@ highlight = {
 }
 
 def get_colour(k):
-    print(k)
-    print(highlight[k])
     desc = highlight[k].copy()
     fg = desc.pop(0)
     opts=('noreset',)+ tuple(desc)
