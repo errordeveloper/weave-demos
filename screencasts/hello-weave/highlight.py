@@ -4,7 +4,11 @@ import json
 
 from django.utils.termcolors import colorize
 
-prompt = 'ilya@weave-01:~$ '
+prompts = ['ilya@weave-01:~$ ', 'ilya@weave-02:~$ ']
+
+## Cheatsheet: (https://github.com/django/django/blob/master/django/utils/termcolors.py)
+# colours: black, red, green, yellow, blue, magenta, cyan, white
+# opts: bold, underscore, blink, reverse, conceal
 
 highlight = {
     'weave-01': ['red', 'bold'],
@@ -12,8 +16,8 @@ highlight = {
     'docker': ['blue'],
     'run': ['blue'],
     '-ti': ['blue'],
-    '--name': ['yellow'],
-    'hello': ['yellow'],
+    '--name': ['cyan'],
+    'hello': ['cyan', 'bold'],
     'ubuntu': ['green', 'underscore'],
     'netcat': ['green'],
     '-lk': ['green'],
@@ -45,7 +49,8 @@ for f in ['rec-weave-01.json', 'rec-weave-02.json']:
         word_start = 0
         for i,x in enumerate(commands):
             curr = x[1]
-            if curr == prompt: continue
+            if curr in prompts:
+                x[1] = colorize(curr, fg='yellow')
             elif curr != '\r\n' and curr != ' ' and len(curr) == 1:
                 if word_start == 0:
                     word_start = i
