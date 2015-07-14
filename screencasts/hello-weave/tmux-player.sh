@@ -14,9 +14,9 @@ tmux set -t $s pane-active-border-bg default
 tmux split-window -v
 
 tmux select-pane -t 0
-tmux send-keys 'clear; asciinema play rec-weave-01.json; exit' C-m
+tmux send-keys 'clear; asciinema play fancy-rec-weave-01.json; exit' C-m
 
 tmux select-pane -t 1
-tmux send-keys 'clear; asciinema play rec-weave-02.json; exit' C-m
+tmux send-keys 'clear; asciinema play fancy-rec-weave-02.json; exit' C-m
 
 tmux -2 attach-session -t $s
