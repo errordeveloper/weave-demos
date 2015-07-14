@@ -16,6 +16,7 @@ highlight = {
     '-lk': 'red',
     '1234': 'red',
     'Hello, Weave!\r\n': 'red',
+    'export DOCKER_HOST=tcp://127.0.0.1:12375\r\n': 'red',
 }
 
 colours = {
