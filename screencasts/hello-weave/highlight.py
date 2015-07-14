@@ -20,14 +20,13 @@ highlight = [
 
 highlight_tokens = [t[0] for t in highlight]
 
-tokens = []
-
 colours = {
     'red': ('\033[91m', '\033[00m'),
 }
 
 for f in ['rec-weave-01.json', 'rec-weave-02.json']:
     with open(f) as json_data:
+        tokens = []
         d = json.load(json_data)
         json_data.close()
         commands = d['stdout']
