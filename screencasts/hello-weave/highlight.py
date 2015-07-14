@@ -1,37 +1,41 @@
 #!/usr/bin/env python3
+
 import json
+
+from django.utils.termcolors import colorize
 
 prompt = 'ilya@weave-01:~$ '
 
 highlight = {
-    'weave-01': 'red',
-    'weave-02': 'red',
-    'docker': 'red',
-    'run': 'red',
-    '--name': 'red',
-    'hello': 'red',
-    '-ti': 'red',
-    'ubuntu': 'red',
-    'netcat': 'red',
-    '-lk': 'red',
-    '1234': 'red',
-    'Hello, Weave!\r\n': 'red',
-    'export DOCKER_HOST=tcp://127.0.0.1:12375\r\n': 'red',
-}
-
-colours = {
-    'red': '\033[91m',
+    'weave-01': ['red', 'bold'],
+    'weave-02': ['red', 'bold'],
+    'docker': ['blue'],
+    'run': ['blue'],
+    '-ti': ['blue'],
+    '--name': ['yellow'],
+    'hello': ['yellow'],
+    'ubuntu': ['green'],
+    'netcat': ['green'],
+    '-lk': ['green'],
+    '1234': ['green'],
+    'Hello, Weave!\r\n': ['magenta'],
+    'export DOCKER_HOST=tcp://127.0.0.1:12375\r\n': ['cyan'],
 }
 
 def get_colour(k):
-  return [0, colours[highlight[k]]]
+    print(k)
+    print(highlight[k])
+    desc = highlight[k].copy()
+    fg = desc.pop(0)
+    opts=('noreset',)+ tuple(desc)
+    return [0, colorize(fg=fg, opts=opts)]
 
 def start_colour(x, o):
   return (x[1] + o, get_colour(x[0]))
 
 def term_colour(x, o):
   l = len(x[0]) if x[2] else 1
-  return (x[1] + l + o, [0, '\033[00m'])
+  return (x[1] + l + o, [0, colorize()])
 
 for f in ['rec-weave-01.json', 'rec-weave-02.json']:
     with open(f) as json_data:
@@ -55,7 +59,7 @@ for f in ['rec-weave-01.json', 'rec-weave-02.json']:
                 word_start = 0
             elif curr != '\r\n' and len(curr) > 1:
                 tokens.append((curr, i, False))
-         
+
         offset = 0
         for x in tokens:
             if x[0] in highlight.keys():
@@ -63,9 +67,9 @@ for f in ['rec-weave-01.json', 'rec-weave-02.json']:
                 offset += 1
                 commands.insert(*(term_colour(x, offset)))
                 offset += 1
-    
+
         d['commands'] = commands
-    
+
         with open('fancy-' + f, 'w') as json_output:
             json_output.write(json.dumps(d))
             json_output.close()
