@@ -1,14 +1,22 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$mesos_slaves = (ENV['MESOS_SLAVES'] || 1).to_i
-
+## The variables bellow can be overriden in `config.rb` file
+$mesos_slaves = 1
+$memory = 1024*2
+$cpu = 2
 $network = [172, 17, 85]
+
+CONFIG = File.join(File.dirname(__FILE__), 'config.rb')
+
+if File.exist?(CONFIG)
+  require CONFIG
+end
 
 Vagrant.configure(2) do |config|
   config.vm.box = 'chef/centos-7.0'
 
-  vms = (0..$mesos_slaves).map{ |a| "mesos-%02d" % [a] }
+  vms = (0..$mesos_slaves).map{ |a| 'mesos-%02d' % [a] }
 
   ips = {}
 
@@ -40,8 +48,8 @@ Vagrant.configure(2) do |config|
         # vb.check_guest_additions = false
         # vb.functional_vboxsf = false
 
-        vb.memory = 1024*2
-        vb.cpus = 2
+        vb.memory = $memory
+        vb.cpus = $cpus
       end
 
 
