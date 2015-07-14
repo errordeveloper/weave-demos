@@ -44,26 +44,31 @@ Vagrant.configure(2) do |config|
         vb.cpus = 2
       end
 
-      config.vm.provision :shell, inline: 'yum -q -y install docker'
 
       ## Compile a list of IP addresses module one for this VM
       weave_peers = ips.select{|host, addr| addr if host != vm_name}.values
-      config.vm.provision :shell, inline: <<-SHELL
-        /vagrant/install_weave.sh
-        /vagrant/setup_and_launch_weave.sh #{weave_peers.join(' ')}
-      SHELL
+
+      ## Base provisioning script is like this, it's generally the same an all the nodes,
+      ## accept for the list of Weaev peers being defined dynamically
+      do_provisioning = <<-SCRIPT
+        set -e
+        set -x
+        yum -q -y install docker
+        cd /vagrant
+        ./install_weave.sh
+        ./setup_and_launch_weave.sh #{weave_peers.join(' ')}
+        ./install_mesosphere_packages.sh
+      SCRIPT
 
       if x == 0
-        config.vm.provision :shell, inline: <<-SHELL
-          /vagrant/install_mesosphere_packages.sh
-          /vagrant/launch_mesos_master_services.sh
-        SHELL
+        ## Master is on the head node (mesos-00)
+        do_provisioning << "./launch_mesos_master_services.sh"
       elsif x > 0
-         config.vm.provision :shell, inline: <<-SHELL
-           /vagrant/install_mesosphere_packages.sh
-           /vagrant/setup_and_launch_mesos_slave.sh zk://#{ips['mesos-00']}:2181/mesos
-         SHELL
+        ## Slaves are an all remaing nodes
+        do_provisioning << "./setup_and_launch_mesos_slave.sh zk://#{ips['mesos-00']}:2181/mesos"
       end
+
+      config.vm.provision :shell, inline: do_provisioning
     end
   end
 end
