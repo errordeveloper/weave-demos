@@ -13,8 +13,6 @@ highlight = [
     ('netcat', 'red'),
     ('-lk', 'red'),
     ('1234', 'red'),
-    ('sudo curl -s -L git.io/weave -o /usr/local/bin/weave', 'red'),
-    ('b4e40e4b4665a1ffa23f90eb3ab57c83ef243e64151bedc1501235df6e532e09\r\n', 'red'),
     ('Hello, Weave!\r\n', 'red'),
 ]
 
