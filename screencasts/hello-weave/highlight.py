@@ -3,24 +3,34 @@ import json
 
 prompt = 'ilya@weave-01:~$ '
 
-highlight = [
-    ('weave-01', 'red'),
-    ('weave-02', 'red'),
-    ('docker', 'red'),
-    ('run', 'red'),
-    ('--name', 'red'),
-    ('hello', 'red'),
-    ('netcat', 'red'),
-    ('-lk', 'red'),
-    ('1234', 'red'),
-    ('Hello, Weave!\r\n', 'red'),
-]
-
-highlight_tokens = [t[0] for t in highlight]
+highlight = {
+    'weave-01': 'red',
+    'weave-02': 'red',
+    'docker': 'red',
+    'run': 'red',
+    '--name': 'red',
+    'hello': 'red',
+    '-ti': 'red',
+    'ubuntu': 'red',
+    'netcat': 'red',
+    '-lk': 'red',
+    '1234': 'red',
+    'Hello, Weave!\r\n': 'red',
+}
 
 colours = {
-    'red': ('\033[91m', '\033[00m'),
+    'red': '\033[91m',
 }
+
+def get_colour(k):
+  return [0, colours[highlight[k]]]
+
+def start_colour(x, o):
+  return (x[1] + o, get_colour(x[0]))
+
+def term_colour(x, o):
+  l = len(x[0]) if x[2] else 1
+  return (x[1] + l + o, [0, '\033[00m'])
 
 for f in ['rec-weave-01.json', 'rec-weave-02.json']:
     with open(f) as json_data:
@@ -47,11 +57,10 @@ for f in ['rec-weave-01.json', 'rec-weave-02.json']:
          
         offset = 0
         for x in tokens:
-            if x[0] in highlight_tokens:
-                commands.insert(x[1] + offset, [0, colours['red'][0]])
+            if x[0] in highlight.keys():
+                commands.insert(*(start_colour(x, offset)))
                 offset += 1
-                l = len(x[0]) if x[2] else 1
-                commands.insert(x[1] + l + offset, [0, colours['red'][1]])
+                commands.insert(*(term_colour(x, offset)))
                 offset += 1
     
         d['commands'] = commands
