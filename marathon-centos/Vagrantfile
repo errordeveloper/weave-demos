@@ -60,6 +60,7 @@ Vagrant.configure(2) do |config|
         ./install_mesosphere_packages.sh
       SCRIPT
 
+      ## Below is what's different denpending on the number of the machine
       if x == 0
         ## Master is on the head node (mesos-00)
         do_provisioning << "./launch_mesos_master_services.sh"
