@@ -59,7 +59,7 @@
 	<data>
 	YnBsaXN0MDDUAQIDBAUGGBlYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3AS
 	AAGGoKQHCBESVSRudWxs1AkKCwwNDg8QVk5TU2l6ZVhOU2ZGbGFnc1ZOU05hbWVWJGNs
-	YXNzI0AsAAAAAAAAEBCAAoADXE1lbmxvLUl0YWxpY9ITFBUWWiRjbGFzc25hbWVYJGNs
+	YXNzI0AyAAAAAAAAEBCAAoADXE1lbmxvLUl0YWxpY9ITFBUWWiRjbGFzc25hbWVYJGNs
 	YXNzZXNWTlNGb250ohUXWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0RobVHJvb3SA
 	AQgRGiMtMjc8QktSW2JpcnR2eIWKlZ6lqLHDxssAAAAAAAABAQAAAAAAAAAcAAAAAAAA
 	AAAAAAAAAAAAzQ==
@@ -91,11 +91,11 @@
 	<key>WindowTitle</key>
 	<string>Terminal</string>
 	<key>columnCount</key>
-	<integer>152</integer>
+	<integer>110</integer>
 	<key>name</key>
 	<string>Screencast YT</string>
 	<key>rowCount</key>
-	<integer>38</integer>
+	<integer>29</integer>
 	<key>shellExitAction</key>
 	<integer>1</integer>
 	<key>type</key>
