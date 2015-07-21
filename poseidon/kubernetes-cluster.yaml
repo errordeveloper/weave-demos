@@ -1,27 +1,6 @@
 #cloud-config
 
 write_files:
-  - path: /opt/bin/register_minion.sh
-    permissions: '0755'
-    owner: root
-    content: |
-      #!/bin/sh -xe
-      minion_id="${1}"
-      master_url="${2}"
-      env_label="${3}"
-      until healthcheck=$(curl --fail --silent "${master_url}/healthz")
-      do sleep 2
-      done
-      test -n "${healthcheck}"
-      test "${healthcheck}" = "ok"
-      printf '{
-        "id": "%s",
-        "kind": "Minion",
-        "apiVersion": "v1beta1",
-        "labels": { "environment": "%s" }
-        }' "${minion_id}" "${env_label}" \
-        | /opt/bin/kubectl create -s "${master_url}" -f -
-
   - path: /etc/weave.core-01.env
     permissions: 0644
     owner: root
@@ -48,14 +27,18 @@ write_files:
 
 coreos:
   update:
-    group: alpha
+    group: stable
     reboot-strategy: 'off'
-  etcd:
-    addr: $public_ipv4:4001
-    bind-addr: 0.0.0.0
-    peer-addr: $public_ipv4:7001
-    peer-heartbeat-interval: 250
-    peer-election-timeout: 1000
+
+  etcd2:
+    name: '$public_ipv4'
+    initial-cluster-token: 'etcd-cluster'
+    initial-advertise-peer-urls: 'http://$public_ipv4:2380'
+    listen-peer-urls: 'http://$public_ipv4:2380'
+    listen-client-urls: 'http://0.0.0.0:2379,http://0.0.0.0:4001'
+    advertise-client-urls: 'http://$public_ipv4:2379,http://$public_ipv4:4001'
+    initial-cluster-state: 'new'
+
   units:
     - name: systemd-networkd-wait-online.service
       drop-ins:
@@ -86,7 +69,7 @@ coreos:
         [Install]
         WantedBy=multi-user.target
         WantedBy=kubernetes-master.target
-        WantedBy=kubernetes-minion.target
+        WantedBy=kubernetes-node.target
 
     - name: kubernetes-master.target
       enable: true
@@ -99,24 +82,25 @@ coreos:
         After=weave-network.target
         Requires=weave-network.target
         ConditionHost=core-01
-        Wants=apiserver.service
-        Wants=scheduler.service
-        Wants=controller-manager.service
+        Wants=kube-apiserver.service
+        Wants=kube-scheduler.service
+        Wants=kube-controller-manager.service
+        Wants=kube-proxy.service
         [Install]
         WantedBy=multi-user.target
 
-    - name: kubernetes-minion.target
+    - name: kubernetes-node.target
       enable: true
       command: start
       content: |
         [Unit]
-        Description=Kubernetes Cluster Minion
+        Description=Kubernetes Cluster Node
         Documentation=http://kubernetes.io/
         RefuseManualStart=no
         After=weave-network.target
         Requires=weave-network.target
         ConditionHost=!core-01
-        Wants=proxy.service
+        Wants=kube-proxy.service
         Wants=kubelet.service
         [Install]
         WantedBy=multi-user.target
@@ -219,20 +203,20 @@ coreos:
         WantedBy=weave-network.target
 
     ## based on: https://github.com/kelseyhightower/kubernetes-coreos/blob/e16f8ac/configs/master.yml
-    - name: download-kubernetes.service
+    - name: install-kubernetes.service
       enable: true
       content: |
         [Unit]
         After=network-online.target
-        Before=apiserver.service
-        Before=controller-manager.service
+        Before=kube-apiserver.service
+        Before=kube-controller-manager.service
         Before=kubelet.service
-        Before=proxy.service
+        Before=kube-proxy.service
         Description=Download Kubernetes Binaries
         Documentation=http://kubernetes.io/
         Requires=network-online.target
         [Service]
-        Environment=KUBE_RELEASE_TARBALL=https://github.com/GoogleCloudPlatform/kubernetes/releases/download/v0.17.0/kubernetes.tar.gz
+        Environment=KUBE_RELEASE_TARBALL=https://github.com/GoogleCloudPlatform/kubernetes/releases/download/v1.0.1/kubernetes.tar.gz
         ExecStartPre=/bin/mkdir -p /opt/
         ExecStart=/bin/bash -c "curl --silent --location $KUBE_RELEASE_TARBALL | tar xzv -C /tmp/"
         ExecStart=/bin/tar xzvf /tmp/kubernetes/server/kubernetes-server-linux-amd64.tar.gz -C /opt
@@ -241,33 +225,33 @@ coreos:
         ExecStartPost=/bin/mv /tmp/kubernetes/examples/guestbook /home/core/guestbook-example
         ExecStartPost=/bin/chown core. -R /home/core/guestbook-example
         ExecStartPost=/bin/rm -rf /tmp/kubernetes
-        ExecStartPost=/bin/sed 's/\("createExternalLoadBalancer":\) true/\1 false/' -i /home/core/guestbook-example/frontend-service.json
+        ExecStartPost=/bin/sed 's/# type: LoadBalancer/type: NodePort/' -i /home/core/guestbook-example/frontend-service.yaml
         RemainAfterExit=yes
         Type=oneshot
         [Install]
         WantedBy=kubernetes-master.target
-        WantedBy=kubernetes-minion.target
+        WantedBy=kubernetes-node.target
 
-    - name: apiserver.service
+    - name: kube-apiserver.service
       enable: true
       content: |
         [Unit]
         After=etcd2.service
-        After=download-kubernetes.service
-        Before=controller-manager.service
-        Before=scheduler.service
+        After=install-kubernetes.service
+        Before=kube-controller-manager.service
+        Before=kube-scheduler.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-apiserver
         Description=Kubernetes API Server
         Documentation=http://kubernetes.io/
         Wants=etcd2.service
-        Wants=download-kubernetes.service
+        Wants=install-kubernetes.service
         ConditionHost=core-01
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-apiserver \
             --address=0.0.0.0 \
             --port=8080 \
             --etcd_servers=http://127.0.0.1:4001 \
-            --portal_net=10.1.0.0/16 \
+            --service-cluster-ip-range=10.1.0.0/16 \
             --cloud_provider=vagrant \
             --logtostderr=true --v=3
         Restart=always
@@ -275,16 +259,16 @@ coreos:
         [Install]
         WantedBy=kubernetes-master.target
 
-    - name: scheduler.service
+    - name: kube-scheduler.service
       enable: true
       content: |
         [Unit]
-        After=apiserver.service
-        After=download-kubernetes.service
+        After=kube-apiserver.service
+        After=install-kubernetes.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-scheduler
         Description=Kubernetes Scheduler
         Documentation=http://kubernetes.io/
-        Wants=apiserver.service
+        Wants=kube-apiserver.service
         ConditionHost=core-01
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-scheduler \
@@ -295,19 +279,19 @@ coreos:
         [Install]
         WantedBy=kubernetes-master.target
 
-    - name: controller-manager.service
+    - name: kube-controller-manager.service
       enable: true
       content: |
         [Unit]
         After=etcd2.service
-        After=download-kubernetes.service
-        After=apiserver.service
+        After=install-kubernetes.service
+        After=kube-apiserver.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-controller-manager
         Description=Kubernetes Controller Manager
         Documentation=http://kubernetes.io/
-        Wants=apiserver.service
+        Wants=kube-apiserver.service
         Wants=etcd2.service
-        Wants=download-kubernetes.service
+        Wants=install-kubernetes.service
         ConditionHost=core-01
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-controller-manager \
@@ -324,12 +308,12 @@ coreos:
       content: |
         [Unit]
         After=etcd2.service
-        After=download-kubernetes.service
+        After=install-kubernetes.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kubelet
         Description=Kubernetes Kubelet
         Documentation=http://kubernetes.io/
         Wants=etcd2.service
-        Wants=download-kubernetes.service
+        Wants=install-kubernetes.service
         ConditionHost=!core-01
         [Service]
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests/
@@ -345,20 +329,19 @@ coreos:
         Restart=always
         RestartSec=10
         [Install]
-        WantedBy=kubernetes-minion.target
+        WantedBy=kubernetes-node.target
 
-    - name: proxy.service
+    - name: kube-proxy.service
       enable: true
       content: |
         [Unit]
         After=etcd2.service
-        After=download-kubernetes.service
+        After=install-kubernetes.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kube-proxy
         Description=Kubernetes Proxy
         Documentation=http://kubernetes.io/
         Wants=etcd2.service
-        Wants=download-kubernetes.service
-        ConditionHost=!core-01
+        Wants=install-kubernetes.service
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-proxy \
              --master=http://172.17.8.101:8080 \
@@ -366,23 +349,5 @@ coreos:
         Restart=always
         RestartSec=10
         [Install]
-        WantedBy=kubernetes-minion.target
-
-    - name: kubectl-create-minion.service
-      enable: true
-      content: |
-        [Unit]
-        After=download-kubernetes.service
-        Before=proxy.service
-        Before=kubelet.service
-        ConditionFileIsExecutable=/opt/kubernetes/server/bin/kubectl
-        ConditionFileIsExecutable=/opt/bin/register_minion.sh
-        Description=Kubernetes Create Minion
-        Documentation=http://kubernetes.io/
-        Wants=download-kubernetes.service
-        ConditionHost=!core-01
-        [Service]
-        ExecStart=/opt/bin/register_minion.sh $public_ipv4 http://172.17.8.101:8080 testing
-        Type=oneshot
-        [Install]
-        WantedBy=kubernetes-minion.target
+        WantedBy=kubernetes-master.target
+        WantedBy=kubernetes-node.target
