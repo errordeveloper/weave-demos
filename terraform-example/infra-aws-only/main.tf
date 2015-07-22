@@ -83,7 +83,7 @@ resource "aws_instance" "weave" {
 }
 
 resource "aws_vpc" "weave" {
-    cidr_block = "10.220.0.0/16"
+    cidr_block = "172.220.0.0/16"
     enable_dns_support = true
     enable_dns_hostnames = true
 }
@@ -107,7 +107,7 @@ resource "aws_route_table" "weave" {
 
 resource "aws_subnet" "weave" {
     vpc_id = "${aws_vpc.weave.id}"
-    cidr_block = "10.220.1.0/24"
+    cidr_block = "172.220.1.0/24"
     map_public_ip_on_launch = true
 }
 

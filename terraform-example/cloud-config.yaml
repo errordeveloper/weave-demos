@@ -79,3 +79,10 @@ write_files:
         zettio/weavedns:latest \
         zettio/weavetools:latest \
       "
+#  - path: /etc/weave.env
+#    permissions: 0600
+#    owner: root
+#    content: |
+#      WEAVE_PEERS="${peers}"
+#      WEAVE_PASSWORD="${crypt}"
+#      WEAVEDNS_ADDR="10.10.2.1${count}/16"

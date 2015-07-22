@@ -56,7 +56,7 @@ resource "google_compute_instance" "weave" {
 // Custom GCE network declaration, so we can set firewall rules below
 resource "google_compute_network" "weave" {
     name = "weave"
-    ipv4_range = "10.220.0.0/16"
+    ipv4_range = "172.220.0.0/16"
 }
 
 // Firewall rules for the network (allow inbound ssh and weave connections)
@@ -138,7 +138,7 @@ resource "aws_instance" "weave" {
 // so I decided to make it safer with dedicating a VPC to Terraform.
 // TODO: refactor this as a module
 resource "aws_vpc" "weave" {
-    cidr_block = "10.220.0.0/16"
+    cidr_block = "172.220.0.0/16"
 }
 
 resource "aws_internet_gateway" "weave" {
@@ -161,7 +161,7 @@ resource "aws_route_table" "weave" {
 // With a non-default VPC we have to create a subnet also
 resource "aws_subnet" "weave" {
     vpc_id = "${aws_vpc.weave.id}"
-    cidr_block = "10.220.1.0/24"
+    cidr_block = "172.220.1.0/24"
     map_public_ip_on_launch = true
 }
 
