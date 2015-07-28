@@ -2,28 +2,25 @@
 
 write_files:
   - path: /etc/weave.core-01.env
-    permissions: 0644
+    permissions: '0644'
     owner: root
     content: |
-      WEAVE_PEERS=""
-      BRIDGE_ADDRESS_CIDR="10.9.1.1/24"
-      BREAKOUT_ROUTE="10.9.0.0/16"
+      WEAVE_PEERS="172.17.8.102 172.17.8.103"
+      VERSION="latest"
 
   - path: /etc/weave.core-02.env
-    permissions: 0644
+    permissions: '0644'
     owner: root
     content: |
-      WEAVE_PEERS="172.17.8.101"
-      BRIDGE_ADDRESS_CIDR="10.9.2.1/24"
-      BREAKOUT_ROUTE="10.9.0.0/16"
+      WEAVE_PEERS="172.17.8.101 172.17.8.103"
+      VERSION="latest"
 
   - path: /etc/weave.core-03.env
-    permissions: 0644
+    permissions: '0644'
     owner: root
     content: |
-      WEAVE_PEERS="172.17.8.101"
-      BRIDGE_ADDRESS_CIDR="10.9.3.1/24"
-      BREAKOUT_ROUTE="10.9.0.0/16"
+      WEAVE_PEERS="172.17.8.101 172.17.8.102"
+      VERSION="latest"
 
 coreos:
   update:
@@ -47,13 +44,6 @@ coreos:
             [Service]
             ExecStart=/bin/sh -x -c \
               'until curl --silent --fail https://status.github.com/api/status.json | grep -q \"good\"; do sleep 2; done'
-
-    - name: docker.service
-      drop-ins:
-        - name: 50-weave-kubernetes.conf
-          content: |
-            [Service]
-            Environment=DOCKER_OPTS='--bridge="weave" -r="false"'
 
     - name: etcd2.service
       command: start
@@ -118,9 +108,8 @@ coreos:
       content: |
         [Unit]
         After=network-online.target
+        After=docker.service
         Before=weave.service
-        Before=weave-helper.service
-        Before=docker.service
         Description=Install Weave
         Documentation=http://docs.weave.works/
         Requires=network-online.target
@@ -133,19 +122,14 @@ coreos:
           --location \
           https://github.com/weaveworks/weave/releases/download/latest_release/weave \
           --output /opt/bin/weave
-        ExecStartPre=/usr/bin/curl \
-          --silent \
-          --location \
-          https://raw.github.com/errordeveloper/weave-demos/master/poseidon/weave-helper \
-          --output /opt/bin/weave-helper
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
-        ExecStartPre=/usr/bin/chmod +x /opt/bin/weave-helper
+        ExecStartPre=/bin/bash -c 'test -f /tmp/weave.tar && docker load -i /tmp/weave.tar'
         ExecStart=/bin/echo Weave Installed
         [Install]
         WantedBy=weave-network.target
         WantedBy=weave.service
 
-    - name: weave-helper.service
+    - name: weaveproxy.service
       enable: true
       content: |
         [Unit]
@@ -156,7 +140,8 @@ coreos:
         Requires=docker.service
         Requires=install-weave.service
         [Service]
-        ExecStart=/opt/bin/weave-helper
+        EnvironmentFile=-/etc/weave.env
+        ExecStart=/opt/bin/weave launch-proxy --rewrite-inspect --without-dns
         [Install]
         WantedBy=weave-network.target
 
@@ -172,34 +157,14 @@ coreos:
         Requires=install-weave.service
         [Service]
         TimeoutStartSec=0
+        EnvironmentFile=-/etc/weave.env
         EnvironmentFile=/etc/weave.%H.env
         ExecStartPre=/opt/bin/weave setup
-        ExecStartPre=/opt/bin/weave launch $WEAVE_PEERS
+        ExecStartPre=/opt/bin/weave launch-router $WEAVE_PEERS
         ExecStart=/usr/bin/docker attach weave
         Restart=on-failure
         ExecStop=/opt/bin/weave stop
         [Install]
-        WantedBy=weave-network.target
-
-    - name: weave-create-bridge.service
-      enable: true
-      content: |
-        [Unit]
-        After=network.target
-        After=install-weave.service
-        Before=weave.service
-        Before=docker.service
-        Requires=network.target
-        Requires=install-weave.service
-        [Service]
-        Type=oneshot
-        EnvironmentFile=/etc/weave.%H.env
-        ExecStart=/opt/bin/weave --local create-bridge
-        ExecStart=/usr/bin/ip addr add dev weave $BRIDGE_ADDRESS_CIDR
-        ExecStart=/usr/bin/ip route add $BREAKOUT_ROUTE dev weave scope link
-        ExecStart=/usr/bin/ip route add 224.0.0.0/4 dev weave
-        [Install]
-        WantedBy=multi-user.target
         WantedBy=weave-network.target
 
     ## based on: https://github.com/kelseyhightower/kubernetes-coreos/blob/e16f8ac/configs/master.yml
@@ -248,7 +213,7 @@ coreos:
         ConditionHost=core-01
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-apiserver \
-            --address=0.0.0.0 \
+            --address=$public_ipv4 \
             --port=8080 \
             --etcd_servers=http://127.0.0.1:4001 \
             --service-cluster-ip-range=10.1.0.0/16 \
@@ -318,7 +283,8 @@ coreos:
         [Service]
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests/
         ExecStart=/opt/kubernetes/server/bin/kubelet \
-            --address=0.0.0.0 \
+            --docker_endpoint=unix:/var/run/weave.sock \
+            --address=$public_ipv4 \
             --port=10250 \
             --hostname_override=$public_ipv4 \
             --api_servers=http://172.17.8.101:8080 \
