@@ -123,7 +123,7 @@ coreos:
           https://github.com/weaveworks/weave/releases/download/latest_release/weave \
           --output /opt/bin/weave
         ExecStartPre=/usr/bin/chmod +x /opt/bin/weave
-        ExecStartPre=/bin/bash -c 'test -f /tmp/weave.tar && docker load -i /tmp/weave.tar'
+        ExecStartPre=/bin/bash -c 'test ! -f /tmp/weave.tar || docker load -i /tmp/weave.tar'
         ExecStart=/bin/echo Weave Installed
         [Install]
         WantedBy=weave-network.target
@@ -213,11 +213,12 @@ coreos:
         ConditionHost=core-01
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-apiserver \
-            --address=$public_ipv4 \
+            --insecure-bind-address=0.0.0.0 \
+            --external-hostname=$public_ipv4 \
             --port=8080 \
-            --etcd_servers=http://127.0.0.1:4001 \
+            --etcd-servers=http://127.0.0.1:4001 \
             --service-cluster-ip-range=10.1.0.0/16 \
-            --cloud_provider=vagrant \
+            --cloud-provider=vagrant \
             --logtostderr=true --v=3
         Restart=always
         RestartSec=10
