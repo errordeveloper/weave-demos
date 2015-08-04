@@ -35,6 +35,7 @@ coreos:
     listen-client-urls: 'http://0.0.0.0:2379,http://0.0.0.0:4001'
     advertise-client-urls: 'http://$public_ipv4:2379,http://$public_ipv4:4001'
     initial-cluster-state: 'new'
+    initial-cluster: '172.17.8.101=http://172.17.8.101:2380,172.17.8.102=http://172.17.8.102:2380,172.17.8.103=http://172.17.8.103:2380'
 
   units:
     - name: systemd-networkd-wait-online.service
@@ -141,7 +142,10 @@ coreos:
         Requires=install-weave.service
         [Service]
         EnvironmentFile=-/etc/weave.env
-        ExecStart=/opt/bin/weave launch-proxy --rewrite-inspect --without-dns
+        ExecStartPre=/opt/bin/weave launch-proxy --rewrite-inspect --without-dns --log-level=debug
+        ExecStart=/usr/bin/docker attach weaveproxy
+        Restart=on-failure
+        ExecStop=/opt/bin/weave stop-proxy
         [Install]
         WantedBy=weave-network.target
 
@@ -163,7 +167,29 @@ coreos:
         ExecStartPre=/opt/bin/weave launch-router $WEAVE_PEERS
         ExecStart=/usr/bin/docker attach weave
         Restart=on-failure
-        ExecStop=/opt/bin/weave stop
+        ExecStop=/opt/bin/weave stop-router
+        [Install]
+        WantedBy=weave-network.target
+
+    - name: weave-expose.service
+      enable: true
+      content: |
+        [Unit]
+        After=install-weave.service
+        After=weave.service
+        After=docker.service
+        Description=Weave Network Router
+        Documentation=http://docs.weave.works/
+        Requires=docker.service
+        Requires=install-weave.service
+        Requires=weave.service
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        TimeoutStartSec=0
+        EnvironmentFile=-/etc/weave.env
+        ExecStart=/opt/bin/weave expose
+        ExecStop=/opt/bin/weave hide
         [Install]
         WantedBy=weave-network.target
 
@@ -214,12 +240,12 @@ coreos:
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-apiserver \
             --insecure-bind-address=0.0.0.0 \
-            --external-hostname=$public_ipv4 \
+            --advertise-address=$public_ipv4 \
             --port=8080 \
             --etcd-servers=http://127.0.0.1:4001 \
-            --service-cluster-ip-range=10.1.0.0/16 \
+            --service-cluster-ip-range=10.16.0.0/12 \
             --cloud-provider=vagrant \
-            --logtostderr=true --v=3
+            --logtostderr=true --v=9
         Restart=always
         RestartSec=10
         [Install]
@@ -292,7 +318,8 @@ coreos:
             --logtostderr=true \
             --cluster_dns=10.1.0.3 \
             --cluster_domain=kube.local \
-            --config=/etc/kubernetes/manifests/
+            --config=/etc/kubernetes/manifests/ \
+            --v=9
         Restart=always
         RestartSec=10
         [Install]
