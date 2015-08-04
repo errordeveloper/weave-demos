@@ -4,10 +4,10 @@ if File.exists?('kubernetes-cluster.yaml') && ARGV[0].eql?('up')
   require 'open-uri'
   require 'yaml'
 
-  token = open('https://discovery.etcd.io/new').read
-
   data = YAML.load(IO.readlines('kubernetes-cluster.yaml')[1..-1].join)
-  data['coreos']['etcd2']['discovery'] = token
+
+  #token = open('https://discovery.etcd.io/new').read
+  #data['coreos']['etcd2']['discovery'] = token
 
   if ENV['TEST_WEAVE_IMAGES_FROM'] then
     data['write_files'] << {
