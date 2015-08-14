@@ -142,7 +142,7 @@ coreos:
         Requires=install-weave.service
         [Service]
         EnvironmentFile=-/etc/weave.env
-        ExecStartPre=/opt/bin/weave launch-proxy --rewrite-inspect --without-dns --log-level=debug
+        ExecStartPre=/opt/bin/weave launch-proxy --rewrite-inspect --without-dns
         ExecStart=/usr/bin/docker attach weaveproxy
         Restart=on-failure
         ExecStop=/opt/bin/weave stop-proxy
@@ -245,7 +245,7 @@ coreos:
             --etcd-servers=http://127.0.0.1:4001 \
             --service-cluster-ip-range=10.16.0.0/12 \
             --cloud-provider=vagrant \
-            --logtostderr=true --v=9
+            --logtostderr=true
         Restart=always
         RestartSec=10
         [Install]
@@ -316,10 +316,9 @@ coreos:
             --hostname_override=$public_ipv4 \
             --api_servers=http://172.17.8.101:8080 \
             --logtostderr=true \
-            --cluster_dns=10.1.0.3 \
+            --cluster_dns=10.16.0.3 \
             --cluster_domain=kube.local \
-            --config=/etc/kubernetes/manifests/ \
-            --v=9
+            --config=/etc/kubernetes/manifests/
         Restart=always
         RestartSec=10
         [Install]
