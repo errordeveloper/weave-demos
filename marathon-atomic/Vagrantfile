@@ -1,5 +1,3 @@
-# BEING USED FOR TESTING, REMOVE BEFORE RELEASE
-#
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -11,8 +9,23 @@ BUILD_VERSION = 20150521
 MIRROR = 'https://download.fedoraproject.org'
 MIRROR_PREFIX = "#{MIRROR}/pub/fedora/linux/releases/#{FEDORA_RELEASE}/Cloud/x86_64/Images"
 
-$num_instances = 1
-$instance_name_prefix = 'marathon'
+CONFIG = File.join(File.dirname(__FILE__), 'config.rb')
+
+## The variables bellow can be overriden in `config.rb` file
+$mesos_slaves = 1
+$memory = 1024*2
+$cpus = 2
+$network = [172, 17, 85]
+
+if File.exist?(CONFIG)
+  require CONFIG
+end
+
+## XXX: May be this could be turned into a generator script that shall be
+## checked into the repo? ...it could also be turned into a Vagrant plugin
+## or a more general purpose cloud-config genrator. The point is that it
+## rather looks like a thing only an advanced user could read, but I'm not
+## sure, it might be okay actually.
 
 cloud_config = {
   'write_files' => %w(
@@ -28,6 +41,26 @@ cloud_config = {
   end
 }
 
+vms = (0..$mesos_slaves).map{ |a| 'mesos-%02d' % [a] }
+
+ips = {}
+
+vms.each_with_index{ |i, x| ips[i] = ($network + [x+100]).join('.') }
+
+cloud_config['write_files'] += vms.map do |vm_name|
+  ## Compile a list of IP addresses modulo one for this VM
+  weave_peers = ips.select{|host, addr| addr if host != vm_name}.values
+  ## Create an environment file that will get load by `weave.service`
+  ## with the `%H` expantion for each given host
+  content = [ "WEAVE_PEERS=\"#{weave_peers}\"" ]
+  content << "WEAVE_PASSWORD=\"#$weave_password\"" unless $weave_password.nil?
+  {
+    'content' => content.join("\n"),
+    'path' => "/etc/weave.#{vm_name}.env",
+    'permissions' => '0640',
+  }
+end
+
 cloud_init_ds = '/var/lib/cloud/seed/nocloud'
 
 $do_cloud_config = <<-SCRIPT
@@ -42,48 +75,50 @@ cat <<- EOF > #{cloud_init_ds}/user-data
 EOF
 
 systemctl -q unmask cloud-init-local.service cloud-config.service cloud-final.service
-systemctl -q start cloud-config.service cloud-final.service
+systemctl -q --no-block start cloud-config.service cloud-final.service
 SCRIPT
 
 docker_images = %w(
   weaveworks/weave:1.0.1 weaveworks/weavedns:1.0.1 weaveworks/weaveexec:1.0.1
-  mesoscloud/zookeeper:3.4.6-centos-7 mesoscloud/marathon:0.8.2-centos-7
-  mesoscloud/mesos-master:0.22.1-centos-7 mesoscloud/mesos-slave:0.22.1-centos-7
+  mesoscloud/zookeeper:3.4.6-centos-7 mesoscloud/marathon:0.9.1-centos-7
+  mesoscloud/mesos-master:0.23.0-centos-7 mesoscloud/mesos-slave:0.23.0-centos-7
 )
 
 $do_marathon_setup = <<-SCRIPT
 for i in #{docker_images.join(' ')}
-do docker pull $i
+do docker pull $i > /dev/null
 done
 
-systemctl -q enable weave.target weave.service weaveproxy.service
-systemctl -q start weave.service weaveproxy.service
+systemctl -q --no-block enable weave.target weave.service weaveproxy.service
+systemctl -q --no-block start weave.service weaveproxy.service
 
-systemctl -q start zookeeper.service
+systemctl -q --no-block start zookeeper.service
 ## give ZK some time... TODO: still need to figure out what to do in a cluster setup, may be just launch ZK hosts first
-sleep 5
-systemctl -q start mesos-master.service mesos-slave.service marathon.service
+systemctl -q --no-block start mesos-master.service mesos-slave.service marathon.service
 SCRIPT
 
 Vagrant.configure('2') do |config|
   config.vm.box = "fedora-atomic-#{FEDORA_RELEASE}-#{BUILD_VERSION}"
   config.vm.box_url = "#{MIRROR_PREFIX}/Fedora-Cloud-Atomic-Vagrant-#{FEDORA_RELEASE}-#{BUILD_VERSION}.x86_64.vagrant-virtualbox.box"
 
-  config.vm.guest = :atomic
+  #config.vm.guest = :atomic
 
-  (1..$num_instances).each do |i|
-    config.vm.define vm_name = "%s-%02d" % [$instance_name_prefix, i] do |config|
-      config.vm.hostname = vm_name
+  vms.each do |i|
+
+    config.vm.define vm_name = i do |config|
+
+      config.vm.network :private_network, ip: ips[vm_name]
 
       config.vm.provider :virtualbox do |vb|
         vb.gui = false
         vb.check_guest_additions = false
         vb.functional_vboxsf = false
 
-        vb.memory = 1024*6
-        vb.cpus = 2
+        vb.memory = $memory
+        vb.cpus = $cpus
       end
 
+      config.vm.provision :shell, inline: "hostnamectl set-hostname #{vm_name}"
       config.vm.provision :shell, inline: $do_cloud_config
       config.vm.provision :shell, inline: $do_marathon_setup
     end
