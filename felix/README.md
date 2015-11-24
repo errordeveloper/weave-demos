@@ -44,7 +44,7 @@ Here is something simple you can try.
 
 Firstly, launch a web server on one machine:
 ```
-$ vagrant ssh core-01 -c 'sudo weave run --with-dns 10.0.0.1/24 --hostname=hola.weave.local errordeveloper/hello-weave'
+$ vagrant ssh core-01 -c 'eval $(weave env) ; docker run --name=hola errordeveloper/hello-weave'
 Unable to find image 'errordeveloper/hello-weave:latest' locally
 Pulling repository errordeveloper/hello-weave
 ...
@@ -57,7 +57,8 @@ Then, attach a client container on the other and test it like so:
 0 %> vagrant ssh core-02 
 CoreOS stable (557.2.0)
 Update Strategy: No Reboots
-core@core-02 ~ $ docker attach `sudo weave run --with-dns 10.0.0.2/24 -ti errordeveloper/curl`
+core@core-02 ~ $ eval $(weave env)
+core@core-02 ~ $ docker run -ti errordeveloper/curl
 Unable to find image 'errordeveloper/curl:latest' locally
 Pulling repository errordeveloper/curl
 ...
