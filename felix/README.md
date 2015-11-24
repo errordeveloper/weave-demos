@@ -44,7 +44,7 @@ Here is something simple you can try.
 
 Firstly, launch a web server on one machine:
 ```
-$ vagrant ssh core-01 -c 'eval $(weave env) ; docker run --name=hola errordeveloper/hello-weave'
+$ vagrant ssh core-01 -c 'eval $(weave env) ; docker run -d --name=hola errordeveloper/hello-weave'
 Unable to find image 'errordeveloper/hello-weave:latest' locally
 Pulling repository errordeveloper/hello-weave
 ...
