@@ -21,7 +21,6 @@ def genenv_content(count)
   %W(
     WEAVE_PEERS="#{weave_peers}"
     WEAVE_PASSWORD="#{WEAVE_PASSWORD}"
-    WEAVEDNS_ADDR="10.10.2.#{count}/16"
   ).join("\n")
 end
 
