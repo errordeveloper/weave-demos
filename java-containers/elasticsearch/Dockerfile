@@ -17,6 +17,8 @@ RUN sed 's/^\(hosts:[\ ]*\)\(files\)\ \(dns\)$/\1\3 \2/' -i /etc/nsswitch.conf
 
 VOLUME [ "/data" ]
 
+USER nobody
+
 CMD [ \
   "-Xms256m", "-Xmx1g", "-Xss256k", \
   "-Djava.awt.headless=true", \
