@@ -19,8 +19,10 @@ USER nobody
 ADD logging.yml /usr/elasticsearch/config/logging.yml
 
 CMD [ \
-  "-Xms256m", "-Xmx1g", "-Xss256k", \
+  "-Xms256m", "-Xmx1g", \
   "-Djava.awt.headless=true", \
+  "-Djna.nosys=true", \
+  "-Dfile.encoding=UTF-8", \
   "-XX:+UseParNewGC", \
   "-XX:+UseConcMarkSweepGC", \
   "-XX:CMSInitiatingOccupancyFraction=75", \
@@ -36,7 +38,7 @@ CMD [ \
   "-Des.discovery.zen.ping.multicast.address=_ethwe:ipv4_", \
   "-Des.cluster.name=elasticsearch", \
   "-Des.http.cors.enabled=true", \
-  "-cp", ":/usr/elasticsearch/lib/elasticsearch-*.jar:/usr/elasticsearch/lib/*:/usr/elasticsearch/lib/sigar/*", \
+  "-cp", "/usr/elasticsearch/lib/elasticsearch-*.jar:/usr/elasticsearch/lib/*", \
   "org.elasticsearch.bootstrap.Elasticsearch", \
   "start" \
 ]
