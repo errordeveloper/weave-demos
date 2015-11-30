@@ -6,4 +6,4 @@ EXPOSE 80
 
 WORKDIR /app
 
-CMD [ "/usr/bin/npm", "start" ]
+CMD [ "/usr/local/bin/npm", "start" ]
