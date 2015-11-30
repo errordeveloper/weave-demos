@@ -6,6 +6,7 @@ coreos:
   units:
     - name: weave-network.target
       enable: true
+      command: start
       content: |
         [Unit]
         Description=Weave Network Setup Complete
@@ -14,8 +15,6 @@ coreos:
         After=network-online.target
         [Install]
         WantedBy=multi-user.target
-        WantedBy=kubernetes-master.target
-        WantedBy=kubernetes-node.target
 
     - name: 10-weave.network
       runtime: false
