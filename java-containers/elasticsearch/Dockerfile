@@ -10,7 +10,11 @@ RUN curl \
   https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$ELASTICSEARCH_BINARY_RELEASE.tar.gz \
     | gunzip \
     | tar x -C /usr/ \
-  && ln -s /usr/elasticsearch-$ELASTICSEARCH_BINARY_RELEASE /usr/elasticsearch
+  && ln -s /usr/elasticsearch-$ELASTICSEARCH_BINARY_RELEASE /usr/elasticsearch \
+  && mkdir /data && chown nobody /data \
+  && mkdir /usr/elasticsearch/logs && chown nobody /usr/elasticsearch/logs \
+  && mkdir /usr/elasticsearch/plugins && chown nobody /usr/elasticsearch/plugins \
+  && mkdir /usr/elasticsearch/config/scripts && chown nobody /usr/elasticsearch/config/scripts
 
 VOLUME [ "/data" ]
 
@@ -38,7 +42,7 @@ CMD [ \
   "-Des.discovery.zen.ping.multicast.address=_ethwe:ipv4_", \
   "-Des.cluster.name=elasticsearch", \
   "-Des.http.cors.enabled=true", \
-  "-cp", "/usr/elasticsearch/lib/elasticsearch-*.jar:/usr/elasticsearch/lib/*", \
+  "-cp", "/usr/elasticsearch/lib/elasticsearch-2.1.0.jar:/usr/elasticsearch/lib/*", \
   "org.elasticsearch.bootstrap.Elasticsearch", \
   "start" \
 ]
