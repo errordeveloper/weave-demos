@@ -12,12 +12,11 @@ RUN curl \
     | tar x -C /usr/ \
   && ln -s /usr/elasticsearch-$ELASTICSEARCH_BINARY_RELEASE /usr/elasticsearch
 
-## Currently we need to tweak nsswitch.conf(5), mainly due to zettio/weave#68
-RUN sed 's/^\(hosts:[\ ]*\)\(files\)\ \(dns\)$/\1\3 \2/' -i /etc/nsswitch.conf
-
 VOLUME [ "/data" ]
 
 USER nobody
+
+ADD logging.yml /usr/elasticsearch/config/logging.yml
 
 CMD [ \
   "-Xms256m", "-Xmx1g", "-Xss256k", \
@@ -38,5 +37,6 @@ CMD [ \
   "-Des.cluster.name=elasticsearch", \
   "-Des.http.cors.enabled=true", \
   "-cp", ":/usr/elasticsearch/lib/elasticsearch-*.jar:/usr/elasticsearch/lib/*:/usr/elasticsearch/lib/sigar/*", \
-  "org.elasticsearch.bootstrap.Elasticsearch" \
+  "org.elasticsearch.bootstrap.Elasticsearch", \
+  "start" \
 ]
