@@ -1,5 +1,9 @@
-FROM errordeveloper/iojs-minimal-runtime:v1.0.1
+FROM node
 
 ADD ./ /app/
 
 EXPOSE 80
+
+WORKDIR /app
+
+CMD [ "/usr/bin/npm", "start" ]
