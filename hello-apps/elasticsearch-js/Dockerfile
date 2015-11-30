@@ -1,10 +1,6 @@
 FROM node
-
 EXPOSE 80
-
+ADD ./ /app/
 WORKDIR /app
-
-ONBUILD ADD ./ /app/
-ONBUILD RUN npm install
-
+RUN npm install
 CMD [ "npm", "start" ]
