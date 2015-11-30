@@ -44,7 +44,7 @@ appender:
   deprecation_log:
     type: console
     layout:
-      type: conversionPattern
+      type: consolePattern
       conversionPattern: "[%d{ISO8601}][%-5p][%-25c] %m%n"
 
   index_search_slow_log:
