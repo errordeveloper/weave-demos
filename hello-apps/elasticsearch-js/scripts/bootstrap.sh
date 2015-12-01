@@ -2,8 +2,7 @@
 
 cd $(git rev-parse --show-toplevel)/felix
 
-#creds="--build-arg nginxplus_license_cookie=${1} --build-arg nginxplus_license_secret=${2}"
-
+#NGINXPLUS_CREDS="--build-arg nginxplus_license_cookie=${1} --build-arg nginxplus_license_secret=${2}"
 
 for i in 1 2 3 ; do
 
@@ -24,7 +23,9 @@ for i in 1 2 3 ; do
   "
 
   build_myapp_lb_image="\
-    docker build -t myapp_lb https://github.com/errordeveloper/weave-demos.git#:hello-apps/elasticsearch-js/myapp_lb \
+    docker build -t myapp_lb \
+      --build-arg \$(ip -4 addr show dev docker0 | grep -m1 -o 'inet [.0-9]*' | sed 's/inet \([.0-9]*\)/weavedns_addr=\1/') \
+      https://github.com/errordeveloper/weave-demos.git#:hello-apps/elasticsearch-js/myapp_lb \
   "
 
   run_my_app_lb="\
@@ -46,4 +47,3 @@ for i in 1 2 3 ; do
   echo "Bootstrapping ${vm}..."
   vagrant ssh $vm --command "${cmd}" &> $log && echo "  - done" || echo "  - fail (see $log)"
 done
-
