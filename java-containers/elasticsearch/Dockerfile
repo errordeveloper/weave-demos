@@ -18,6 +18,10 @@ RUN curl \
 
 VOLUME [ "/data" ]
 
+RUN [ "java", "-Xmx64m", "-Xms16m", "-Delasticsearch", "-Des.path.home=/usr/elasticsearch", \
+  "-cp", "/usr/elasticsearch/lib/*", "org.elasticsearch.plugins.PluginManager", \
+    "--install", "discovery-multicast" ]
+
 USER nobody
 
 ADD logging.yml /usr/elasticsearch/config/logging.yml
