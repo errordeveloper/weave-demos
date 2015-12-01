@@ -4,10 +4,16 @@ git clone https://github.com/errordeveloper/weave-demos
 cd weave-demos/felix
 vagrant up
 cd ../hello-apps/elasticsearch-js
+```
+Now you need to get the codes `cs.nginx.com`
+```bash
 export NGINXPLUS_CREDS=" \
   --build-arg nginxplus_license_cookie=<...> \
   --build-arg nginxplus_license_secret=<...> \
 "
+```
+Next, let's fire-up the containers!
+```bash
 ./scripts/bootstrap.sh
 ```
 
