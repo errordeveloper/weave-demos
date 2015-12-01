@@ -1,5 +1,5 @@
 ## Boostrap
-```
+```bash
 git clone https://github.com/errordeveloper/weave-demos
 cd weave-demos/felix
 vagrant up
@@ -28,12 +28,15 @@ The API defined by this app is pretty simple:
 
 So let's create our first document:
 
-```
+```bash
 curl -s \
   --request POST \
   --data '{"a": 1}' \
   --header 'Content-type: application/json' \
-  http://172.17.8.101/hello/sample1 | jq .
+  http://172.17.8.102/hello/sample1 | jq .
+```
+
+```javascript
 {
   "msg": {
     "_index": "hello",
@@ -46,10 +49,12 @@ curl -s \
 ```
 
 And fetch it:
-```
+```bash
 curl -s \
   --request GET \
   http://172.17.8.101/hello/sample1 | jq .
+```
+```javascript
 {
   "msg": {
     "a": 1
@@ -58,12 +63,14 @@ curl -s \
 ```
 
 Now, we can also post another document with the same title:
-```
+```bash
 curl -s \
   --request POST \
   --data '{"a": 2}' \
   --header 'Content-type: application/json' \
-  http://172.17.8.101/hello/sample1 | jq .
+  http://172.17.8.102/hello/sample1 | jq .
+```
+```javascript
 {
   "msg": {
     "_index": "hello",
@@ -76,10 +83,12 @@ curl -s \
 ```
 
 Try to fetch it:
-```
+```bash
 curl -s \
   --request GET \
-  http://172.17.8.101/hello/sample1 | jq .
+  http://172.17.8.103/hello/sample1 | jq .
+```
+```javascript
 {
   "msg": "There're too many of those, I'm sorry! But you can try `/hello/_search/:title` ;)"
 }
@@ -87,10 +96,12 @@ curl -s \
 
 So we no longer can use `GET /hello/:title`, however search comes to rescue:
 
-```
+```bash
 curl -s \
   --request GET \
-  http://172.17.8.101/hello/_search/sample1 | jq .
+  http://172.17.8.102/hello/_search/sample1 | jq .
+```
+```javascript
 {
   "msg": "Found 2 matching documents...",
   "hits": [
