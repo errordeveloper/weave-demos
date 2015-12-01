@@ -1,6 +1,6 @@
 var elasticsearch = require('elasticsearch');
 var es = new elasticsearch.Client({
-    hosts: [ 'es-1.weave.local:9200', 'es-2.weave.local:9200', 'es-3.weave.local:9200', ],
+    hosts: [ 'es-1.weave.local:9200', /* 'es-2.weave.local:9200', 'es-3.weave.local:9200', */ ],
       log: 'trace'
 });
 
