@@ -29,7 +29,7 @@ for i in 1 2 3 ; do
   "
 
   run_my_app_lb="\
-    docker run --net=host myapp_lb \
+    docker run -d --net=host myapp_lb \
   "
 
   cmd="weave expose \
