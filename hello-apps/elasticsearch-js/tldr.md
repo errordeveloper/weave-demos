@@ -5,8 +5,8 @@ cd weave-demos/felix
 vagrant up
 cd ../hello-apps/elasticsearch-js
 export NGINXPLUS_CREDS=" \
-  --build-arg nginxplus_license_cookie=2406d2e0bb1664c2524c9351d7b8e5a5a3322a68902f5aa6432645b79a57290008cb68d6 \
-  --build-arg nginxplus_license_secret=5e6914945091f987fd54cb0ff61fd40f \
+  --build-arg nginxplus_license_cookie=<...> \
+  --build-arg nginxplus_license_secret=<...> \
 "
 ./scripts/bootstrap.sh
 ```
