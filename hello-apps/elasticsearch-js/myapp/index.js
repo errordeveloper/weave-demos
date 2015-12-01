@@ -35,7 +35,8 @@ server.post('/hello', function (req, res, next) {
       res.send(200, es_res);
     }
   });
-}
+  return next();
+});
 
 server.get('/', function (req, res, next) {
   es.nodes.info({
