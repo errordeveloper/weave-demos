@@ -12,7 +12,7 @@ for i in 1 2 3 ; do
   "
 
   build_myapp_image="\
-    docker build -t myapp https://github.com/errordeveloper/weave-demos.git#:hello-apps/elasticsearch-js \
+    docker build -t myapp https://github.com/errordeveloper/weave-demos.git#:hello-apps/elasticsearch-js/myapp \
   "
 
   run_myapp="\
@@ -23,10 +23,19 @@ for i in 1 2 3 ; do
     docker run -d --name='es-${i}' errordeveloper/weave-elasticsearch-minimal:latest \
   "
 
+  build_myapp_lb_image="\
+    docker build -t myapp_lb https://github.com/errordeveloper/weave-demos.git#:hello-apps/elasticsearch-js/myapp_lb \
+  "
+
+  run_my_app_lb="\
+    docker run --net=host myapp_lb \
+  "
+
   cmd="weave expose \
     && eval \$(weave env) \
     && ${build_nginxplus_base_image} \
     && ${build_myapp_image} \
+    && ${build_myapp_lb_image} \
     && ${run_elasticsearch} \
     && ${run_myapp} \
     && ${run_myapp} \
@@ -34,7 +43,7 @@ for i in 1 2 3 ; do
 
   vm="core-0${i}"
   log="/tmp/vagrant_ssh_${vm}"
-  echo "Building NGINX+ on ${vm}..."
+  echo "Bootstrapping ${vm}..."
   vagrant ssh $vm --command "${cmd}" &> $log && echo "  - done" || echo "  - fail (see $log)"
 done
 
