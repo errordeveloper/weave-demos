@@ -40,6 +40,7 @@ for i in 1 2 3 ; do
     && ${run_elasticsearch} \
     && ${run_myapp} \
     && ${run_myapp} \
+    && ${run_my_app_lb} \
   "
 
   vm="core-0${i}"
