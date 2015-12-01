@@ -25,15 +25,17 @@ es.ping({
   }
 });
 
-es.indices.create({
-  index: "hello",
-}, function (error) {
-  if (error) {
-   console.error(error.message);
-  } else {
-   console.log('Created an index for our app.');
-  }
-});
+server.post('/hello', function (req, res, next) {
+  es.indices.create({
+    index: "hello",
+  }, function (error) {
+    if (error) {
+      res.send(500, { msg: error.message });
+    } else {
+      res.send(200, es_res);
+    }
+  });
+}
 
 server.get('/', function (req, res, next) {
   es.nodes.info({
